@@ -17,11 +17,11 @@ async function ensurePaymentManagerInitialized() {
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { paymentId: string } }
+  context: { params: Promise<{ paymentId: string }> }
 ) {
   try {
     await ensurePaymentManagerInitialized();
-    
+
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
@@ -30,6 +30,7 @@ export async function GET(
       );
     }
 
+    const params = await context.params;
     const { paymentId } = params;
     const { searchParams } = new URL(request.url);
     const provider = searchParams.get('provider') as PaymentProvider;
@@ -112,11 +113,11 @@ export async function GET(
 // Update payment status (for internal use or admin)
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { paymentId: string } }
+  context: { params: Promise<{ paymentId: string }> }
 ) {
   try {
     await ensurePaymentManagerInitialized();
-    
+
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
@@ -133,6 +134,7 @@ export async function PUT(
     //   );
     // }
 
+    const params = await context.params;
     const { paymentId } = params;
     const body = await request.json();
     
