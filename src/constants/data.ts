@@ -52,18 +52,6 @@ export const shopNavItems = [
   }
 ];
 
-// Legacy admin nav items (kept for compatibility)
-export const navItems: NavItem[] = [
-  {
-    title: 'Kanban',
-    url: '/dashboard/kanban',
-    icon: 'kanban',
-    shortcut: ['k', 'k'],
-    isActive: false,
-    items: [] // No child items
-  }
-];
-
 
 
 
