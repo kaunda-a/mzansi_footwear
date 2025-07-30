@@ -3,20 +3,20 @@ import { Suspense } from 'react';
 import { PaymentStatus } from '@/components/payments/payment-status';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
-import { ConfettiProvider } from '@/components/ui/confetti';
 
 interface PaymentSuccessPageProps {
-  searchParams: {
+  searchParams: Promise<{
     paymentId?: string;
     provider?: string;
     orderId?: string;
     amount?: string;
     currency?: string;
-  };
+  }>;
 }
 
-function PaymentSuccessContent({ searchParams }: PaymentSuccessPageProps) {
-  const { paymentId, provider, orderId, amount, currency } = searchParams;
+async function PaymentSuccessContent({ searchParams }: PaymentSuccessPageProps) {
+  const params = await searchParams;
+  const { paymentId, provider, orderId, amount, currency } = params;
 
   if (!paymentId || !provider) {
     return (
@@ -81,7 +81,7 @@ function LoadingFallback() {
   );
 }
 
-export default function PaymentSuccessPage({ searchParams }: PaymentSuccessPageProps) {
+export default async function PaymentSuccessPage({ searchParams }: PaymentSuccessPageProps) {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <PaymentSuccessContent searchParams={searchParams} />

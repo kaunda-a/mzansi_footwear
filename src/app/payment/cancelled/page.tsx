@@ -7,15 +7,16 @@ import { XCircle, ArrowLeft, RefreshCw, HelpCircle } from 'lucide-react';
 import Link from 'next/link';
 
 interface PaymentCancelledPageProps {
-  searchParams: {
+  searchParams: Promise<{
     orderId?: string;
     reason?: string;
     provider?: string;
-  };
+  }>;
 }
 
-function PaymentCancelledContent({ searchParams }: PaymentCancelledPageProps) {
-  const { orderId, reason, provider } = searchParams;
+async function PaymentCancelledContent({ searchParams }: PaymentCancelledPageProps) {
+  const params = await searchParams;
+  const { orderId, reason, provider } = params;
 
   const getProviderDisplayName = (provider?: string): string => {
     const names: Record<string, string> = {
@@ -205,7 +206,7 @@ function LoadingFallback() {
   );
 }
 
-export default function PaymentCancelledPage({ searchParams }: PaymentCancelledPageProps) {
+export default async function PaymentCancelledPage({ searchParams }: PaymentCancelledPageProps) {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <PaymentCancelledContent searchParams={searchParams} />
