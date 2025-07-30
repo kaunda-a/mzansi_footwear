@@ -93,13 +93,13 @@ export function Billboard({
       )}
 
       {/* Content */}
-      <div className='relative p-6 md:p-8'>
+      <div className='relative p-4 md:p-6'>
         <div className='flex items-start justify-between'>
-          <div className='flex-1 space-y-4'>
+          <div className='flex-1 space-y-3'>
             {/* Header */}
             <div className='space-y-2'>
               <div className='flex items-center space-x-2'>
-                <Badge variant='outline' className='capitalize'>
+                <Badge variant='outline' className='capitalize text-xs'>
                   {currentBillboard.type.replace('_', ' ').toLowerCase()}
                 </Badge>
                 {currentBillboard.endDate && (
@@ -108,13 +108,13 @@ export function Billboard({
                   </Badge>
                 )}
               </div>
-              
-              <h2 className='text-2xl md:text-3xl font-bold tracking-tight'>
+
+              <h2 className='text-xl md:text-2xl lg:text-3xl font-bold tracking-tight'>
                 {currentBillboard.title}
               </h2>
-              
+
               {currentBillboard.description && (
-                <p className='text-muted-foreground text-lg max-w-2xl'>
+                <p className='text-muted-foreground text-sm md:text-base max-w-2xl line-clamp-2'>
                   {currentBillboard.description}
                 </p>
               )}
@@ -122,31 +122,32 @@ export function Billboard({
 
             {/* Action Button */}
             {(currentBillboard.linkUrl || onAction) && (
-              <div className='flex items-center space-x-3'>
+              <div className='flex items-center space-x-2'>
                 {currentBillboard.linkUrl && (
                   <Button
-                    size='lg'
+                    size='sm'
                     onClick={() => window.open(currentBillboard.linkUrl!, '_blank')}
-                    className='group'
+                    className='group text-sm'
                   >
                     {currentBillboard.linkText || 'Learn More'}
-                    <IconExternalLink className='ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform' />
+                    <IconExternalLink className='ml-1 h-3 w-3 group-hover:translate-x-1 transition-transform' />
                   </Button>
                 )}
-                
+
                 {onAction && (
                   <Button
                     variant='outline'
-                    size='lg'
+                    size='sm'
                     onClick={() => onAction(currentBillboard)}
+                    className='text-sm'
                   >
                     View Details
                   </Button>
                 )}
 
                 {currentBillboard.videoUrl && (
-                  <Button variant='ghost' size='lg' className='group'>
-                    <IconPlayerPlay className='mr-2 h-4 w-4 group-hover:scale-110 transition-transform' />
+                  <Button variant='ghost' size='sm' className='group text-sm'>
+                    <IconPlayerPlay className='mr-1 h-3 w-3 group-hover:scale-110 transition-transform' />
                     Watch Video
                   </Button>
                 )}
@@ -173,14 +174,14 @@ export function Billboard({
 
         {/* Navigation */}
         {billboards.length > 1 && (
-          <div className='flex items-center justify-between mt-6'>
-            <div className='flex space-x-2'>
+          <div className='flex items-center justify-between mt-4'>
+            <div className='flex space-x-1'>
               {billboards.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentIndex(index)}
                   className={cn(
-                    'w-3 h-3 rounded-full transition-all duration-200',
+                    'w-2 h-2 rounded-full transition-all duration-200',
                     index === currentIndex
                       ? 'bg-primary scale-110'
                       : 'bg-primary/30 hover:bg-primary/50'
@@ -189,7 +190,7 @@ export function Billboard({
               ))}
             </div>
 
-            <div className='text-sm text-muted-foreground'>
+            <div className='text-xs text-muted-foreground'>
               {currentIndex + 1} of {billboards.length}
             </div>
           </div>

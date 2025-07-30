@@ -1,4 +1,4 @@
-import Header from '@/components/layout/header';
+import { Navbar } from '@/components/layout/navbar';
 import { StoreFooter } from '@/components/layout/store-footer';
 import { CartView } from '@/components/cart/cart-view';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
@@ -10,12 +10,12 @@ export const metadata = {
 
 export default function CartPage() {
   return (
-    <>
-      <Header />
-      <main className="flex-1">
+    <div className="flex flex-col min-h-screen">
+      <Navbar />
+      <main className="flex-1 bg-muted/30">
         {/* Breadcrumbs */}
-        <div className="bg-gray-50 border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <div className="bg-background border-b">
+          <div className="container mx-auto px-4 py-4">
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
@@ -31,11 +31,11 @@ export default function CartPage() {
         </div>
 
         {/* Cart Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="container mx-auto px-4 py-8">
           <CartView />
         </div>
       </main>
       <StoreFooter />
-    </>
+    </div>
   );
 }

@@ -20,6 +20,7 @@ interface ProductCatalogProps {
   showSort?: boolean
   showPagination?: boolean
   limit?: number
+  featured?: boolean
 }
 
 function ProductCatalogSkeleton() {
@@ -49,11 +50,12 @@ function ProductCatalogSkeleton() {
   )
 }
 
-async function ProductCatalogContent({ 
-  searchParams, 
-  showSort = true, 
+async function ProductCatalogContent({
+  searchParams,
+  showSort = true,
   showPagination = true,
-  limit = 12 
+  limit = 12,
+  featured = false
 }: ProductCatalogProps) {
   const page = parseInt(searchParams.page || '1')
   const sortParam = searchParams.sort || 'newest'
@@ -82,6 +84,10 @@ async function ProductCatalogContent({
 
   if (searchParams.maxPrice) {
     filters.maxPrice = parseFloat(searchParams.maxPrice)
+  }
+
+  if (featured) {
+    filters.isFeatured = true
   }
 
   // Note: size and color filtering would need to be handled at the variant level

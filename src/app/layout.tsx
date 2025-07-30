@@ -8,7 +8,7 @@ import { cookies } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import KBar from '@/components/kbar';
-import { SidebarProvider } from '@/components/ui/sidebar';
+
 import './globals.css';
 import './theme.css';
 
@@ -95,14 +95,12 @@ export default async function RootLayout({
             enableColorScheme
           >
             <Providers activeThemeValue={activeThemeValue as string}>
-              <SidebarProvider>
-                <KBar>
-                  <div className="min-h-screen flex flex-col">
-                    {children}
-                  </div>
-                  <Toaster />
-                </KBar>
-              </SidebarProvider>
+              <KBar>
+                <div className="min-h-screen flex flex-col">
+                  {children}
+                </div>
+                <Toaster />
+              </KBar>
             </Providers>
           </ThemeProvider>
         </NuqsAdapter>
