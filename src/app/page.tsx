@@ -1,4 +1,4 @@
-import Header from '@/components/layout/header';
+import { Header } from '@/components/layout/header';
 import { Navbar } from '@/components/layout/navbar';
 import { StoreFooter } from '@/components/layout/store-footer';
 import { MarqueeContainer } from '@/components/marquee-container';
