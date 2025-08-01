@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
-import Header from '@/components/layout/header';
+import { Header } from '@/components/layout/header';
 import { StoreFooter } from '@/components/layout/store-footer';
 import { ProductService } from '@/lib/services/products';
 import { ProductDetailView } from '@/features/product/components/product-detail-view';

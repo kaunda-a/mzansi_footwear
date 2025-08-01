@@ -1,7 +1,7 @@
 import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import Header from '@/components/layout/header'
+import { Header } from '@/components/layout/header'
 import { StoreFooter } from '@/components/layout/store-footer'
 import FormCardSkeleton from '@/components/form-card-skeleton'
 import { OrderViewPage } from '@/features/orders'
