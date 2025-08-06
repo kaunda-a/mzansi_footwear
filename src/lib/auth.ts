@@ -32,6 +32,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.role = token.role as UserRole
       }
       return session
+    },
+    async redirect({ url, baseUrl }) {
+      // Redirect customers to store after sign in
+      if (url.startsWith("/")) return `${baseUrl}${url}`
+      // If it's a callback URL, use it
+      if (new URL(url).origin === baseUrl) return url
+      // Default redirect to store homepage for customers
+      return baseUrl
     }
   },
   events: {
@@ -70,7 +78,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }
   },
   pages: {
-    signIn: "/auth/sign-in",
+    signIn: "/auth/customer-sign-in",
     error: "/auth/error"
   }
 })

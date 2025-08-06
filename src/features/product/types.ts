@@ -13,6 +13,7 @@ export interface ProductCardProps {
   showQuickView?: boolean
   showCompare?: boolean
   priority?: boolean
+  compact?: boolean
 }
 
 export interface ProductFiltersProps {

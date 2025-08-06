@@ -15,6 +15,8 @@ export type ProductWithDetails = Product & {
   _count: {
     reviews: number
   }
+  averageRating: number
+  reviewCount: number
 }
 
 export type ProductFilters = {
@@ -103,6 +105,9 @@ export class ProductService {
           },
           _count: {
             select: { reviews: true }
+          },
+          reviews: {
+            select: { rating: true }
           }
         },
         orderBy,
@@ -113,16 +118,25 @@ export class ProductService {
     ])
 
     return {
-      products: products.map(product => ({
-        ...product,
-        variants: product.variants.map(variant => ({
-          ...variant,
-          price: variant.price,
-          comparePrice: variant.comparePrice,
-          costPrice: variant.costPrice,
-          weight: variant.weight
-        }))
-      })),
+      products: products.map(product => {
+        const reviews = (product as any).reviews || []
+        const averageRating = reviews.length > 0
+          ? reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / reviews.length
+          : 0
+
+        return {
+          ...product,
+          variants: product.variants.map(variant => ({
+            ...variant,
+            price: variant.price,
+            comparePrice: variant.comparePrice,
+            costPrice: variant.costPrice,
+            weight: variant.weight
+          })),
+          averageRating,
+          reviewCount: product._count.reviews
+        }
+      }),
       pagination: {
         page,
         limit,
@@ -166,11 +180,19 @@ export class ProductService {
         },
         _count: {
           select: { reviews: true }
+        },
+        reviews: {
+          select: { rating: true }
         }
       }
     })
 
     if (!product) return null
+
+    // Calculate average rating
+    const averageRating = product.reviews.length > 0
+      ? product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length
+      : 0
 
     return {
       ...product,
@@ -180,12 +202,14 @@ export class ProductService {
         comparePrice: variant.comparePrice,
         costPrice: variant.costPrice,
         weight: variant.weight
-      }))
+      })),
+      averageRating,
+      reviewCount: product._count.reviews
     }
   }
 
   static async getFeaturedProducts(limit = 8): Promise<ProductWithDetails[]> {
-    return db.product.findMany({
+    const products = await db.product.findMany({
       where: {
         isFeatured: true,
         isActive: true,
@@ -205,10 +229,26 @@ export class ProductService {
         },
         _count: {
           select: { reviews: true }
+        },
+        reviews: {
+          select: { rating: true }
         }
       },
       take: limit,
       orderBy: { createdAt: 'desc' }
+    })
+
+    return products.map(product => {
+      const reviews = (product as any).reviews || []
+      const averageRating = reviews.length > 0
+        ? reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / reviews.length
+        : 0
+
+      return {
+        ...product,
+        averageRating,
+        reviewCount: product._count.reviews
+      }
     })
   }
 

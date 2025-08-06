@@ -7,15 +7,14 @@ import type { ProductGridProps } from '../types'
 
 function ProductGridSkeleton() {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-      {[...Array(8)].map((_, i) => (
-        <div key={i} className="space-y-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3 md:gap-4">
+      {[...Array(14)].map((_, i) => (
+        <div key={i} className="space-y-2">
           <Skeleton className="aspect-square rounded-lg" />
-          <div className="space-y-2">
-            <Skeleton className="h-3 w-1/2" />
-            <Skeleton className="h-4 w-3/4" />
-            <Skeleton className="h-3 w-1/3" />
-            <Skeleton className="h-6 w-1/2" />
+          <div className="space-y-1 px-1">
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
           </div>
         </div>
       ))}
@@ -53,14 +52,15 @@ export function ProductGrid({
   }
 
   return (
-    <div className={`grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 ${className}`}>
+    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3 md:gap-4 ${className}`}>
       {products.map((product, index) => (
-        <ProductCard 
-          key={product.id} 
+        <ProductCard
+          key={product.id}
           product={product}
           showQuickView={showQuickView}
           showCompare={showCompare}
-          priority={index < 4} // Prioritize first 4 images for LCP
+          priority={index < 8} // Prioritize first 8 images for LCP
+          compact={true} // Enable compact mode for Temu-style layout
         />
       ))}
     </div>

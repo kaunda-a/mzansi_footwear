@@ -24,7 +24,8 @@ export function ProductCard({
   product,
   showQuickView = true,
   showCompare = true,
-  priority = false
+  priority = false,
+  compact = false
 }: ProductCardProps) {
   const [isWishlisted, setIsWishlisted] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
@@ -89,6 +90,113 @@ export function ProductCard({
 
   const inStock = product.variants.some(v => v.stock > 0)
 
+  if (compact) {
+    return (
+      <Card className="group overflow-hidden border-0 shadow-sm hover:shadow-md transition-all duration-200">
+        <CardContent className="p-0">
+          <Link href={`/products/${product.id}`}>
+            {/* Product Image */}
+            <div className="relative aspect-square overflow-hidden bg-gray-50 rounded-t-lg">
+              {primaryImage ? (
+                <Image
+                  src={primaryImage.url}
+                  alt={primaryImage.altText || product.name}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  priority={priority}
+                  sizes="(min-width: 1536px) 14vw, (min-width: 1280px) 16vw, (min-width: 1024px) 20vw, (min-width: 768px) 25vw, (min-width: 640px) 33vw, 50vw"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center">
+                    <span className="text-xs font-bold text-primary">IMG</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Compact Badges */}
+              <div className="absolute top-1 left-1 flex flex-wrap gap-1">
+                {discountPercentage > 0 && (
+                  <Badge variant="destructive" className="text-[10px] px-1 py-0 h-4">
+                    -{discountPercentage}%
+                  </Badge>
+                )}
+                {!inStock && (
+                  <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4">
+                    Out
+                  </Badge>
+                )}
+              </div>
+
+              {/* Wishlist button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-1 right-1 h-6 w-6 rounded-full bg-white/80 hover:bg-white opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={handleWishlist}
+              >
+                <IconHeart
+                  className={`h-3 w-3 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`}
+                />
+              </Button>
+            </div>
+
+            {/* Product Info */}
+            <div className="p-2 space-y-1">
+              <h3 className="font-medium text-xs leading-tight line-clamp-2 min-h-[2.5rem]">
+                {product.name}
+              </h3>
+
+              <div className="flex items-center justify-between">
+                <div className="flex flex-col">
+                  <span className="font-bold text-sm text-primary">
+                    {formatPrice(Number(cheapestVariant.price))}
+                  </span>
+                  {hasDiscount && (
+                    <span className="text-[10px] text-muted-foreground line-through">
+                      {formatPrice(Number(cheapestVariant.comparePrice))}
+                    </span>
+                  )}
+                </div>
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-6 w-6 rounded-full hover:bg-primary hover:text-primary-foreground"
+                  onClick={handleAddToCart}
+                  disabled={!inStock || isLoading}
+                >
+                  <IconShoppingCart className="h-3 w-3" />
+                </Button>
+              </div>
+
+              {/* Rating */}
+              {(product.averageRating > 0 || product._count?.reviews > 0) && (
+                <div className="flex items-center gap-1">
+                  <div className="flex">
+                    {[...Array(5)].map((_, i) => (
+                      <IconStar
+                        key={i}
+                        className={`h-2 w-2 ${
+                          i < Math.floor(product.averageRating || 0)
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-gray-300'
+                        }`}
+                      />
+                    ))}
+                  </div>
+                  <span className="text-[10px] text-muted-foreground">
+                    ({product.reviewCount || product._count?.reviews || 0})
+                  </span>
+                </div>
+              )}
+            </div>
+          </Link>
+        </CardContent>
+      </Card>
+    )
+  }
+
   return (
     <Card className="group overflow-hidden border-0 shadow-sm hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
       <CardContent className="p-0">
@@ -114,7 +222,7 @@ export function ProductCard({
                 </div>
               </div>
             )}
-            
+
             {/* Badges */}
             <div className="absolute top-3 left-3 flex flex-col gap-2">
               {product.isFeatured && (

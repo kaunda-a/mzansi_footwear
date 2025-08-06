@@ -1,10 +1,9 @@
-import { Header } from '@/components/layout/header';
-import { Navbar } from '@/components/layout/navbar';
-import { StoreFooter } from '@/components/layout/store-footer';
+import Header from '@/components/layout/header';
+import { StoreFooter } from '@/components/layout/footer';
 import { MarqueeContainer } from '@/components/marquee-container';
 import { BillboardContainer } from '@/components/layout/billboard-container';
 import { CarouselBillboardContainer } from '@/components/layout/carousel-billboard-container';
-import { FeaturedProducts } from '@/components/sections/featured-products';
+import { FeaturedProducts } from '@/components/featured-products';
 import { ProductCatalog } from '@/features/product/components/product-catalog';
 import { Suspense } from 'react';
 
@@ -12,7 +11,6 @@ import { Suspense } from 'react';
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <Navbar />
       <Header />
 
       <main className="flex-1">
@@ -36,10 +34,6 @@ export default function HomePage() {
             className="h-32 md:h-40 rounded-lg"
           />
         </div>
-
-        {/* Featured Products */}
-        <FeaturedProducts />
-
         {/* Popular Products */}
         <div className="bg-muted/30 py-12">
           <div className="container mx-auto px-4">
@@ -49,15 +43,14 @@ export default function HomePage() {
             </div>
 
             <Suspense fallback={
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="space-y-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3 md:gap-4">
+                {Array.from({ length: 14 }).map((_, i) => (
+                  <div key={i} className="space-y-2">
                     <div className="aspect-square bg-muted rounded animate-pulse" />
-                    <div className="space-y-2">
-                      <div className="h-3 w-1/2 bg-muted rounded animate-pulse" />
-                      <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
-                      <div className="h-3 w-1/3 bg-muted rounded animate-pulse" />
-                      <div className="h-6 w-1/2 bg-muted rounded animate-pulse" />
+                    <div className="space-y-1 px-1">
+                      <div className="h-3 w-full bg-muted rounded animate-pulse" />
+                      <div className="h-3 w-3/4 bg-muted rounded animate-pulse" />
+                      <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
                     </div>
                   </div>
                 ))}
@@ -67,16 +60,16 @@ export default function HomePage() {
                 searchParams={{}}
                 showSort={false}
                 showPagination={false}
-                limit={8}
+                limit={14}
                 featured={true}
               />
             </Suspense>
           </div>
         </div>
-
-        <MarqueeContainer />
+        
+      <FeaturedProducts />
       </main>
-
+      <MarqueeContainer />
       <StoreFooter />
     </div>
   );

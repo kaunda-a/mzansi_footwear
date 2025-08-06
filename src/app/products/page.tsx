@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
-import { Navbar } from '@/components/layout/navbar';
-import { StoreFooter } from '@/components/layout/store-footer';
+import Header from '@/components/layout/header';
+import { StoreFooter } from '@/components/layout/footer';
 import { ProductCatalog } from '@/features/product/components/product-catalog';
 import { ProductFilters } from '@/features/product/components/product-filters';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
@@ -25,8 +25,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   
   return (
     <div className="flex flex-col min-h-screen">
-      {/* New Modern Navbar */}
-      <Navbar />
+      <Header />
 
       <main className="flex-1">
         {/* Breadcrumbs */}

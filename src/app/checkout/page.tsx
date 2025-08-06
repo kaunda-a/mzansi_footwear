@@ -1,5 +1,5 @@
-import { Header } from '@/components/layout/header';
-import { StoreFooter } from '@/components/layout/store-footer';
+import Header from '@/components/layout/header';
+import { StoreFooter } from '@/components/layout/footer';
 import { CheckoutView } from '@/components/checkout/checkout-view';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
 

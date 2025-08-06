@@ -1,8 +1,8 @@
 import { Suspense } from 'react'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
-import { Header } from '@/components/layout/header'
-import { StoreFooter } from '@/components/layout/store-footer'
+import Header from '@/components/layout/header'
+import { StoreFooter } from '@/components/layout/footer'
 import FormCardSkeleton from '@/components/form-card-skeleton'
 import { BillboardViewPage } from '@/features/billboards'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
@@ -59,7 +59,7 @@ export default async function Page(props: BillboardPageProps) {
     }
 
     return (
-      <>
+      <div className="flex flex-col min-h-screen">
         <Header />
         <main className="flex-1">
           {/* Breadcrumbs */}
@@ -91,7 +91,7 @@ export default async function Page(props: BillboardPageProps) {
           </div>
         </main>
         <StoreFooter />
-      </>
+      </div>
     )
   } catch (error) {
     console.error('Error loading billboard:', error)

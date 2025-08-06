@@ -8,6 +8,7 @@ import { cookies } from 'next/headers';
 import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import KBar from '@/components/kbar';
+import { Navbar } from '@/components/layout/navbar';
 
 import './globals.css';
 import './theme.css';
@@ -96,9 +97,10 @@ export default async function RootLayout({
           >
             <Providers activeThemeValue={activeThemeValue as string}>
               <KBar>
-                <div className="min-h-screen flex flex-col">
+                <div className="min-h-screen flex flex-col pb-20 sm:pb-24">
                   {children}
                 </div>
+                <Navbar />
                 <Toaster />
               </KBar>
             </Providers>

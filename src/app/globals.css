@@ -271,3 +271,97 @@ html, body {
 .animate-marquee-reverse {
   animation: marquee-reverse 15s linear infinite;
 }
+
+/* Safe area handling for mobile devices */
+.safe-area-pb {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.safe-area-pt {
+  padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-pl {
+  padding-left: env(safe-area-inset-left);
+}
+
+.safe-area-pr {
+  padding-right: env(safe-area-inset-right);
+}
+
+/* Enhanced safe area for bottom navigation */
+.pb-safe {
+  padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+}
+
+.pt-safe {
+  padding-top: max(env(safe-area-inset-top), 0.5rem);
+}
+
+/* Additional safe area utilities */
+.mb-safe {
+  margin-bottom: max(env(safe-area-inset-bottom), 1rem);
+}
+
+.pb-safe-sm {
+  padding-bottom: max(env(safe-area-inset-bottom), 0.5rem);
+}
+
+/* Linear/Raycast-inspired glassmorphism */
+.linear-glass {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.dark .linear-glass {
+  background: rgba(0, 0, 0, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Enhanced navbar animations */
+@keyframes navbar-slide-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes navbar-item-bounce {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.navbar-slide-up {
+  animation: navbar-slide-up 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.navbar-item-active {
+  animation: navbar-item-bounce 0.3s ease-in-out;
+}
+
+/* Responsive design enhancements */
+@media (max-width: 640px) {
+  .navbar-compact {
+    padding: 0.5rem 0.75rem;
+  }
+
+  .navbar-item-compact {
+    padding: 0.5rem;
+    min-width: 60px;
+  }
+}
+
+/* Focus states for accessibility */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50 focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+}

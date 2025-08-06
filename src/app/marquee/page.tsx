@@ -1,8 +1,8 @@
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { SearchParams } from 'nuqs/server'
-import { Header } from '@/components/layout/header'
-import { StoreFooter } from '@/components/layout/store-footer'
+import Header from '@/components/layout/header'
+import { StoreFooter } from '@/components/layout/footer'
 import { Heading } from '@/components/ui/heading'
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
 import { MarqueeListingPage } from '@/features/marquee'
@@ -31,7 +31,7 @@ export default async function Page(props: pageProps) {
   const searchParams = await props.searchParams
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1">
         {/* Breadcrumbs */}
@@ -73,6 +73,6 @@ export default async function Page(props: pageProps) {
         </div>
       </main>
       <StoreFooter />
-    </>
+    </div>
   )
 }
