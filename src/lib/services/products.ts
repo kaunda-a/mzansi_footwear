@@ -2,7 +2,7 @@ import { db } from '@/lib/prisma'
 import type { Product, Category, Brand, ProductVariant, ProductImage, Prisma, ProductStatus } from '@prisma/client'
 import { Decimal } from '@prisma/client/runtime/library'
 
-export type ProductWithDetails = Product & {
+export type ProductWithDetails = Omit<Product, 'averageRating'> & {
   category: Category
   brand: Brand
   variants: Array<Omit<ProductVariant, 'price' | 'comparePrice' | 'costPrice' | 'weight'> & {
