@@ -27,9 +27,10 @@ export type UpdateMarqueeData = {
 
 export class MarqueeService {
   static async getActiveMessages(): Promise<MarqueeMessageWithCreator[]> {
-    const now = new Date()
-    
-    return db.marqueeMessage.findMany({
+    try {
+      const now = new Date()
+      
+      return await db.marqueeMessage.findMany({
       where: {
         isActive: true,
         OR: [
@@ -60,6 +61,10 @@ export class MarqueeService {
         { createdAt: 'desc' }
       ]
     })
+    } catch (error) {
+      console.error('Error fetching active marquee messages:', error)
+      return []
+    }
   }
 
   static async getAllMessages({

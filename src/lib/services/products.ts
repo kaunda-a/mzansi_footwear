@@ -90,8 +90,9 @@ export class ProductService {
       orderBy[sort.field] = sort.direction
     }
 
-    const [products, total] = await Promise.all([
-      db.product.findMany({
+    try {
+      const [products, total] = await Promise.all([
+        db.product.findMany({
         where,
         include: {
           category: true,
@@ -142,6 +143,18 @@ export class ProductService {
         limit,
         total,
         pages: Math.ceil(total / limit)
+      }
+    }
+    } catch (error) {
+      console.error('Error fetching products:', error)
+      return {
+        products: [],
+        pagination: {
+          page,
+          limit,
+          total: 0,
+          pages: 0
+        }
       }
     }
   }
