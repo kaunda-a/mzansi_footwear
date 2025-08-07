@@ -15,7 +15,7 @@ export type ProductWithDetails = Product & {
   _count: {
     reviews: number
   }
-  averageRating: number
+  averageRating: Decimal
   reviewCount: number
 }
 
@@ -134,7 +134,7 @@ export class ProductService {
             costPrice: variant.costPrice,
             weight: variant.weight
           })),
-          averageRating,
+          averageRating: new Decimal(averageRating),
           reviewCount: product._count.reviews
         }
       }),
