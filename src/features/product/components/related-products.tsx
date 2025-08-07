@@ -1,5 +1,6 @@
 import { ProductService } from '@/lib/services/products'
 import { ProductGrid } from './product-grid'
+import { serializeProduct } from '@/lib/types/client-safe'
 import type { RelatedProductsProps } from '../types'
 
 export async function RelatedProducts({ 
@@ -64,31 +65,15 @@ export async function RelatedProducts({
       products = [...products, ...additionalProducts]
     }
 
-    // Strategy 4: If we still don't have enough, get any recent products
-    if (products.length < 4) {
-      const { products: recentProducts } = await ProductService.getProducts({
-        filters: {
-          isActive: true,
-          status: 'ACTIVE',
-        },
-        limit: limit - products.length + 1,
-        sort: { field: 'createdAt', direction: 'desc' }
-      })
-
-      // Add recent products that aren't already included and aren't the current product
-      const additionalProducts = recentProducts.filter(
-        p => p.id !== productId && !products.some(existing => existing.id === p.id)
-      )
-      
-      products = [...products, ...additionalProducts]
-    }
-
-    // Limit to the requested number of products
+    // Limit to the requested number
     products = products.slice(0, limit)
 
     if (!products.length) {
       return null
     }
+
+    // Serialize products to client-safe types
+    const clientSafeProducts = products.map(serializeProduct)
 
     return (
       <section className="space-y-6">
@@ -102,7 +87,7 @@ export async function RelatedProducts({
         </div>
         
         <ProductGrid 
-          products={products} 
+          products={clientSafeProducts} 
           showQuickView={true}
           showCompare={false}
           className="grid-cols-1 sm:grid-cols-2 lg:grid-cols-4"

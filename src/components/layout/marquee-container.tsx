@@ -1,7 +1,14 @@
 import { MarqueeService } from '@/lib/services'
 import { Marquee } from '@/features/marquee/components/marquee-ui'
+import { Suspense } from 'react'
 
-export async function MarqueeContainer() {
+function MarqueeSkeleton() {
+  return (
+    <div className="h-12 bg-muted animate-pulse" />
+  )
+}
+
+async function MarqueeContent() {
   try {
     const messages = await MarqueeService.getActiveMessages()
 
@@ -20,4 +27,12 @@ export async function MarqueeContainer() {
     console.error('Error loading marquee messages:', error)
     return null
   }
+}
+
+export function MarqueeContainer() {
+  return (
+    <Suspense fallback={<MarqueeSkeleton />}>
+      <MarqueeContent />
+    </Suspense>
+  )
 }

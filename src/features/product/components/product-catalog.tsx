@@ -4,6 +4,7 @@ import { ProductGrid } from './product-grid'
 import { ProductPagination } from './product-pagination'
 import { ProductSort as ProductSortComponent } from './product-sort'
 import { Skeleton } from '@/components/ui/skeleton'
+import { serializeProduct } from '@/lib/types/client-safe'
 
 interface ProductCatalogProps {
   searchParams: {
@@ -123,6 +124,9 @@ async function ProductCatalogContent({
       limit,
     })
 
+    // Serialize products to client-safe types
+    const clientSafeProducts = products.map(serializeProduct)
+
     return (
       <div className="space-y-6">
         {/* Results Header */}
@@ -140,13 +144,13 @@ async function ProductCatalogContent({
             )}
           </div>
           
-          {showSort && products.length > 0 && (
+          {showSort && clientSafeProducts.length > 0 && (
             <ProductSortComponent currentSort={sortParam} />
           )}
         </div>
 
         {/* Products Grid */}
-        <ProductGrid products={products} />
+        <ProductGrid products={clientSafeProducts} />
 
         {/* Pagination */}
         {showPagination && pagination.pages > 1 && (

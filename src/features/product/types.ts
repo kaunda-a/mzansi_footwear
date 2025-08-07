@@ -1,7 +1,7 @@
-import type { ProductWithDetails } from '@/lib/services/products'
+import type { ClientProductWithDetails } from '@/lib/types/client-safe'
 
 export interface ProductGridProps {
-  products: ProductWithDetails[]
+  products: ClientProductWithDetails[]
   loading?: boolean
   className?: string
   showQuickView?: boolean
@@ -9,7 +9,7 @@ export interface ProductGridProps {
 }
 
 export interface ProductCardProps {
-  product: ProductWithDetails
+  product: ClientProductWithDetails
   showQuickView?: boolean
   showCompare?: boolean
   priority?: boolean

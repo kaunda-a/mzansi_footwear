@@ -1,5 +1,10 @@
 import { db } from '@/lib/prisma'
 import type { MarqueeMessage, User, MarqueeType } from '@prisma/client'
+import { 
+  ClientMarqueeMessageWithCreator, 
+  serializeMarqueeMessageWithCreator 
+} from '@/lib/types/client-safe'
+
 
 export type MarqueeMessageWithCreator = MarqueeMessage & {
   creator: Pick<User, 'id' | 'firstName' | 'lastName' | 'email'>
@@ -26,11 +31,11 @@ export type UpdateMarqueeData = {
 }
 
 export class MarqueeService {
-  static async getActiveMessages(): Promise<MarqueeMessageWithCreator[]> {
+  static async getActiveMessages(): Promise<ClientMarqueeMessageWithCreator[]> {
     try {
       const now = new Date()
       
-      return await db.marqueeMessage.findMany({
+      const messages = await db.marqueeMessage.findMany({
       where: {
         isActive: true,
         OR: [
@@ -61,6 +66,9 @@ export class MarqueeService {
         { createdAt: 'desc' }
       ]
     })
+
+    // Serialize to client-safe types
+    return messages.map(serializeMarqueeMessageWithCreator)
     } catch (error) {
       console.error('Error fetching active marquee messages:', error)
       return []
@@ -78,7 +86,7 @@ export class MarqueeService {
     type?: MarqueeType
     isActive?: boolean
   } = {}): Promise<{
-    messages: MarqueeMessageWithCreator[]
+    messages: ClientMarqueeMessageWithCreator[]
     pagination: { page: number; limit: number; total: number; pages: number }
   }> {
     const skip = (page - 1) * limit
@@ -111,7 +119,7 @@ export class MarqueeService {
     ])
 
     return {
-      messages,
+      messages: messages.map(serializeMarqueeMessageWithCreator),
       pagination: {
         page,
         limit,
@@ -148,8 +156,8 @@ export class MarqueeService {
     })
   }
 
-  static async getMessageById(id: string): Promise<MarqueeMessageWithCreator | null> {
-    return db.marqueeMessage.findUnique({
+  static async getMessageById(id: string): Promise<ClientMarqueeMessageWithCreator | null> {
+    const message = await db.marqueeMessage.findUnique({
       where: { id },
       include: {
         creator: {
@@ -162,6 +170,8 @@ export class MarqueeService {
         }
       }
     })
+
+    return message ? serializeMarqueeMessageWithCreator(message) : null
   }
 
   // Utility methods for creating common message types

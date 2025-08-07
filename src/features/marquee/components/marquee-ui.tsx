@@ -1,7 +1,7 @@
 'use client'
 
 import { cn } from '@/lib/utils'
-import { MarqueeMessageWithCreator } from '@/lib/services'
+import { ClientMarqueeMessageWithCreator } from '@/lib/types/client-safe'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { 
@@ -19,7 +19,7 @@ import {
 import { useState, useEffect } from 'react'
 
 interface MarqueeProps {
-  messages: MarqueeMessageWithCreator[]
+  messages: ClientMarqueeMessageWithCreator[]
   className?: string
   speed?: 'slow' | 'normal' | 'fast'
   direction?: 'left' | 'right'

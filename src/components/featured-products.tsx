@@ -1,7 +1,27 @@
 import { ProductGrid } from '@/features/product/components/product-grid'
 import { ProductService } from '@/lib/services/products'
+import { serializeProduct } from '@/lib/types/client-safe'
+import { Suspense } from 'react'
 
-export async function FeaturedProducts() {
+function FeaturedProductsSkeleton() {
+  return (
+    <section className="py-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-12">
+          <div className="h-8 bg-muted animate-pulse rounded mb-4 mx-auto w-64" />
+          <div className="h-6 bg-muted animate-pulse rounded mx-auto w-96" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="h-80 bg-muted animate-pulse rounded" />
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
+async function FeaturedProductsContent() {
   try {
     const { products } = await ProductService.getProducts({
       page: 1,
@@ -12,6 +32,9 @@ export async function FeaturedProducts() {
     if (!products.length) {
       return null
     }
+
+    // Serialize products to client-safe types
+    const clientSafeProducts = products.map(serializeProduct)
 
     return (
       <section className="py-16">
@@ -26,7 +49,7 @@ export async function FeaturedProducts() {
           </div>
           
           <ProductGrid 
-            products={products}
+            products={clientSafeProducts}
             showQuickView={true}
             showCompare={true}
           />
@@ -37,4 +60,12 @@ export async function FeaturedProducts() {
     console.error('Error loading featured products:', error)
     return null
   }
+}
+
+export function FeaturedProducts() {
+  return (
+    <Suspense fallback={<FeaturedProductsSkeleton />}>
+      <FeaturedProductsContent />
+    </Suspense>
+  )
 }
