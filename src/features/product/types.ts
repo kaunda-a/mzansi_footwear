@@ -1,5 +1,4 @@
 import type { ProductWithDetails } from '@/lib/services/products'
-import { Decimal } from '@prisma/client/runtime/library'
 
 export interface ProductGridProps {
   products: ProductWithDetails[]
@@ -74,6 +73,6 @@ export interface VariantSelectorProps {
 
 export interface ProductReviewsProps {
   productId: string
-  averageRating?: Decimal
+  averageRating?: number
   totalReviews?: number
 }

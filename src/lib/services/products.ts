@@ -15,7 +15,7 @@ export type ProductWithDetails = Product & {
   _count: {
     reviews: number
   }
-  averageRating: Decimal
+  averageRating: number
   reviewCount: number
 }
 
@@ -134,7 +134,7 @@ export class ProductService {
             costPrice: variant.costPrice,
             weight: variant.weight
           })),
-          averageRating: new Decimal(averageRating),
+          averageRating,
           reviewCount: product._count.reviews
         }
       }),
@@ -160,7 +160,7 @@ export class ProductService {
   }
 
   static async getProductBySlug(slug: string): Promise<ProductWithDetails | null> {
-    return db.product.findUnique({
+    const product = await db.product.findUnique({
       where: { slug },
       include: {
         category: true,
@@ -174,9 +174,26 @@ export class ProductService {
         },
         _count: {
           select: { reviews: true }
+        },
+        reviews: {
+          select: { rating: true }
         }
       }
-    }) as Promise<ProductWithDetails | null>
+    })
+
+    if (!product) return null
+
+    // Calculate average rating from reviews
+    const reviews = (product as any).reviews || []
+    const averageRating = reviews.length > 0
+      ? reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / reviews.length
+      : 0
+
+    return {
+      ...product,
+      averageRating,
+      reviewCount: product._count.reviews
+    } as ProductWithDetails
   }
 
   static async getProductById(id: string): Promise<ProductWithDetails | null> {

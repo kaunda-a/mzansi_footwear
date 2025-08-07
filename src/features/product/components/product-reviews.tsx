@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Decimal } from '@prisma/client/runtime/library'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
@@ -26,14 +25,14 @@ interface Review {
 }
 
 interface ReviewStats {
-  averageRating: Decimal
+  averageRating: number
   totalReviews: number
   ratingDistribution: { [key: number]: number }
 }
 
 export function ProductReviews({ 
   productId, 
-  averageRating = new Decimal(0), 
+  averageRating = 0, 
   totalReviews = 0 
 }: ProductReviewsProps) {
   const [reviews, setReviews] = useState<Review[]>([])
@@ -148,7 +147,7 @@ export function ProductReviews({
           {/* Overall Rating */}
           <div className="text-center space-y-2">
             <div className="text-4xl font-bold">{stats.averageRating.toFixed(1)}</div>
-            {renderStars(Math.round(stats.averageRating.toNumber()), 'lg')}
+            {renderStars(Math.round(stats.averageRating), 'lg')}
             <p className="text-sm text-muted-foreground">
               Based on {stats.totalReviews} reviews
             </p>
