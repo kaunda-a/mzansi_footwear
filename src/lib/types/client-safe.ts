@@ -3,8 +3,8 @@
  * but are safe for use in client components without server dependencies
  */
 
-// Re-export safe enum types (these are just strings/numbers, no server dependencies)
-export {
+// Import and re-export safe enum types (these are just strings/numbers, no server dependencies)
+import type {
   UserRole,
   ProductStatus,
   OrderStatus,
@@ -17,6 +17,20 @@ export {
   BillboardPosition,
   PaymentMethod
 } from '@prisma/client'
+
+export {
+  UserRole,
+  ProductStatus,
+  OrderStatus,
+  PaymentStatus,
+  ShippingStatus,
+  AddressType,
+  AnalyticsEventType,
+  MarqueeType,
+  BillboardType,
+  BillboardPosition,
+  PaymentMethod
+}
 
 // Client-safe base types with proper serialization
 export interface ClientUser {
