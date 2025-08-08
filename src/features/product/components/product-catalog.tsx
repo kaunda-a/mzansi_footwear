@@ -56,7 +56,7 @@ async function ProductCatalogContent({
   showPagination = true,
   limit = 12,
   featured = false
-}: ProductCatalogProps) {
+}: ProductCatalogProps): Promise<JSX.Element> {
   const page = parseInt(searchParams.page || '1')
   const sortParam = searchParams.sort || 'newest'
 

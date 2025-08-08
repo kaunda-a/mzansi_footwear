@@ -21,7 +21,7 @@ function FeaturedProductsSkeleton() {
   )
 }
 
-async function FeaturedProductsContent() {
+async function FeaturedProductsContent(): Promise<JSX.Element | null> {
   try {
     const { products } = await ProductService.getProducts({
       page: 1,
