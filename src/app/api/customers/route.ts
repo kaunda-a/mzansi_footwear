@@ -13,7 +13,6 @@ export async function GET(request: NextRequest) {
             page,
             limit,
             search,
-            role: role as any,
         })
 
         return NextResponse.json(result)
