@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
         const body = await request.json()
         
-        const newAddress = await CustomerService.createCustomerAddress({
+        const newAddress = await CustomerService.createAddress({
             ...body,
             customerId: session.user.id
         })
