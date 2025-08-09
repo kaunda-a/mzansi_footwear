@@ -2,7 +2,7 @@
 
 import React, { Suspense } from 'react'
 import { ProductGrid } from '@/features/product/components/product-grid'
-import { ClientApiService } from '@/lib/api'
+import { Api } from '@/lib/api'
 
 function FeaturedProductsSkeleton() {
   return (
@@ -24,7 +24,7 @@ function FeaturedProductsSkeleton() {
 
 async function FeaturedProductsContent(): Promise<React.ReactElement | null> {
   try {
-    const { products: clientSafeProducts } = await ClientApiService.getProducts({
+    const { products: clientSafeProducts } = await Api.getProducts({
       page: 1,
       limit: 8,
       featured: true

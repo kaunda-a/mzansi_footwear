@@ -5,7 +5,7 @@ import { ProductGrid } from './product-grid'
 import { ProductPagination } from './product-pagination'
 import { ProductSort as ProductSortComponent } from './product-sort'
 import { Skeleton } from '@/components/ui/skeleton'
-import { ClientApiService } from '@/lib/api'
+import { Api } from '@/lib/api'
 import { ProductWithDetails } from '@/lib/services'
 
 interface ProductCatalogProps {
@@ -119,7 +119,7 @@ async function ProductCatalogContent({
   })()
 
   try {
-    const { products: clientSafeProducts, pagination } = await ClientApiService.getProducts({
+    const { products: clientSafeProducts, pagination } = await Api.getProducts({
       page,
       limit,
       sort: sortParam,

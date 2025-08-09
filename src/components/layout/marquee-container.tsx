@@ -3,7 +3,7 @@
 import React, { Suspense } from 'react'
 import { Marquee } from '@/features/marquee/components/marquee-ui'
 import { MarqueeMessageWithCreator } from '@/lib/services'
-import { ClientApiService } from '@/lib/api'
+import { Api } from '@/lib/api'
 
 function MarqueeSkeleton() {
   return (
@@ -13,7 +13,7 @@ function MarqueeSkeleton() {
 
 async function MarqueeContent(): Promise<React.ReactElement | null> {
   try {
-    const messages: MarqueeMessageWithCreator[] = await ClientApiService.getActiveMarqueeMessages()
+    const messages: MarqueeMessageWithCreator[] = await Api.getActiveMarqueeMessages()
 
     if (!messages.length) return null
 
