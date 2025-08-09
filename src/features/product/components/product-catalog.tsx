@@ -6,7 +6,7 @@ import { ProductPagination } from './product-pagination'
 import { ProductSort as ProductSortComponent } from './product-sort'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Api } from '@/lib/api'
-import { ProductWithDetails } from '@/lib/services'
+import { ProductWithDetails, ProductFilters } from '@/lib/services'
 
 interface ProductCatalogProps {
   searchParams: {
