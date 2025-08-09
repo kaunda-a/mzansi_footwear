@@ -19,7 +19,7 @@ export async function GET() {
 
         // Calculate analytics
         const totalOrders = orders.length
-        const totalSpent = orders.reduce((sum, order) => sum + order.totalAmount, 0)
+        const totalSpent = orders.reduce((sum, order) => sum + order.totalAmount.toNumber(), 0)
         
         // Get recent purchases (last 5)
         const recentPurchases = orders
@@ -27,7 +27,7 @@ export async function GET() {
             .slice(0, 5)
             .map(order => ({
                 id: order.id,
-                total: order.totalAmount,
+                total: order.totalAmount.toNumber(),
                 date: order.createdAt,
                 status: order.status,
                 itemCount: order.orderItems.length
@@ -61,7 +61,7 @@ export async function GET() {
             
             spendingTrend.push({
                 month: date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }),
-                amount: monthOrders.reduce((sum, order) => sum + order.totalAmount, 0)
+                amount: monthOrders.reduce((sum, order) => sum + order.totalAmount.toNumber(), 0)
             })
         }
 
