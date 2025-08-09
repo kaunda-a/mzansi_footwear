@@ -13,9 +13,11 @@ export async function GET(request: NextRequest) {
         const result = await OrderService.getOrders({
             page,
             limit,
-            status: status as any,
-            search,
-            userId,
+            filters: {
+                status: status as any,
+                search,
+                customerId: userId,
+            },
         })
 
         return NextResponse.json(result)
