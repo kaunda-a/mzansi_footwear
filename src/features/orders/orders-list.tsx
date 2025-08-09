@@ -46,7 +46,7 @@ export function OrderListingPage({}: OrderListingPageProps) {
           page: Number(page) || 1,
           limit: Number(pageLimit) || 10,
           search: search || undefined,
-          status: orderStatus,
+          status: orderStatus || undefined,
           userId: session.user.id,
         })
         
