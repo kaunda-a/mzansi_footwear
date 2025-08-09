@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
-import { OrderService } from "@/lib/services/orders"
 import { auth } from "@/lib/auth"
+import { db } from "@/lib/prisma"
 
 export async function GET() {
     try {
@@ -10,11 +10,26 @@ export async function GET() {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         }
 
-        // Get customer's order history
-        const { orders } = await OrderService.getOrders({
-            filters: { customerId: session.user.id },
-            page: 1,
-            limit: 1000 // Get all orders for analytics
+        // Get customer's order history with category data
+        const orders = await db.order.findMany({
+            where: { customerId: session.user.id },
+            include: {
+                items: {
+                    include: {
+                        product: {
+                            select: {
+                                name: true,
+                                category: {
+                                    select: {
+                                        name: true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            orderBy: { createdAt: 'desc' }
         })
 
         // Calculate analytics
@@ -30,13 +45,13 @@ export async function GET() {
                 total: order.totalAmount.toNumber(),
                 date: order.createdAt,
                 status: order.status,
-                itemCount: order.orderItems.length
+                itemCount: order.items.length
             }))
 
         // Calculate favorite categories
         const categoryCount: Record<string, number> = {}
         orders.forEach(order => {
-            order.orderItems.forEach(item => {
+            order.items.forEach(item => {
                 const category = item.product.category?.name || 'Uncategorized'
                 categoryCount[category] = (categoryCount[category] || 0) + item.quantity
             })
