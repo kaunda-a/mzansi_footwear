@@ -12,7 +12,6 @@ export async function GET(request: NextRequest) {
         const result = await BillboardService.getAllBillboards({
             page,
             limit,
-            search,
             position: position as any,
         })
 
