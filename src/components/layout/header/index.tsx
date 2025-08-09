@@ -4,7 +4,7 @@ import { Breadcrumbs } from '../../breadcrumbs';
 import SearchInput from '../../search-input';
 import { ThemeSelector } from '../../theme-selector';
 import { ModeToggle } from '../ThemeToggle/theme-toggle';
-import { motion } from 'motion/react';
+import { motion } from 'framer-motion';
 
 export function Header() {
   return (
