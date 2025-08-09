@@ -1,10 +1,12 @@
+'use client';
+
 import React from 'react';
 import { Separator } from '../../ui/separator';
 import { Breadcrumbs } from '../../breadcrumbs';
 import SearchInput from '../../search-input';
 import { ThemeSelector } from '../../theme-selector';
 import { ModeToggle } from '../ThemeToggle/theme-toggle';
-import { motion } from 'motion';
+import { motion } from 'motion/react';
 
 export function Header() {
   return (
