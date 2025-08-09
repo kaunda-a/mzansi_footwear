@@ -45,7 +45,7 @@ export function OrderListingPage({}: OrderListingPageProps) {
         const result = await Api.getOrders({
           page: Number(page) || 1,
           limit: Number(pageLimit) || 10,
-          search,
+          search: search || undefined,
           status: orderStatus,
           userId: session.user.id,
         })
