@@ -1,73 +1,62 @@
 'use client'
 
-import Link from 'next/link';
-import { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { useState, useEffect } from 'react'
+import { Api } from '@/lib/api'
+import { formatPrice } from '@/lib/format'
+import Link from 'next/link'
 import { 
-  IconPackage, 
-  IconHeart, 
-  IconUser, 
-  IconMapPin,
-  IconCreditCard,
-  IconBell,
-  IconShield,
-  IconArrowRight,
+  IconPackage,
   IconTruck,
-  IconCheck
-} from '@tabler/icons-react';
-import { Api } from '@/lib/api';
-import { formatPrice } from '@/lib/format';
+  IconArrowRight,
+  IconTrendingUp,
+  IconCalendar
+} from '@tabler/icons-react'
 
-interface AccountDashboardProps {}
+interface AccountDashboardProps {
+  className?: string
+}
 
-export function AccountDashboard({}: AccountDashboardProps) {
-  const [customer, setCustomer] = useState<any>(null)
+export function AccountDashboard({ className }: AccountDashboardProps) {
   const [analytics, setAnalytics] = useState<any>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    async function fetchAccountData() {
+    async function fetchAnalytics() {
       try {
-        setLoading(true)
-        setError(null)
-        
-        const [customerData, analyticsData] = await Promise.all([
-          Api.getCurrentCustomerProfile(),
-          Api.getCustomerAnalytics()
-        ])
-        
-        setCustomer(customerData)
+        const analyticsData = await Api.getCustomerAnalytics()
         setAnalytics(analyticsData)
-      } catch (err) {
-        setError('Failed to load account data')
-        console.error('Error loading account data:', err)
+      } catch (error) {
+        console.error('Error fetching analytics:', error)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchAccountData()
+    fetchAnalytics()
   }, [])
 
   if (loading) {
-    return <div className="text-center py-12">Loading account...</div>
-  }
-
-  if (error || !customer) {
     return (
-      <div className="text-center py-12">
-        <h3 className="text-lg font-semibold mb-2">Something went wrong</h3>
-        <p className="text-muted-foreground">{error}</p>
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="animate-pulse">
+              <CardContent className="p-6">
+                <div className="h-16 bg-muted rounded"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="space-y-8">
-      {/* Quick Stats */}
+    <div className={`space-y-8 ${className}`}>
+      {/* Overview Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card>
           <CardContent className="p-6">
@@ -75,6 +64,7 @@ export function AccountDashboard({}: AccountDashboardProps) {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Total Orders</p>
                 <p className="text-2xl font-bold">{analytics?.totalOrders || 0}</p>
+                <p className="text-xs text-muted-foreground mt-1">All time purchases</p>
               </div>
               <IconPackage className="h-8 w-8 text-blue-500" />
             </div>
@@ -87,8 +77,9 @@ export function AccountDashboard({}: AccountDashboardProps) {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Total Spent</p>
                 <p className="text-2xl font-bold">{formatPrice(analytics?.totalSpent || 0)}</p>
+                <p className="text-xs text-muted-foreground mt-1">Lifetime value</p>
               </div>
-              <IconCreditCard className="h-8 w-8 text-green-500" />
+              <IconTrendingUp className="h-8 w-8 text-green-500" />
             </div>
           </CardContent>
         </Card>
@@ -97,10 +88,15 @@ export function AccountDashboard({}: AccountDashboardProps) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Wishlist Items</p>
-                <p className="text-2xl font-bold">0</p>
+                <p className="text-sm font-medium text-muted-foreground">Favorite Category</p>
+                <p className="text-lg font-bold">{analytics?.favoriteCategories?.[0]?.name || 'None'}</p>
+                <p className="text-xs text-muted-foreground mt-1">Most purchased</p>
               </div>
-              <IconHeart className="h-8 w-8 text-red-500" />
+              <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+                <span className="text-purple-600 font-bold text-sm">
+                  {analytics?.favoriteCategories?.[0]?.count || 0}
+                </span>
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -116,7 +112,7 @@ export function AccountDashboard({}: AccountDashboardProps) {
             </CardTitle>
             <Button variant="outline" size="sm" asChild>
               <Link href="/account/orders">
-                View All
+                View All Orders
                 <IconArrowRight className="ml-1 h-4 w-4" />
               </Link>
             </Button>
@@ -126,12 +122,18 @@ export function AccountDashboard({}: AccountDashboardProps) {
           {analytics?.recentPurchases?.length > 0 ? (
             <div className="space-y-4">
               {analytics.recentPurchases.map((order: any) => (
-                <div key={order.id} className="flex items-center justify-between p-4 border rounded-lg">
-                  <div>
-                    <p className="font-medium">Order #{order.id.slice(-8)}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(order.date).toLocaleDateString()} • {order.itemCount} items
-                    </p>
+                <div key={order.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                      <IconPackage className="h-5 w-5 text-primary" />
+                    </div>
+                    <div>
+                      <p className="font-medium">Order #{order.id.slice(-8)}</p>
+                      <p className="text-sm text-muted-foreground flex items-center gap-1">
+                        <IconCalendar className="h-3 w-3" />
+                        {new Date(order.date).toLocaleDateString()} • {order.itemCount} items
+                      </p>
+                    </div>
                   </div>
                   <div className="text-right">
                     <p className="font-semibold">{formatPrice(order.total)}</p>
@@ -143,68 +145,81 @@ export function AccountDashboard({}: AccountDashboardProps) {
               ))}
             </div>
           ) : (
-            <div className="text-center py-8">
+            <div className="text-center py-12">
               <IconPackage className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-              <p className="text-muted-foreground">No orders yet</p>
-              <Button className="mt-4" asChild>
-                <Link href="/products">Start Shopping</Link>
+              <h3 className="font-semibold mb-2">No orders yet</h3>
+              <p className="text-muted-foreground mb-4">Start shopping to see your orders here</p>
+              <Button asChild>
+                <Link href="/products">Browse Products</Link>
               </Button>
             </div>
           )}
         </CardContent>
       </Card>
 
+      {/* Spending Trend */}
+      {analytics?.spendingTrend?.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <IconTrendingUp className="h-5 w-5" />
+              Spending Trend (Last 6 Months)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              {analytics.spendingTrend.map((month: any) => (
+                <div key={month.month} className="text-center p-3 border rounded-lg">
+                  <p className="text-xs text-muted-foreground mb-1">{month.month}</p>
+                  <p className="font-semibold">{formatPrice(month.amount)}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <Card>
-          <CardContent className="p-6">
-            <div className="text-center space-y-2">
-              <IconUser className="h-8 w-8 mx-auto text-blue-500" />
-              <h3 className="font-semibold">Profile</h3>
-              <p className="text-sm text-muted-foreground">Manage your personal information</p>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/account/profile">Update Profile</Link>
-              </Button>
-            </div>
+          <CardHeader>
+            <CardTitle className="text-lg">Quick Actions</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Button variant="outline" className="w-full justify-start" asChild>
+              <Link href="/account/profile">
+                Update Profile Information
+              </Link>
+            </Button>
+            <Button variant="outline" className="w-full justify-start" asChild>
+              <Link href="/account/addresses">
+                Manage Shipping Addresses
+              </Link>
+            </Button>
+            <Button variant="outline" className="w-full justify-start" asChild>
+              <Link href="/account/orders">
+                Track Your Orders
+              </Link>
+            </Button>
           </CardContent>
         </Card>
 
         <Card>
-          <CardContent className="p-6">
-            <div className="text-center space-y-2">
-              <IconMapPin className="h-8 w-8 mx-auto text-green-500" />
-              <h3 className="font-semibold">Addresses</h3>
-              <p className="text-sm text-muted-foreground">Manage shipping addresses</p>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/account/addresses">Manage Addresses</Link>
-              </Button>
+          <CardHeader>
+            <CardTitle className="text-lg">Account Security</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Password</span>
+              <Badge variant="secondary">Secure</Badge>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-center space-y-2">
-              <IconBell className="h-8 w-8 mx-auto text-orange-500" />
-              <h3 className="font-semibold">Notifications</h3>
-              <p className="text-sm text-muted-foreground">Update preferences</p>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/account/notifications">Preferences</Link>
-              </Button>
+            <div className="flex items-center justify-between">
+              <span className="text-sm">Email Verified</span>
+              <Badge variant="default">Verified</Badge>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardContent className="p-6">
-            <div className="text-center space-y-2">
-              <IconShield className="h-8 w-8 mx-auto text-purple-500" />
-              <h3 className="font-semibold">Security</h3>
-              <p className="text-sm text-muted-foreground">Password and security</p>
-              <Button variant="outline" size="sm" asChild>
-                <Link href="/account/security">Security Settings</Link>
-              </Button>
-            </div>
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/account/security">Security Settings</Link>
+            </Button>
           </CardContent>
         </Card>
       </div>

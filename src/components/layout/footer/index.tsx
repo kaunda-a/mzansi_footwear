@@ -2,32 +2,17 @@ import Link from 'next/link';
 import { IconBrandFacebook, IconBrandTwitter, IconBrandInstagram, IconMail, IconPhone, IconMapPin } from '@tabler/icons-react';
 
 const footerLinks = {
-  shop: [
-    { name: 'All Products', href: '/products' },
-    { name: 'New Arrivals', href: '/products?filter=new' },
-    { name: 'Best Sellers', href: '/products?filter=bestsellers' },
-    { name: 'Promotions', href: '/billboards' },
-    { name: 'Sale', href: '/products?filter=sale' },
-  ],
-  categories: [
-    { name: 'Sneakers', href: '/categories/sneakers' },
-    { name: 'Formal Shoes', href: '/categories/formal' },
-    { name: 'Boots', href: '/categories/boots' },
-    { name: 'Sandals', href: '/categories/sandals' },
-  ],
+
   support: [
     { name: 'Contact Us', href: '/contact' },
-    { name: 'Messages', href: '/marquee' },
-    { name: 'Size Guide', href: '/size-guide' },
     { name: 'Shipping Info', href: '/shipping' },
     { name: 'Returns', href: '/returns' },
     { name: 'FAQ', href: '/faq' },
   ],
   company: [
     { name: 'About Us', href: '/about' },
-    { name: 'Our Story', href: '/story' },
+    { name: 'Blog', href: '/blog' },
     { name: 'Careers', href: '/careers' },
-    { name: 'Press', href: '/press' },
   ],
   legal: [
     { name: 'Privacy Policy', href: '/privacy' },
@@ -62,7 +47,7 @@ export function StoreFooter() {
             <div className="space-y-2 text-sm text-muted-foreground">
               <div className="flex items-center space-x-2">
                 <IconMapPin className="h-4 w-4" />
-                <span>Cape Town, South Africa</span>
+                <span>Mpumalanga, South Africa</span>
               </div>
               <div className="flex items-center space-x-2">
                 <IconPhone className="h-4 w-4" />
@@ -73,40 +58,6 @@ export function StoreFooter() {
                 <span>hello@mzansifootwear.co.za</span>
               </div>
             </div>
-          </div>
-
-          {/* Shop links */}
-          <div>
-            <h3 className="font-semibold mb-4">Shop</h3>
-            <ul className="space-y-2">
-              {footerLinks.shop.map((link) => (
-                <li key={link.name}>
-                  <Link 
-                    href={link.href} 
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Categories */}
-          <div>
-            <h3 className="font-semibold mb-4">Categories</h3>
-            <ul className="space-y-2">
-              {footerLinks.categories.map((link) => (
-                <li key={link.name}>
-                  <Link 
-                    href={link.href} 
-                    className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
           </div>
 
           {/* Support */}
