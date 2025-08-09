@@ -3,10 +3,11 @@ import { CustomerService } from "@/lib/services/customer"
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
     try {
-        const customer = await CustomerService.getCustomerById(params.id)
+        const { id } = await context.params
+        const customer = await CustomerService.getCustomerById(id)
         
         if (!customer) {
             return NextResponse.json({ error: "Customer not found" }, { status: 404 })

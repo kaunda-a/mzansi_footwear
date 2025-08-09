@@ -3,10 +3,11 @@ import { BillboardService } from "@/lib/services/billboard"
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
     try {
-        const billboard = await BillboardService.getBillboardById(params.id)
+        const { id } = await context.params
+        const billboard = await BillboardService.getBillboardById(id)
         
         if (!billboard) {
             return NextResponse.json({ error: "Billboard not found" }, { status: 404 })

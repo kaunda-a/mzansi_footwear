@@ -3,10 +3,11 @@ import { MarqueeService } from "@/lib/services/marquee"
 
 export async function GET(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    context: { params: Promise<{ id: string }> }
 ) {
     try {
-        const message = await MarqueeService.getMessageById(params.id)
+        const { id } = await context.params
+        const message = await MarqueeService.getMessageById(id)
         
         if (!message) {
             return NextResponse.json({ error: "Marquee message not found" }, { status: 404 })
