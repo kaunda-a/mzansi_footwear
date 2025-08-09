@@ -41,7 +41,7 @@ export default async function AboutPage({ searchParams }: AboutPageProps) {
             />
           </div>
           <div className="mx-auto grid w-full max-w-6xl items-start gap-6">
-            <Suspense fallback={<DataTableSkeleton />}>
+            <Suspense fallback={<DataTableSkeleton columnCount={1} rowCount={6} filterCount={0} />}>
               <div className="container mx-auto px-4 py-8 max-w-4xl">
                 <div className="prose prose-gray dark:prose-invert max-w-none">
                   <h2>Our Story</h2>
