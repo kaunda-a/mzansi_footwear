@@ -1,7 +1,7 @@
-import type { ClientProductWithDetails } from '@/lib/types/client-safe'
+import type { ProductWithDetails } from '@/lib/services'
 
 export interface ProductGridProps {
-  products: ClientProductWithDetails[]
+  products: ProductWithDetails[]
   loading?: boolean
   className?: string
   showQuickView?: boolean

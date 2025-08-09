@@ -1,10 +1,12 @@
-import { Suspense } from 'react'
-import { ProductService, type ProductFilters, type ProductSort } from '@/lib/services/products'
+"use client"
+
+import React, { Suspense } from 'react'
 import { ProductGrid } from './product-grid'
 import { ProductPagination } from './product-pagination'
 import { ProductSort as ProductSortComponent } from './product-sort'
 import { Skeleton } from '@/components/ui/skeleton'
-import { serializeProduct } from '@/lib/types/client-safe'
+import { ClientApiService } from '@/lib/api'
+import { ProductWithDetails } from '@/lib/services'
 
 interface ProductCatalogProps {
   searchParams: {
@@ -56,7 +58,7 @@ async function ProductCatalogContent({
   showPagination = true,
   limit = 12,
   featured = false
-}: ProductCatalogProps): Promise<JSX.Element> {
+}: ProductCatalogProps): Promise<React.ReactElement> {
   const page = parseInt(searchParams.page || '1')
   const sortParam = searchParams.sort || 'newest'
 
@@ -117,15 +119,17 @@ async function ProductCatalogContent({
   })()
 
   try {
-    const { products, pagination } = await ProductService.getProducts({
-      filters,
-      sort,
+    const { products: clientSafeProducts, pagination } = await ClientApiService.getProducts({
       page,
       limit,
+      sort: sortParam,
+      search: searchParams.search,
+      category: searchParams.category,
+      brand: searchParams.brand,
+      minPrice: searchParams.minPrice ? parseFloat(searchParams.minPrice) : undefined,
+      maxPrice: searchParams.maxPrice ? parseFloat(searchParams.maxPrice) : undefined,
+      featured,
     })
-
-    // Serialize products to client-safe types
-    const clientSafeProducts = products.map(serializeProduct)
 
     return (
       <div className="space-y-6">

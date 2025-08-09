@@ -1,9 +1,5 @@
 import { db } from '@/lib/prisma'
 import type { MarqueeMessage, User, MarqueeType } from '@prisma/client'
-import { 
-  ClientMarqueeMessageWithCreator, 
-  serializeMarqueeMessageWithCreator 
-} from '@/lib/types/client-safe'
 
 
 export type MarqueeMessageWithCreator = MarqueeMessage & {
@@ -31,10 +27,10 @@ export type UpdateMarqueeData = {
 }
 
 export class MarqueeService {
-  static async getActiveMessages(): Promise<ClientMarqueeMessageWithCreator[]> {
+  static async getActiveMessages(): Promise<MarqueeMessageWithCreator[]> {
     try {
       const now = new Date()
-      
+
       const messages = await db.marqueeMessage.findMany({
       where: {
         isActive: true,
@@ -67,8 +63,7 @@ export class MarqueeService {
       ]
     })
 
-    // Serialize to client-safe types
-    return messages.map(serializeMarqueeMessageWithCreator)
+    return messages
     } catch (error) {
       console.error('Error fetching active marquee messages:', error)
       return []
@@ -86,7 +81,7 @@ export class MarqueeService {
     type?: MarqueeType
     isActive?: boolean
   } = {}): Promise<{
-    messages: ClientMarqueeMessageWithCreator[]
+    messages: MarqueeMessageWithCreator[]
     pagination: { page: number; limit: number; total: number; pages: number }
   }> {
     const skip = (page - 1) * limit
@@ -119,7 +114,7 @@ export class MarqueeService {
     ])
 
     return {
-      messages: messages.map(serializeMarqueeMessageWithCreator),
+      messages,
       pagination: {
         page,
         limit,
@@ -156,7 +151,7 @@ export class MarqueeService {
     })
   }
 
-  static async getMessageById(id: string): Promise<ClientMarqueeMessageWithCreator | null> {
+  static async getMessageById(id: string): Promise<MarqueeMessageWithCreator | null> {
     const message = await db.marqueeMessage.findUnique({
       where: { id },
       include: {
@@ -171,7 +166,7 @@ export class MarqueeService {
       }
     })
 
-    return message ? serializeMarqueeMessageWithCreator(message) : null
+    return message
   }
 
   // Utility methods for creating common message types

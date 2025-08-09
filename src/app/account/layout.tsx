@@ -1,7 +1,9 @@
-import React from 'react';
+'use client'
+
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
-import { auth } from '@/lib/auth';
+import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -19,6 +21,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { signOut } from 'next-auth/react';
+import { Api } from '@/lib/api';
 
 const accountNavItems = [
   {
@@ -71,15 +74,44 @@ const accountNavItems = [
   }
 ];
 
-export default async function AccountLayout({
+export default function AccountLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  const [analytics, setAnalytics] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    
+    if (!session) {
+      router.push('/auth/signin?callbackUrl=/account');
+      return;
+    }
+
+    async function fetchAnalytics() {
+      try {
+        const analyticsData = await Api.getCustomerAnalytics();
+        setAnalytics(analyticsData);
+      } catch (error) {
+        console.error('Error fetching analytics:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchAnalytics();
+  }, [session, status, router]);
+
+  if (status === 'loading') {
+    return <div className="text-center py-12">Loading...</div>;
+  }
 
   if (!session) {
-    redirect('/auth/signin?callbackUrl=/account');
+    return null;
   }
 
   return (
@@ -159,19 +191,25 @@ export default async function AccountLayout({
               <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Total Orders</span>
-                  <Badge variant="secondary">12</Badge>
+                  <Badge variant="secondary">
+                    {loading ? '...' : analytics?.totalOrders || 0}
+                  </Badge>
                 </div>
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Wishlist Items</span>
-                  <Badge variant="secondary">5</Badge>
+                  <Badge variant="secondary">0</Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Saved Addresses</span>
-                  <Badge variant="secondary">2</Badge>
+                  <span className="text-sm text-muted-foreground">Total Spent</span>
+                  <Badge variant="secondary">
+                    {loading ? '...' : `R${(analytics?.totalSpent || 0).toFixed(0)}`}
+                  </Badge>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-sm text-muted-foreground">Payment Methods</span>
-                  <Badge variant="secondary">1</Badge>
+                  <span className="text-sm text-muted-foreground">Favorite Category</span>
+                  <Badge variant="secondary">
+                    {loading ? '...' : analytics?.favoriteCategories?.[0]?.name || 'None'}
+                  </Badge>
                 </div>
               </CardContent>
             </Card>

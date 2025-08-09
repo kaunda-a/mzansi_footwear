@@ -1,5 +1,8 @@
+'use client'
+
+import { Api } from '@/lib/api'
+import { useState, useEffect } from 'react'
 import { notFound } from 'next/navigation'
-import { MarqueeService } from '@/lib/services/marquee'
 import { Marquee } from './marquee-ui'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -35,19 +38,48 @@ const typeIcons: Record<string, any> = {
   ORDER: IconShoppingCart
 }
 
-export async function MarqueeViewPage({ marqueeId }: MarqueeViewProps) {
-  try {
-    const message = await MarqueeService.getMessageById(marqueeId)
+export function MarqueeViewPage({ marqueeId }: MarqueeViewProps) {
+  const [message, setMessage] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-    if (!message) {
-      return notFound()
+  useEffect(() => {
+    async function fetchMessage() {
+      try {
+        setLoading(true)
+        setError(null)
+        const result = await Api.getMarqueeMessageById(marqueeId)
+        
+        if (!result) {
+          setError('Message not found')
+          return
+        }
+        
+        setMessage(result)
+      } catch (err) {
+        setError('Failed to load marquee message')
+        console.error('Error loading marquee message:', err)
+      } finally {
+        setLoading(false)
+      }
     }
 
-    const isExpired = message.endDate && new Date(message.endDate) < new Date()
-    const isScheduled = message.startDate && new Date(message.startDate) > new Date()
-    const Icon = typeIcons[message.type] || IconInfoCircle
+    fetchMessage()
+  }, [marqueeId])
 
-    return (
+  if (loading) {
+    return <div className="text-center py-12">Loading...</div>
+  }
+
+  if (error || !message) {
+    return notFound()
+  }
+
+  const isExpired = message.endDate && new Date(message.endDate) < new Date()
+  const isScheduled = message.startDate && new Date(message.startDate) > new Date()
+  const Icon = typeIcons[message.type] || IconInfoCircle
+
+  return (
       <div className="space-y-8">
         {/* Message Preview */}
         <div className="space-y-4">
@@ -284,8 +316,4 @@ export async function MarqueeViewPage({ marqueeId }: MarqueeViewProps) {
         </div>
       </div>
     )
-  } catch (error) {
-    console.error('Error loading marquee message:', error)
-    return notFound()
-  }
 }

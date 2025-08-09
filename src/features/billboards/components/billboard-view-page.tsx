@@ -1,5 +1,8 @@
+'use client'
+
+import { Api } from '@/lib/api'
+import { useState, useEffect } from 'react'
 import { notFound } from 'next/navigation'
-import { BillboardService } from '@/lib/services/billboard'
 import { Billboard } from '@/components/ui/billboard'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -19,18 +22,47 @@ import {
 import { formatDate } from '@/lib/format'
 import type { BillboardViewProps } from '../types'
 
-export async function BillboardViewPage({ billboardId }: BillboardViewProps) {
-  try {
-    const billboard = await BillboardService.getBillboardById(billboardId)
+export function BillboardViewPage({ billboardId }: BillboardViewProps) {
+  const [billboard, setBillboard] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-    if (!billboard) {
-      return notFound()
+  useEffect(() => {
+    async function fetchBillboard() {
+      try {
+        setLoading(true)
+        setError(null)
+        const result = await Api.getBillboardById(billboardId)
+        
+        if (!result) {
+          setError('Billboard not found')
+          return
+        }
+        
+        setBillboard(result)
+      } catch (err) {
+        setError('Failed to load billboard')
+        console.error('Error loading billboard:', err)
+      } finally {
+        setLoading(false)
+      }
     }
 
-    const isExpired = billboard.endDate && new Date(billboard.endDate) < new Date()
-    const isScheduled = billboard.startDate && new Date(billboard.startDate) > new Date()
+    fetchBillboard()
+  }, [billboardId])
 
-    return (
+  if (loading) {
+    return <div className="text-center py-12">Loading...</div>
+  }
+
+  if (error || !billboard) {
+    return notFound()
+  }
+
+  const isExpired = billboard.endDate && new Date(billboard.endDate) < new Date()
+  const isScheduled = billboard.startDate && new Date(billboard.startDate) > new Date()
+
+  return (
       <div className="space-y-8">
         {/* Billboard Preview */}
         <div className="space-y-4">
@@ -288,8 +320,4 @@ export async function BillboardViewPage({ billboardId }: BillboardViewProps) {
         </div>
       </div>
     )
-  } catch (error) {
-    console.error('Error loading billboard:', error)
-    return notFound()
-  }
 }

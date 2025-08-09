@@ -1,7 +1,9 @@
-import { MarqueeService } from '@/lib/services'
+"use client"
+
+import React, { Suspense } from 'react'
 import { Marquee } from '@/features/marquee/components/marquee-ui'
-import { Suspense } from 'react'
-import { ClientMarqueeMessageWithCreator } from '@/lib/types/client-safe'
+import { MarqueeMessageWithCreator } from '@/lib/services'
+import { ClientApiService } from '@/lib/api'
 
 function MarqueeSkeleton() {
   return (
@@ -9,9 +11,9 @@ function MarqueeSkeleton() {
   )
 }
 
-async function MarqueeContent(): Promise<JSX.Element | null> {
+async function MarqueeContent(): Promise<React.ReactElement | null> {
   try {
-    const messages: ClientMarqueeMessageWithCreator[] = await MarqueeService.getActiveMessages()
+    const messages: MarqueeMessageWithCreator[] = await ClientApiService.getActiveMarqueeMessages()
 
     if (!messages.length) return null
 

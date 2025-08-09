@@ -1,5 +1,7 @@
-import { Suspense } from 'react'
-import { MarqueeService } from '@/lib/services/marquee'
+'use client'
+
+import { Api } from '@/lib/api'
+import { useState, useEffect } from 'react'
 import { Marquee, SimpleMarquee } from './marquee-ui'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -82,174 +84,185 @@ function EmptyState() {
   )
 }
 
-async function MarqueeListingContent({ searchParams }: MarqueeListingProps) {
+function MarqueeListingContent({ searchParams }: MarqueeListingProps) {
+  const [messages, setMessages] = useState<any[]>([])
+  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, pages: 0 })
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
   const page = parseInt(searchParams?.page || '1')
   const type = searchParams?.type
   const search = searchParams?.search
 
-  try {
-    const { messages, pagination } = await MarqueeService.getAllMessages({
-      page,
-      limit: 10,
-      type: type as any,
-    })
-
-    // Filter by search if provided
-    const filteredMessages = search
-      ? messages.filter(message =>
-          message.title.toLowerCase().includes(search.toLowerCase()) ||
-          message.message.toLowerCase().includes(search.toLowerCase())
-        )
-      : messages
-
-    if (!filteredMessages.length) {
-      return <EmptyState />
+  useEffect(() => {
+    async function fetchMessages() {
+      try {
+        setLoading(true)
+        setError(null)
+        const result = await Api.getAllMarqueeMessages({
+          page,
+          limit: 10,
+          type,
+          search,
+        })
+        setMessages(result.messages)
+        setPagination(result.pagination)
+      } catch (err) {
+        setError('Failed to load marquee messages')
+        console.error('Error loading marquee messages:', err)
+      } finally {
+        setLoading(false)
+      }
     }
 
-    return (
-      <div className="space-y-6">
-        {/* Active Messages Preview */}
-        {page === 1 && filteredMessages.some(msg => msg.isActive) && (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">Currently Active Messages</h2>
-            <div className="space-y-2">
-              {filteredMessages
-                .filter(msg => msg.isActive)
-                .slice(0, 3)
-                .map((message) => (
-                  <SimpleMarquee
-                    key={message.id}
-                    message={`${message.title}: ${message.message}`}
-                    className="rounded-lg"
-                  />
-                ))}
-            </div>
-          </div>
-        )}
+    fetchMessages()
+  }, [page, type, search])
 
-        {/* Results Summary */}
-        <div className="text-sm text-muted-foreground">
-          Showing {filteredMessages.length} of {pagination.total} messages
-          {search && <span> for "{search}"</span>}
-        </div>
-
-        {/* Messages List */}
-        <div className="space-y-6">
-          {filteredMessages.map((message) => {
-            const Icon = typeIcons[message.type] || IconInfoCircle
-            const isExpired = message.endDate && new Date(message.endDate) < new Date()
-            const isScheduled = message.startDate && new Date(message.startDate) > new Date()
-
-            return (
-              <Card key={message.id} className="overflow-hidden">
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2">
-                        <Icon className="h-5 w-5" />
-                        <h3 className="text-xl font-semibold">{message.title}</h3>
-                        <Badge variant="outline" className="capitalize">
-                          {message.type.toLowerCase()}
-                        </Badge>
-                        <Badge 
-                          variant={message.isActive ? "default" : "secondary"}
-                          className="text-xs"
-                        >
-                          {message.isActive ? 'Active' : 'Inactive'}
-                        </Badge>
-                        {isExpired && (
-                          <Badge variant="destructive" className="text-xs">
-                            Expired
-                          </Badge>
-                        )}
-                        {isScheduled && (
-                          <Badge variant="outline" className="text-xs">
-                            Scheduled
-                          </Badge>
-                        )}
-                      </div>
-                      
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <IconFlag className="h-4 w-4" />
-                          <span>Priority {message.priority}</span>
-                        </div>
-                        
-                        <div className="flex items-center gap-1">
-                          <IconCalendar className="h-4 w-4" />
-                          <span>Created {formatDate(message.createdAt)}</span>
-                        </div>
-                        
-                        {message.endDate && (
-                          <div className="flex items-center gap-1">
-                            <IconCalendar className="h-4 w-4" />
-                            <span>Expires {formatDate(message.endDate)}</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href={`/marquee/${message.id}`}>
-                        View Details
-                      </Link>
-                    </Button>
-                  </div>
-                </CardHeader>
-                
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="bg-muted/50 rounded-lg p-4">
-                      <p className="text-sm font-mono">{message.message}</p>
-                    </div>
-                    
-                    <div className="flex items-center justify-between">
-                      <div className="text-sm text-muted-foreground">
-                        Created by {message.creator.firstName} {message.creator.lastName}
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        {message.isActive && !isExpired && !isScheduled && (
-                          <Badge variant="default" className="text-xs">
-                            Currently Visible
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )
-          })}
-        </div>
-
-        {/* Pagination would go here if needed */}
-        {pagination.pages > 1 && (
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">
-              Page {page} of {pagination.pages}
-            </p>
-          </div>
-        )}
-      </div>
-    )
-  } catch (error) {
-    console.error('Error loading marquee messages:', error)
+  if (loading) return <MarqueeListingSkeleton />
+  if (error) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-semibold mb-2">Something went wrong</h3>
-        <p className="text-muted-foreground">
-          We couldn't load the marquee messages. Please try again later.
-        </p>
+        <p className="text-muted-foreground">{error}</p>
       </div>
     )
   }
+
+  const filteredMessages = messages
+
+  if (!filteredMessages.length) {
+    return <EmptyState />
+  }
+
+  return (
+    <div className="space-y-6">
+      {/* Active Messages Preview */}
+      {page === 1 && filteredMessages.some((msg: any) => msg.isActive) && (
+        <div className="space-y-4">
+          <h2 className="text-xl font-semibold">Currently Active Messages</h2>
+          <div className="space-y-2">
+            {filteredMessages
+              .filter((msg: any) => msg.isActive)
+              .slice(0, 3)
+              .map((message: any) => (
+                <SimpleMarquee
+                  key={message.id}
+                  message={`${message.title}: ${message.message}`}
+                  className="rounded-lg"
+                />
+              ))}
+          </div>
+        </div>
+      )}
+
+      {/* Results Summary */}
+      <div className="text-sm text-muted-foreground">
+        Showing {filteredMessages.length} of {pagination.total} messages
+        {search && <span> for "{search}"</span>}
+      </div>
+
+      {/* Messages List */}
+      <div className="space-y-6">
+        {filteredMessages.map((message: any) => {
+          const Icon = typeIcons[message.type] || IconInfoCircle
+          const isExpired = message.endDate && new Date(message.endDate) < new Date()
+          const isScheduled = message.startDate && new Date(message.startDate) > new Date()
+
+          return (
+            <Card key={message.id} className="overflow-hidden">
+              <CardHeader>
+                <div className="flex items-start justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Icon className="h-5 w-5" />
+                      <h3 className="text-xl font-semibold">{message.title}</h3>
+                      <Badge variant="outline" className="capitalize">
+                        {message.type.toLowerCase()}
+                      </Badge>
+                      <Badge 
+                        variant={message.isActive ? "default" : "secondary"}
+                        className="text-xs"
+                      >
+                        {message.isActive ? 'Active' : 'Inactive'}
+                      </Badge>
+                      {isExpired && (
+                        <Badge variant="destructive" className="text-xs">
+                          Expired
+                        </Badge>
+                      )}
+                      {isScheduled && (
+                        <Badge variant="outline" className="text-xs">
+                          Scheduled
+                        </Badge>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-1">
+                        <IconFlag className="h-4 w-4" />
+                        <span>Priority {message.priority}</span>
+                      </div>
+                      
+                      <div className="flex items-center gap-1">
+                        <IconCalendar className="h-4 w-4" />
+                        <span>Created {formatDate(message.createdAt)}</span>
+                      </div>
+                      
+                      {message.endDate && (
+                        <div className="flex items-center gap-1">
+                          <IconCalendar className="h-4 w-4" />
+                          <span>Expires {formatDate(message.endDate)}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href={`/marquee/${message.id}`}>
+                      View Details
+                    </Link>
+                  </Button>
+                </div>
+              </CardHeader>
+              
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="bg-muted/50 rounded-lg p-4">
+                    <p className="text-sm font-mono">{message.message}</p>
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <div className="text-sm text-muted-foreground">
+                      Created by {message.creator.firstName} {message.creator.lastName}
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      {message.isActive && !isExpired && !isScheduled && (
+                        <Badge variant="default" className="text-xs">
+                          Currently Visible
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })}
+      </div>
+
+      {/* Pagination would go here if needed */}
+      {pagination.pages > 1 && (
+        <div className="text-center">
+          <p className="text-sm text-muted-foreground">
+            Page {page} of {pagination.pages}
+          </p>
+        </div>
+      )}
+    </div>
+  )
 }
 
 export function MarqueeListingPage(props: MarqueeListingProps) {
-  return (
-    <Suspense fallback={<MarqueeListingSkeleton />}>
-      <MarqueeListingContent {...props} />
-    </Suspense>
-  )
+  return <MarqueeListingContent {...props} />
 }

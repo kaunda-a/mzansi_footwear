@@ -1,5 +1,7 @@
-import { Suspense } from 'react'
-import { BillboardService } from '@/lib/services/billboard'
+'use client'
+
+import { Api } from '@/lib/api'
+import { useState, useEffect } from 'react'
 import { Billboard, CompactBillboard } from '@/components/ui/billboard'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -57,33 +59,58 @@ function EmptyState() {
   )
 }
 
-async function BillboardListingContent({ searchParams }: BillboardListingProps) {
+function BillboardListingContent({ searchParams }: BillboardListingProps) {
+  const [billboards, setBillboards] = useState<any[]>([])
+  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, pages: 0 })
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
   const page = parseInt(searchParams?.page || '1')
   const type = searchParams?.type
   const position = searchParams?.position
   const search = searchParams?.search
 
-  try {
-    const { billboards, pagination } = await BillboardService.getAllBillboards({
-      page,
-      limit: 10,
-      type: type as any,
-      position: position as any,
-    })
-
-    // Filter by search if provided
-    const filteredBillboards = search
-      ? billboards.filter(billboard =>
-          billboard.title.toLowerCase().includes(search.toLowerCase()) ||
-          billboard.description?.toLowerCase().includes(search.toLowerCase())
-        )
-      : billboards
-
-    if (!filteredBillboards.length) {
-      return <EmptyState />
+  useEffect(() => {
+    async function fetchBillboards() {
+      try {
+        setLoading(true)
+        setError(null)
+        const result = await Api.getBillboards({
+          page,
+          limit: 10,
+          search,
+          position,
+        })
+        setBillboards(result.billboards)
+        setPagination(result.pagination)
+      } catch (err) {
+        setError('Failed to load billboards')
+        console.error('Error loading billboards:', err)
+      } finally {
+        setLoading(false)
+      }
     }
 
+    fetchBillboards()
+  }, [page, type, position, search])
+
+  if (loading) return <BillboardListingSkeleton />
+  if (error) {
     return (
+      <div className="text-center py-12">
+        <h3 className="text-lg font-semibold mb-2">Something went wrong</h3>
+        <p className="text-muted-foreground">{error}</p>
+      </div>
+    )
+  }
+
+  const filteredBillboards = billboards
+
+  if (!filteredBillboards.length) {
+    return <EmptyState />
+  }
+
+  return (
       <div className="space-y-6">
         {/* Results Summary */}
         <div className="text-sm text-muted-foreground">
@@ -192,23 +219,8 @@ async function BillboardListingContent({ searchParams }: BillboardListingProps) 
         )}
       </div>
     )
-  } catch (error) {
-    console.error('Error loading billboards:', error)
-    return (
-      <div className="text-center py-12">
-        <h3 className="text-lg font-semibold mb-2">Something went wrong</h3>
-        <p className="text-muted-foreground">
-          We couldn't load the billboards. Please try again later.
-        </p>
-      </div>
-    )
-  }
 }
 
 export function BillboardListingPage(props: BillboardListingProps) {
-  return (
-    <Suspense fallback={<BillboardListingSkeleton />}>
-      <BillboardListingContent {...props} />
-    </Suspense>
-  )
+  return <BillboardListingContent {...props} />
 }

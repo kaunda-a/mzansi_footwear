@@ -1,7 +1,8 @@
+"use client"
+
+import React, { Suspense } from 'react'
 import { ProductGrid } from '@/features/product/components/product-grid'
-import { ProductService } from '@/lib/services/products'
-import { serializeProduct } from '@/lib/types/client-safe'
-import { Suspense } from 'react'
+import { ClientApiService } from '@/lib/api'
 
 function FeaturedProductsSkeleton() {
   return (
@@ -21,20 +22,17 @@ function FeaturedProductsSkeleton() {
   )
 }
 
-async function FeaturedProductsContent(): Promise<JSX.Element | null> {
+async function FeaturedProductsContent(): Promise<React.ReactElement | null> {
   try {
-    const { products } = await ProductService.getProducts({
+    const { products: clientSafeProducts } = await ClientApiService.getProducts({
       page: 1,
       limit: 8,
-      filters: { isFeatured: true }
+      featured: true
     })
 
-    if (!products.length) {
+    if (!clientSafeProducts.length) {
       return null
     }
-
-    // Serialize products to client-safe types
-    const clientSafeProducts = products.map(serializeProduct)
 
     return (
       <section className="py-16">
