@@ -78,10 +78,7 @@ export function Navbar() {
     return pathname.startsWith(href)
   }
 
-  // Hide navbar on authentication pages
-  const isAuthPage = pathname.startsWith('/auth/')
-  
-  if (!mounted || isAuthPage) {
+  if (!mounted) {
     return null
   }
 
