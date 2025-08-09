@@ -9,7 +9,7 @@ export interface ProductGridProps {
 }
 
 export interface ProductCardProps {
-  product: ClientProductWithDetails
+  product: ProductWithDetails
   showQuickView?: boolean
   showCompare?: boolean
   priority?: boolean
