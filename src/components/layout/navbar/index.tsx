@@ -66,7 +66,7 @@ export function Navbar() {
       id: 'account',
       label: session ? 'Account' : 'Sign In',
       icon: IconUser,
-      href: session ? '/account' : '/auth/customer-sign-in',
+      href: session ? '/account' : `/auth/sign-in?callbackUrl=${encodeURIComponent(pathname)}`,
       color: 'text-orange-500'
     }
   ]

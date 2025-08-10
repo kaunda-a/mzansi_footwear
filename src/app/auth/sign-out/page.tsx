@@ -69,15 +69,15 @@ export default function SignOutPage() {
           <div>
             <CardTitle className="text-2xl">Sign Out</CardTitle>
             <CardDescription className="text-base mt-2">
-              Thanks for using Mzansi Footwear Admin, {userName}!
+              Thanks for shopping with Mzansi Footwear, {userName}!
             </CardDescription>
           </div>
         </CardHeader>
         
         <CardContent className="space-y-6">
           <div className="text-center text-sm text-muted-foreground">
-            <p>You're about to sign out of your admin account.</p>
-            <p className="mt-1">We hope you had a productive session! 🎉</p>
+            <p>You're about to sign out of your account.</p>
+            <p className="mt-1">We hope you enjoyed shopping with us! 🎉</p>
           </div>
           
           <div className="space-y-3">
@@ -108,7 +108,7 @@ export default function SignOutPage() {
               size="lg"
             >
               <IconArrowLeft className="mr-2 h-4 w-4" />
-              Go Back to Dashboard
+              Go Back to Account
             </Button>
           </div>
           

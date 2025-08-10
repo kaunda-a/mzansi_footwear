@@ -24,7 +24,7 @@ export function CustomerAuthForm() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/'
+  const callbackUrl = searchParams.get('callbackUrl') || '/account'
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true)

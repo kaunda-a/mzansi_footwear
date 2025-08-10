@@ -34,11 +34,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session
     },
     async redirect({ url, baseUrl }) {
-      // Redirect customers to store after sign in
+      // If redirecting after successful sign in
       if (url.startsWith("/")) return `${baseUrl}${url}`
       // If it's a callback URL, use it
       if (new URL(url).origin === baseUrl) return url
-      // Default redirect to store homepage for customers
+      
+      // Default redirect to account page for customers after sign in
+      // Check if it's coming from sign in page
+      if (url === baseUrl || url.includes('callback')) {
+        return `${baseUrl}/account`
+      }
+      
       return baseUrl
     }
   },
@@ -78,7 +84,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     }
   },
   pages: {
-    signIn: "/auth/customer-sign-in",
+    signIn: "/auth/sign-in",
     error: "/auth/error"
   }
 })
