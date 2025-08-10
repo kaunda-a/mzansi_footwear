@@ -34,6 +34,19 @@ export function ProductCard({
   const { addItem } = useCartStore()
 
   const primaryImage = product.images.find(img => img.isPrimary) || product.images[0]
+  
+  // Helper to check if image URL is valid for production
+  const isValidImageUrl = (url: string) => {
+    if (!url) return false
+    // Only allow proper Cloudinary URLs in production
+    return url.startsWith('https://res.cloudinary.com/')
+  }
+  
+  // Debug image URLs
+  if (typeof window !== 'undefined' && product.images.length > 0) {
+    console.log('Product images for', product.name, ':', product.images.map(img => ({ url: img.url, isValid: isValidImageUrl(img.url) })))
+  }
+  
   const cheapestVariant = product.variants.reduce((prev, current) => 
     Number(prev.price) < Number(current.price) ? prev : current
   )
@@ -97,7 +110,7 @@ export function ProductCard({
           <Link href={`/products/${product.id}`}>
             {/* Product Image */}
             <div className="relative aspect-square overflow-hidden bg-gray-50 rounded-t-lg">
-              {primaryImage ? (
+              {primaryImage && isValidImageUrl(primaryImage.url) ? (
                 <Image
                   src={primaryImage.url}
                   alt={primaryImage.altText || product.name}
