@@ -228,10 +228,10 @@ export class ProductService {
       ...product,
       variants: product.variants.map(variant => ({
         ...variant,
-        price: Number(variant.price),
-        comparePrice: variant.comparePrice ? Number(variant.comparePrice) : null,
-        costPrice: variant.costPrice ? Number(variant.costPrice) : null,
-        weight: variant.weight ? Number(variant.weight) : null
+        price: variant.price,
+        comparePrice: variant.comparePrice,
+        costPrice: variant.costPrice,
+        weight: variant.weight
       })),
       averageRating,
       reviewCount: product._count.reviews
