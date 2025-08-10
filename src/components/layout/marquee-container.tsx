@@ -1,5 +1,3 @@
-"use client"
-
 import React, { Suspense } from 'react'
 import { Marquee } from '@/features/marquee/components/marquee-ui'
 import { MarqueeMessageWithCreator } from '@/lib/services'

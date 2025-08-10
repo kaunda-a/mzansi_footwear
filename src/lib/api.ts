@@ -13,22 +13,40 @@ import type {
   UpdateVariantData,
   UserWithDetails
 } from '@/lib/services'
+import { MarqueeService } from '@/lib/services/marquee'
+import { ProductService } from '@/lib/services/products'
 
 export class Api {
+  private static getBaseUrl(): string {
+    if (typeof window !== 'undefined') {
+      // Client-side
+      return ''
+    }
+    // Server-side
+    return process.env.NEXTAUTH_URL || process.env.VERCEL_URL || 'http://localhost:3000'
+  }
+
   static async getActiveMarqueeMessages(): Promise<MarqueeMessageWithCreator[]> {
     try {
-      const response = await fetch('/api/marquee', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+      // Use direct service call on server-side, HTTP request on client-side
+      if (typeof window === 'undefined') {
+        // Server-side - call service directly
+        return await MarqueeService.getActiveMessages()
+      } else {
+        // Client-side - make HTTP request
+        const response = await fetch('/api/marquee', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        return await response.json()
       }
-
-      return await response.json()
     } catch (error) {
       console.error('Error fetching marquee messages:', error)
       return []
@@ -50,30 +68,71 @@ export class Api {
     pagination: { page: number; limit: number; total: number; pages: number }
   }> {
     try {
-      const searchParams = new URLSearchParams()
-      
-      if (params.page) searchParams.append('page', params.page.toString())
-      if (params.limit) searchParams.append('limit', params.limit.toString())
-      if (params.sort) searchParams.append('sort', params.sort)
-      if (params.search) searchParams.append('search', params.search)
-      if (params.category) searchParams.append('category', params.category)
-      if (params.brand) searchParams.append('brand', params.brand)
-      if (params.minPrice) searchParams.append('minPrice', params.minPrice.toString())
-      if (params.maxPrice) searchParams.append('maxPrice', params.maxPrice.toString())
-      if (params.featured) searchParams.append('featured', 'true')
+      // Use direct service call on server-side, HTTP request on client-side
+      if (typeof window === 'undefined') {
+        // Server-side - call service directly
+        const filters: any = {
+          isActive: true,
+          status: "ACTIVE" as const,
+          search: params.search,
+          categoryId: params.category,
+          brandId: params.brand,
+          minPrice: params.minPrice,
+          maxPrice: params.maxPrice,
+          isFeatured: params.featured ? true : undefined
+        }
+        
+        const sortConfig = (() => {
+          switch (params.sort) {
+            case "oldest":
+              return { field: "createdAt" as const, direction: "asc" as const }
+            case "price-low-high":
+              return { field: "price" as const, direction: "asc" as const }
+            case "price-high-low":
+              return { field: "price" as const, direction: "desc" as const }
+            case "name-a-z":
+              return { field: "name" as const, direction: "asc" as const }
+            case "name-z-a":
+              return { field: "name" as const, direction: "desc" as const }
+            case "newest":
+            default:
+              return { field: "createdAt" as const, direction: "desc" as const }
+          }
+        })()
+        
+        return await ProductService.getProducts({
+          filters,
+          sort: sortConfig,
+          page: params.page || 1,
+          limit: params.limit || 12,
+        })
+      } else {
+        // Client-side - make HTTP request
+        const searchParams = new URLSearchParams()
+        
+        if (params.page) searchParams.append('page', params.page.toString())
+        if (params.limit) searchParams.append('limit', params.limit.toString())
+        if (params.sort) searchParams.append('sort', params.sort)
+        if (params.search) searchParams.append('search', params.search)
+        if (params.category) searchParams.append('category', params.category)
+        if (params.brand) searchParams.append('brand', params.brand)
+        if (params.minPrice) searchParams.append('minPrice', params.minPrice.toString())
+        if (params.maxPrice) searchParams.append('maxPrice', params.maxPrice.toString())
+        if (params.featured) searchParams.append('featured', 'true')
 
-      const response = await fetch(`/api/products?${searchParams.toString()}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
+        const response = await fetch(`/api/products?${searchParams.toString()}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        return await response.json()
       }
-
-      return await response.json()
     } catch (error) {
       console.error('Error fetching products:', error)
       return {
@@ -100,7 +159,8 @@ export class Api {
       if (params.type) searchParams.append('type', params.type)
       if (params.search) searchParams.append('search', params.search)
 
-      const response = await fetch(`/api/marquee/list?${searchParams.toString()}`, {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/marquee/list?${searchParams.toString()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -123,7 +183,8 @@ export class Api {
 
   static async getMarqueeMessageById(id: string): Promise<MarqueeMessageWithCreator | null> {
     try {
-      const response = await fetch(`/api/marquee/${id}`, {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/marquee/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -162,7 +223,8 @@ export class Api {
       if (params.search) searchParams.append('search', params.search)
       if (params.position) searchParams.append('position', params.position)
 
-      const response = await fetch(`/api/billboards?${searchParams.toString()}`, {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/billboards?${searchParams.toString()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -185,7 +247,8 @@ export class Api {
 
   static async getBillboardById(id: string): Promise<BillboardWithCreator | null> {
     try {
-      const response = await fetch(`/api/billboards/${id}`, {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/billboards/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -226,7 +289,8 @@ export class Api {
       if (params.search) searchParams.append('search', params.search)
       if (params.userId) searchParams.append('userId', params.userId)
 
-      const response = await fetch(`/api/orders?${searchParams.toString()}`, {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/orders?${searchParams.toString()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -249,7 +313,8 @@ export class Api {
 
   static async getOrderById(id: string): Promise<OrderWithDetails | null> {
     try {
-      const response = await fetch(`/api/orders/${id}`, {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/orders/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -282,7 +347,8 @@ export class Api {
     spendingTrend: { month: string; amount: number }[]
   }> {
     try {
-      const response = await fetch('/api/account/analytics', {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/account/analytics`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -309,7 +375,8 @@ export class Api {
   // Product Variants Methods
   static async getProductVariants(productId: string): Promise<any[]> {
     try {
-      const response = await fetch(`/api/products/${productId}/variants`, {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/products/${productId}/variants`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -329,7 +396,8 @@ export class Api {
 
   static async createProductVariant(productId: string, variantData: CreateVariantData): Promise<any | null> {
     try {
-      const response = await fetch(`/api/products/${productId}/variants`, {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/products/${productId}/variants`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -350,7 +418,8 @@ export class Api {
 
   static async updateProductVariant(variantId: string, variantData: UpdateVariantData): Promise<any | null> {
     try {
-      const response = await fetch(`/api/product-variants/${variantId}`, {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/product-variants/${variantId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -372,7 +441,8 @@ export class Api {
   // Customer Profile Methods (for account management)
   static async getCurrentCustomerProfile(): Promise<CustomerWithDetails | null> {
     try {
-      const response = await fetch('/api/account/profile', {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/account/profile`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -401,7 +471,8 @@ export class Api {
     dateOfBirth?: string
   }): Promise<CustomerWithDetails | null> {
     try {
-      const response = await fetch('/api/account/profile', {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/account/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -422,7 +493,8 @@ export class Api {
 
   static async getCustomerAddresses(): Promise<any[]> {
     try {
-      const response = await fetch('/api/account/addresses', {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/account/addresses`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -454,7 +526,8 @@ export class Api {
     phone?: string
   }): Promise<any | null> {
     try {
-      const response = await fetch('/api/account/addresses', {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/account/addresses`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

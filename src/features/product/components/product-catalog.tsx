@@ -1,5 +1,3 @@
-"use client"
-
 import React, { Suspense } from 'react'
 import { ProductGrid } from './product-grid'
 import { ProductPagination } from './product-pagination'

@@ -1,5 +1,3 @@
-"use client"
-
 import React, { Suspense } from 'react'
 import { ProductGrid } from '@/features/product/components/product-grid'
 import { Api } from '@/lib/api'
