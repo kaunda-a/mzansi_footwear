@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Separator } from '../../ui/separator';
-import { Breadcrumbs } from '../../breadcrumbs';
+import Logo from '../../icons/logo';
 import SearchInput from '../../search-input';
 import { ThemeSelector } from '../../theme-selector';
 import { ModeToggle } from '../ThemeToggle/theme-toggle';
@@ -26,7 +26,7 @@ export function Header() {
           <div className='flex items-center gap-3 min-w-0 flex-1'>
             <Separator orientation='vertical' className='h-5 bg-border/60' />
             <div className="min-w-0 flex-1">
-              <Breadcrumbs />
+              <Logo />
             </div>
           </div>
 
