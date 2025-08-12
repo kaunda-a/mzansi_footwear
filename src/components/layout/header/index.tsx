@@ -25,7 +25,7 @@ export function Header() {
           <div className='flex items-center gap-3 min-w-0 flex-1'>
             <Separator orientation='vertical' className='h-5 bg-border/60' />
             <div className="min-w-0 flex-1">
-              <img src="/logo.svg" alt="Mzansi Footwear Logo" className="h-8 w-auto" />
+              <img src="/logo.svg" alt="Mzansi Footwear Logo" className="h-8 w-auto" />Mzansi Footwear
             </div>
           </div>
 

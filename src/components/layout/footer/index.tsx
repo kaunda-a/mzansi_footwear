@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { IconBrandFacebook, IconBrandTwitter, IconBrandInstagram, IconMail, IconPhone, IconMapPin } from '@tabler/icons-react';
+import { IconBrandInstagram, IconBrandTiktok, IconBrandWhatsapp, IconMail, IconPhone, IconMapPin } from '@tabler/icons-react';
 
 const footerLinks = {
 
@@ -22,9 +22,9 @@ const footerLinks = {
 };
 
 const socialLinks = [
-  { name: 'Facebook', href: '#', icon: IconBrandFacebook },
-  { name: 'Twitter', href: '#', icon: IconBrandTwitter },
-  { name: 'Instagram', href: '#', icon: IconBrandInstagram },
+  { name: 'Instagram', href: 'https://instagram.com/mzansifootwear?igsh=cGQ1b3F0N21nYjl6&utm_source=qr', icon: IconBrandInstagram },
+  { name: 'TikTok', href: 'https://tiktok.com/@mzansifootwear', icon: IconBrandTiktok },
+  { name: 'WhatsApp', href: 'https://wa.me/27663759103', icon: IconBrandWhatsapp },
 ];
 
 export function StoreFooter() {
@@ -35,10 +35,7 @@ export function StoreFooter() {
           {/* Brand and contact info */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <div className="h-8 w-8 bg-primary rounded-md flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-sm">MF</span>
-              </div>
-              <span className="font-bold text-xl">Mzansi Footwear</span>
+              <img src="/logo.svg" alt="Mzansi Footwear Logo" className="h-8 w-auto" />
             </div>
             <p className="text-muted-foreground mb-4 max-w-sm">
               Premium South African footwear crafted with passion and precision. 
