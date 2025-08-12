@@ -15,11 +15,11 @@ import {
   IconCalendar
 } from '@tabler/icons-react'
 
-interface AccountDashboardProps {
+interface AccountAnalyticsProps {
   className?: string
 }
 
-export function AccountDashboard({ className }: AccountDashboardProps) {
+export function AccountAnalytics({ className }: AccountAnalyticsProps) {
   const [analytics, setAnalytics] = useState<any>(null)
   const [loading, setLoading] = useState(true)
 

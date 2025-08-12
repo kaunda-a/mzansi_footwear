@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { SearchParams } from 'nuqs/server'
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
-import { AccountDashboard } from '@/components/account'
+import { AccountAnalytics } from '@/components/account/account-analytics'
 import { AccountLayout } from '@/components/account/account-layout'
 
 export const metadata: Metadata = {
@@ -22,7 +22,7 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
       description="Welcome back! Here's a summary of your account activity and quick access to your important information."
     >
       <Suspense fallback={<DataTableSkeleton columnCount={3} rowCount={8} filterCount={0} />}>
-        <AccountDashboard />
+        <AccountAnalytics />
       </Suspense>
     </AccountLayout>
   )

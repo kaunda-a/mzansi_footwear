@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -20,6 +20,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Api } from '@/lib/api';
+import { useSession } from 'next-auth/react';
+import { toast } from 'sonner';
 
 interface PaymentMethod {
   id: string;
@@ -36,37 +39,10 @@ interface PaymentMethod {
   email?: string;
 }
 
-const samplePaymentMethods: PaymentMethod[] = [
-  {
-    id: '1',
-    type: 'card',
-    provider: 'Visa',
-    isDefault: true,
-    last4: '4242',
-    expiryMonth: 12,
-    expiryYear: 2025,
-    cardType: 'visa'
-  },
-  {
-    id: '2',
-    type: 'bank',
-    provider: 'FNB',
-    isDefault: false,
-    bankName: 'First National Bank',
-    accountType: 'Cheque Account'
-  },
-  {
-    id: '3',
-    type: 'wallet',
-    provider: 'PayPal',
-    isDefault: false,
-    walletProvider: 'PayPal',
-    email: 'user@example.com'
-  }
-];
-
 export function AccountPaymentMethods() {
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>(samplePaymentMethods);
+  const { data: session } = useSession();
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const getPaymentIcon = (method: PaymentMethod) => {
     switch (method.type) {
@@ -94,21 +70,40 @@ export function AccountPaymentMethods() {
     }
   };
 
-  const handleSetDefault = (methodId: string) => {
-    setPaymentMethods(prev => prev.map(method => ({
-      ...method,
-      isDefault: method.id === methodId
-    })));
+  const handleSetDefault = async (methodId: string) => {
+    // TODO: implement when backend supports payment methods
+    toast.info('Setting default payment method requires backend support');
   };
 
-  const handleDelete = (methodId: string) => {
-    setPaymentMethods(prev => prev.filter(method => method.id !== methodId));
+  const handleDelete = async (methodId: string) => {
+    // TODO: implement when backend supports payment methods
+    toast.info('Removing payment method requires backend support');
   };
+
+  useEffect(() => {
+    // No backend yet; keep empty list
+    setLoading(false);
+  }, [session]);
 
   const formatExpiryDate = (month?: number, year?: number) => {
     if (!month || !year) return '';
     return `${month.toString().padStart(2, '0')}/${year.toString().slice(-2)}`;
   };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="py-12">
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <span className="ml-2">Loading payment methods...</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -135,7 +130,21 @@ export function AccountPaymentMethods() {
 
       {/* Payment Methods Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {paymentMethods.map((method) => (
+        {paymentMethods.length === 0 ? (
+          <Card className="md:col-span-2">
+            <CardContent className="py-12 text-center">
+              <CreditCard className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No payment methods</h3>
+              <p className="text-muted-foreground mb-4">
+                This section will show your saved cards and payment options once connected to the payment provider.
+              </p>
+              <Button disabled>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Payment Method
+              </Button>
+            </CardContent>
+          </Card>
+        ) : paymentMethods.map((method) => (
           <Card key={method.id} className="relative">
             <CardHeader className="pb-4">
               <div className="flex items-start justify-between">
@@ -247,18 +256,7 @@ export function AccountPaymentMethods() {
           </Card>
         ))}
         
-        {/* Add New Payment Method Card */}
-        <Card className="border-dashed border-2 hover:border-primary/50 transition-colors cursor-pointer">
-          <CardContent className="flex flex-col items-center justify-center py-12">
-            <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-4">
-              <Plus className="h-6 w-6 text-muted-foreground" />
-            </div>
-            <h3 className="font-semibold mb-2">Add Payment Method</h3>
-            <p className="text-sm text-muted-foreground text-center">
-              Add a new card, bank account, or digital wallet
-            </p>
-          </CardContent>
-        </Card>
+        {/* Placeholder add card disabled until backend integration */}
       </div>
 
       {/* Security Notice */}

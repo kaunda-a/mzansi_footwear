@@ -33,7 +33,7 @@ export function OrderListingPage({}: OrderListingPageProps) {
     if (status === 'loading') return
     
     if (!session?.user) {
-      router.push('/auth/customer-sign-in?callbackUrl=/orders')
+      router.push('/auth/sign-in?callbackUrl=/orders')
       return
     }
 

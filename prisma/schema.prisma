@@ -151,10 +151,10 @@ model Product {
   isActive         Boolean          @default(true)
   isFeatured       Boolean          @default(false)
   tags             String[]
-  averageRating    Decimal?         @default(0) @db.Decimal(3, 2)
-  reviewCount      Int              @default(0)
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
+  averageRating    Decimal?         @default(0) @db.Decimal(3, 2)
+  reviewCount      Int              @default(0)
   orderItems       OrderItem[]
   images           ProductImage[]
   variants         ProductVariant[]

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +23,9 @@ import {
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { Api } from '@/lib/api';
+import { useSession } from 'next-auth/react';
+import { formatPrice } from '@/lib/format';
 
 interface OrderItem {
   id: string;
@@ -37,142 +40,109 @@ interface OrderItem {
 interface Order {
   id: string;
   orderNumber: string;
-  date: string;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled' | 'returned';
-  total: number;
+  createdAt: Date;
+  status: 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'REFUNDED';
+  totalAmount: number;
   items: OrderItem[];
-  shippingAddress: string;
-  trackingNumber?: string;
-  estimatedDelivery?: string;
-  paymentMethod: string;
+  shippingAddress?: any;
+  billingAddress?: any;
+  trackingNumber?: string | null;
+  shippedAt?: Date | string | null;
+  deliveredAt?: Date | string | null;
+  payments?: any[];
 }
 
-const sampleOrders: Order[] = [
-  {
-    id: '1',
-    orderNumber: 'MF-2024-001',
-    date: '2024-01-15',
-    status: 'delivered',
-    total: 2499,
-    items: [
-      {
-        id: '1',
-        name: 'Nike Air Max 270 React',
-        image: '/images/product-1.jpg',
-        price: 2499,
-        quantity: 1,
-        size: '9',
-        color: 'Black/White'
-      }
-    ],
-    shippingAddress: '123 Main St, Johannesburg, GP 2000',
-    trackingNumber: 'TRK123456789',
-    paymentMethod: 'Credit Card'
-  },
-  {
-    id: '2',
-    orderNumber: 'MF-2024-002',
-    date: '2024-01-20',
-    status: 'shipped',
-    total: 5798,
-    items: [
-      {
-        id: '2',
-        name: 'Adidas Ultraboost 22',
-        image: '/images/product-2.jpg',
-        price: 3299,
-        quantity: 1,
-        size: '8.5',
-        color: 'White/Blue'
-      },
-      {
-        id: '3',
-        name: 'Puma RS-X',
-        image: '/images/product-3.jpg',
-        price: 2499,
-        quantity: 1,
-        size: '9',
-        color: 'Red/Black'
-      }
-    ],
-    shippingAddress: '456 Oak Ave, Cape Town, WC 8000',
-    trackingNumber: 'TRK987654321',
-    estimatedDelivery: '2024-01-25',
-    paymentMethod: 'PayFast'
-  },
-  {
-    id: '3',
-    orderNumber: 'MF-2024-003',
-    date: '2024-01-22',
-    status: 'processing',
-    total: 1899,
-    items: [
-      {
-        id: '4',
-        name: 'Converse Chuck Taylor',
-        image: '/images/product-4.jpg',
-        price: 1899,
-        quantity: 1,
-        size: '10',
-        color: 'Black'
-      }
-    ],
-    shippingAddress: '789 Pine St, Durban, KZN 4000',
-    paymentMethod: 'Yoco'
-  }
-];
-
 const statusConfig = {
-  pending: { color: 'bg-yellow-500', icon: Clock, label: 'Pending' },
-  processing: { color: 'bg-blue-500', icon: Package, label: 'Processing' },
-  shipped: { color: 'bg-purple-500', icon: Truck, label: 'Shipped' },
-  delivered: { color: 'bg-green-500', icon: CheckCircle, label: 'Delivered' },
-  cancelled: { color: 'bg-red-500', icon: XCircle, label: 'Cancelled' },
-  returned: { color: 'bg-orange-500', icon: RotateCcw, label: 'Returned' }
+  PENDING: { color: 'bg-yellow-500', icon: Clock, label: 'Pending' },
+  CONFIRMED: { color: 'bg-blue-500', icon: CheckCircle, label: 'Confirmed' },
+  PROCESSING: { color: 'bg-blue-500', icon: Package, label: 'Processing' },
+  SHIPPED: { color: 'bg-purple-500', icon: Truck, label: 'Shipped' },
+  DELIVERED: { color: 'bg-green-500', icon: CheckCircle, label: 'Delivered' },
+  CANCELLED: { color: 'bg-red-500', icon: XCircle, label: 'Cancelled' },
+  REFUNDED: { color: 'bg-orange-500', icon: RotateCcw, label: 'Refunded' }
 };
 
 export function AccountOrders() {
-  const [orders] = useState<Order[]>(sampleOrders);
+  const { data: session } = useSession();
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('date-desc');
 
+  useEffect(() => {
+    async function fetchOrders() {
+      try {
+        if (session?.user?.email) {
+          const response = await Api.getOrders({ userId: session.user.id });
+          setOrders(response.orders.map(order => ({
+            ...order,
+            totalAmount: order.totalAmount.toNumber(),
+            items: order.items.map(item => ({
+              id: item.id,
+              name: item.product.name,
+              image: item.product.images[0]?.url || '/placeholder-product.jpg', // Provide a fallback image
+              price: item.unitPrice.toNumber(),
+              quantity: item.quantity,
+              size: item.productVariant?.size,
+              color: item.productVariant?.color,
+            }))
+          })));
+        }
+      } catch (error) {
+        console.error('Error fetching orders:', error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchOrders();
+  }, [session]);
+
   const filteredOrders = orders.filter(order => {
     const matchesSearch = order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+    const matchesStatus = statusFilter === 'all' || order.status.toLowerCase() === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const sortedOrders = [...filteredOrders].sort((a, b) => {
     switch (sortBy) {
       case 'date-desc':
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+        return b.createdAt.getTime() - a.createdAt.getTime();
       case 'date-asc':
-        return new Date(a.date).getTime() - new Date(b.date).getTime();
+        return a.createdAt.getTime() - b.createdAt.getTime();
       case 'total-desc':
-        return b.total - a.total;
+        return Number(b.totalAmount) - Number(a.totalAmount);
       case 'total-asc':
-        return a.total - b.total;
+        return Number(a.totalAmount) - Number(b.totalAmount);
       default:
         return 0;
     }
   });
 
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-ZA', {
-      style: 'currency',
-      currency: 'ZAR'
-    }).format(price);
-  };
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-ZA', {
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('en-ZA', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     });
   };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="py-12">
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <span className="ml-2">Loading orders...</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -265,7 +235,7 @@ export function AccountOrders() {
                       <div>
                         <h3 className="font-semibold">Order {order.orderNumber}</h3>
                         <p className="text-sm text-muted-foreground">
-                          Placed on {formatDate(order.date)}
+                          Placed on {formatDate(order.createdAt)}
                         </p>
                       </div>
                       <Badge 
@@ -277,7 +247,7 @@ export function AccountOrders() {
                       </Badge>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-lg">{formatPrice(order.total)}</p>
+                      <p className="font-semibold text-lg">{formatPrice(order.totalAmount)}</p>
                       <p className="text-sm text-muted-foreground">
                         {order.items.length} item{order.items.length > 1 ? 's' : ''}
                       </p>
@@ -319,11 +289,11 @@ export function AccountOrders() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="text-muted-foreground">Shipping Address</p>
-                      <p className="font-medium">{order.shippingAddress}</p>
+                      <p className="font-medium">{order.shippingAddress ? `${order.shippingAddress.addressLine1}, ${order.shippingAddress.city}` : '—'}</p>
                     </div>
                     <div>
-                      <p className="text-muted-foreground">Payment Method</p>
-                      <p className="font-medium">{order.paymentMethod}</p>
+                      <p className="text-muted-foreground">Payment Status</p>
+                      <p className="font-medium">{order.payments && order.payments[0] ? order.payments[0].status : '—'}</p>
                     </div>
                     {order.trackingNumber && (
                       <div>
@@ -331,19 +301,15 @@ export function AccountOrders() {
                         <p className="font-medium font-mono">{order.trackingNumber}</p>
                       </div>
                     )}
-                    {order.estimatedDelivery && (
-                      <div>
-                        <p className="text-muted-foreground">Estimated Delivery</p>
-                        <p className="font-medium">{formatDate(order.estimatedDelivery)}</p>
-                      </div>
-                    )}
                   </div>
 
                   {/* Order Actions */}
                   <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t">
-                    <Button variant="outline" size="sm">
-                      <Eye className="h-4 w-4 mr-1" />
-                      View Details
+                    <Button variant="outline" size="sm" asChild>
+                      <Link href={`/account/orders/${order.id}`}>
+                        <Eye className="h-4 w-4 mr-1" />
+                        View Details
+                      </Link>
                     </Button>
                     {order.trackingNumber && (
                       <Button variant="outline" size="sm">
@@ -351,11 +317,11 @@ export function AccountOrders() {
                         Track Package
                       </Button>
                     )}
-                    <Button variant="outline" size="sm">
+                    <Button variant="outline" size="sm" disabled title="Coming soon">
                       <Download className="h-4 w-4 mr-1" />
                       Download Invoice
                     </Button>
-                    {order.status === 'delivered' && (
+                    {order.status === 'DELIVERED' && (
                       <>
                         <Button variant="outline" size="sm">
                           <Star className="h-4 w-4 mr-1" />

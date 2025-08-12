@@ -114,7 +114,7 @@ export function CheckoutView() {
       
       // Clear cart and redirect to success page
       clearCart();
-      router.push('/success');
+      router.push('/payments/success');
     } catch (error) {
       console.error('Error submitting order:', error);
     }

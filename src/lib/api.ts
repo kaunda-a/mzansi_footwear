@@ -517,13 +517,14 @@ export class Api {
     firstName: string
     lastName: string
     company?: string
-    address1: string
-    address2?: string
+    addressLine1: string
+    addressLine2?: string
     city: string
     province: string
     postalCode: string
-    country: string
+    country?: string
     phone?: string
+    isDefault?: boolean
   }): Promise<any | null> {
     try {
       const baseUrl = this.getBaseUrl()
@@ -543,6 +544,65 @@ export class Api {
     } catch (error) {
       console.error('Error adding customer address:', error)
       return null
+    }
+  }
+
+  static async updateCustomerAddress(
+    id: string,
+    addressData: Partial<{
+      type: string
+      firstName: string
+      lastName: string
+      company?: string
+      addressLine1: string
+      addressLine2?: string
+      city: string
+      province: string
+      postalCode: string
+      country?: string
+      phone?: string
+      isDefault?: boolean
+    }>
+  ): Promise<any | null> {
+    try {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/account/addresses/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(addressData),
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      return await response.json()
+    } catch (error) {
+      console.error('Error updating customer address:', error)
+      return null
+    }
+  }
+
+  static async deleteCustomerAddress(id: string): Promise<boolean> {
+    try {
+      const baseUrl = this.getBaseUrl()
+      const response = await fetch(`${baseUrl}/api/account/addresses/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      return true
+    } catch (error) {
+      console.error('Error deleting customer address:', error)
+      return false
     }
   }
 }

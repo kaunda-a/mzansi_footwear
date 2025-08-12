@@ -24,6 +24,7 @@ import {
   Star
 } from 'lucide-react';
 import { useSession } from 'next-auth/react';
+import { Api } from '@/lib/api';
 import { toast } from 'sonner';
 
 const SA_PROVINCES = [
@@ -42,11 +43,12 @@ export function AccountProfile() {
   const { data: session } = useSession();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingProfile, setLoadingProfile] = useState(true);
 
   const [profileData, setProfileData] = useState({
-    firstName: session?.user?.name?.split(' ')[0] || '',
-    lastName: session?.user?.name?.split(' ').slice(1).join(' ') || '',
-    email: session?.user?.email || '',
+    firstName: '',
+    lastName: '',
+    email: '',
     phone: '',
     dateOfBirth: '',
     gender: '',
@@ -66,6 +68,33 @@ export function AccountProfile() {
       currency: 'ZAR'
     }
   });
+
+  React.useEffect(() => {
+    async function load() {
+      try {
+        const customer = await Api.getCurrentCustomerProfile();
+        if (customer) {
+          setProfileData(prev => ({
+            ...prev,
+            firstName: customer.firstName || '',
+            lastName: customer.lastName || '',
+            email: customer.email || session?.user?.email || '',
+            phone: customer.phone || '',
+          }))
+        } else {
+          setProfileData(prev => ({
+            ...prev,
+            email: session?.user?.email || '',
+            firstName: session?.user?.name?.split(' ')[0] || '',
+            lastName: session?.user?.name?.split(' ').slice(1).join(' ') || '',
+          }))
+        }
+      } finally {
+        setLoadingProfile(false)
+      }
+    }
+    load()
+  }, [session])
 
   const handleInputChange = (field: string, value: string) => {
     if (field.includes('.')) {
@@ -88,11 +117,18 @@ export function AccountProfile() {
   const handleSave = async () => {
     setIsLoading(true);
     try {
-      // Here you would make an API call to save the profile data
-      await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-      
-      toast.success('Profile updated successfully');
-      setIsEditing(false);
+      const updated = await Api.updateCustomerProfile({
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        email: profileData.email,
+        phone: profileData.phone,
+      });
+      if (updated) {
+        toast.success('Profile updated successfully');
+        setIsEditing(false);
+      } else {
+        toast.error('Failed to update profile');
+      }
     } catch (error) {
       toast.error('Failed to update profile');
     } finally {
@@ -127,6 +163,21 @@ export function AccountProfile() {
     });
     setIsEditing(false);
   };
+
+  if (loadingProfile) {
+    return (
+      <div className="space-y-6">
+        <Card>
+          <CardContent className="py-12">
+            <div className="flex items-center justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <span className="ml-2">Loading profile...</span>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">

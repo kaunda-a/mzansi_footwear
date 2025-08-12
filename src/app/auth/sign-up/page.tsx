@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { SignUpForm } from '@/features/auth/components/sign-up-form';
 import { redirect } from 'next/navigation';
 
 export const metadata: Metadata = {
@@ -7,7 +8,5 @@ export const metadata: Metadata = {
 };
 
 export default function SignUpPage() {
-  // For now, redirect to sign-in since we're using admin-only accounts
-  // In the future, this could be a proper sign-up form
-  redirect('/auth/sign-in');
+return <SignUpForm />;
 }

@@ -45,7 +45,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
   const handleAddToCart = async () => {
     // Check if user is authenticated
     if (!session) {
-      router.push(`/auth/customer-sign-in?callbackUrl=${encodeURIComponent(window.location.href)}`)
+      router.push(`/auth/sign-in?callbackUrl=${encodeURIComponent(window.location.href)}`)
       return
     }
 

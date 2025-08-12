@@ -48,7 +48,7 @@ export default function AuthErrorPage() {
 
           <div className="space-y-3">
             <Button asChild className="w-full">
-              <Link href="/auth/customer-sign-in">
+              <Link href="/auth/sign-in">
                 Try Again
               </Link>
             </Button>

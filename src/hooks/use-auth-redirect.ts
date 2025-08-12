@@ -15,7 +15,7 @@ export function useAuthRedirect() {
 
   const redirectToSignIn = (callbackUrl?: string) => {
     const url = callbackUrl || pathname
-    router.push(`/auth/customer-sign-in?callbackUrl=${encodeURIComponent(url)}`)
+    router.push(`/auth/sign-in?callbackUrl=${encodeURIComponent(url)}`)
   }
 
   const requireAuth = (callback?: () => void, callbackUrl?: string) => {

@@ -5,7 +5,7 @@ import { Header } from '@/components/layout/header'
 import { StoreFooter } from '@/components/layout/footer'
 import { Heading } from '@/components/ui/heading'
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
-import { AccountAddresses } from '@/components/account'
+import { AccountAddresses } from '@/components/account/account-addresses'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 
 export const metadata: Metadata = {

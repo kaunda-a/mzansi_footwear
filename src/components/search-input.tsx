@@ -159,7 +159,7 @@ export default function SearchInput() {
                   {results.map((product) => (
                     <Link
                       key={product.id}
-                      href={`/products/${product.slug}`}
+                      href={`/products/${product.id}`}
                       onClick={() => setIsOpen(false)}
                       className="flex items-center gap-3 p-3 hover:bg-muted/50 transition-colors border-b last:border-b-0"
                     >

@@ -1,7 +1,0 @@
-export { AccountDashboard } from './account-dashboard'
-export { AccountAddresses } from './account-addresses'
-export { AccountOrders } from './account-orders'
-export { AccountProfile } from './account-profile'
-export { AccountPaymentMethods } from './account-payment-methods'
-export { AccountSidebar } from './account-sidebar'
-export { AccountLayout } from './account-layout'

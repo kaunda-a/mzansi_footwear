@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { SearchParams } from 'nuqs/server'
 import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
-import { AccountOrders } from '@/components/account'
+import { AccountOrders } from '@/components/account/account-orders'
 import { AccountLayout } from '@/components/account/account-layout'
 
 export const metadata: Metadata = {
