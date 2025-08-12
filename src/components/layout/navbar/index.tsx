@@ -82,6 +82,11 @@ export function Navbar() {
     return null
   }
 
+  const hideNavbarPaths = ['/auth/sign-in', '/auth/sign-up'];
+  if (hideNavbarPaths.includes(pathname)) {
+    return null;
+  }
+
   return (
     <motion.nav
       initial={{ y: 100, opacity: 0 }}

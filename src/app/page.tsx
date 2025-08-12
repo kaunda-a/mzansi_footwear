@@ -26,19 +26,10 @@ export default function HomePage() {
           />
         </div>
 
-        {/* Secondary Billboard */}
-        <div className="container mx-auto px-4 py-4">
-          <BillboardContainer
-            position="FOOTER"
-            compact={true}
-            className="h-32 md:h-40 rounded-lg"
-          />
-        </div>
         {/* Popular Products */}
         <div className="bg-muted/30 py-12">
           <div className="container mx-auto px-4">
             <div className="mb-8 text-center">
-              <h2 className="text-2xl md:text-3xl font-bold mb-2">Popular Products</h2>
               <p className="text-muted-foreground">Discover our most loved footwear</p>
             </div>
 
@@ -66,7 +57,14 @@ export default function HomePage() {
             </Suspense>
           </div>
         </div>
-        
+               {/* Secondary Billboard */}
+        <div className="container mx-auto px-4 py-4">
+          <BillboardContainer
+            position="FOOTER"
+            compact={true}
+            className="h-32 md:h-40 rounded-lg"
+          />
+        </div>
       <FeaturedProducts />
       </main>
       <MarqueeContainer />
