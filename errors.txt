@@ -1,34 +1,17 @@
-Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
-  {id: ..., productId: ..., size: "8", color: ..., material: ..., sku: ..., price: Decimal, comparePrice: ..., costPrice: ..., stock: ..., lowStockThreshold: ..., weight: ..., isActive: ..., createdAt: ..., updatedAt: ...}
-                                                                                   ^^^^^^^
+Using this console may allow attackers to impersonate you and steal your information using an attack called Self-XSS.
+Do not enter or paste code that you do not understand.
 
-src\components\featured-products.tsx (47:11) @ F
-src\components\featured-products.tsx (47:11) @ FeaturedProductsContent
+net::ERR_BLOCKED_BY_CLIENT
+https://localhost:3000/api/auth/callback/google?code=4%2F0AVMBsJhXlX292JEpplfH6lmNF1ELZxmZ82WYiErj71AqFSVg-Pusc1GcpKqcQj-bpXaCnQ&scope=email+profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.profile+https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email+openid&authuser=1&prompt=consent
 
+on pnpm run dev when i try to login 
+This site can’t provide a secure connection
+localhost sent an invalid response.
+ERR_SSL_PROTOCOL_ERROR
 
-  45 |           </div>
-  46 |           
-> 47 |           <ProductGrid 
-     |           ^
-  48 |             products={clientSafeProducts}
-  49 |             showQuickView={true}
-  50 |             showCompare={true}
+fix
 
+http://localhost:3000/api/auth/callback/google
 
- ✓ Compiled /api/auth/[...nextauth] in 114.3s
- GET /api/auth/session 200 in 122335ms
- GET /api/auth/session 200 in 1034ms
- ○ Compiling /auth/sign-in ...
- ✓ Compiled /auth/sign-in in 47.4s
- GET /auth/sign-in?callbackUrl=%2F 200 in 49046ms
- GET /api/auth/providers 200 in 3511ms
- GET /api/auth/csrf 200 in 4339ms
- POST /api/auth/signin/google? 200 in 7015ms
- GET /api/auth/session 200 in 6445ms
+NEXTAUTH_URL=http://localhost:3000
 
-Authentication Error
-We encountered an issue while trying to sign you in
-There is a problem with the server configuration.
-Try Again
-
-https://mzansi-footwear.vercel.app/auth/error?error=Configuration
