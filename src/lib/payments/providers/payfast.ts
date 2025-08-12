@@ -9,6 +9,7 @@ import {
   PaymentConfig
 } from '../types';
 import crypto from 'crypto';
+import { db } from '@/lib/prisma';
 
 interface PayFastConfig {
   merchantId: string;
@@ -103,7 +104,7 @@ export class PayFastProvider extends BasePaymentProvider {
 
       return this.createSuccessResponse(
         paymentData.m_payment_id,
-        'pending',
+        'PENDING',
         reference,
         {
           redirectUrl: this.processUrl,
@@ -132,11 +133,11 @@ export class PayFastProvider extends BasePaymentProvider {
       this.log('info', 'Checking PayFast payment status', { paymentId });
       
       // In a real implementation, you'd query your database here
-      return 'pending';
+      return 'PENDING';
       
     } catch (error) {
       this.log('error', 'PayFast status check failed', error);
-      return 'failed';
+      return 'FAILED';
     }
   }
 
@@ -201,7 +202,7 @@ export class PayFastProvider extends BasePaymentProvider {
       const status = this.mapPayFastStatus(data.payment_status);
       
       // Here you would update your database with the payment status
-      // await this.updatePaymentStatus(data.m_payment_id, status);
+      await this.updatePaymentStatus(data.custom_str1, status);
       
     } catch (error) {
       this.log('error', 'PayFast webhook processing failed', error);
@@ -271,16 +272,32 @@ export class PayFastProvider extends BasePaymentProvider {
     `;
   }
 
-  private mapPayFastStatus(payfastStatus: string): PaymentStatus {
+    private mapPayFastStatus(payfastStatus: string): PaymentStatus {
     switch (payfastStatus?.toLowerCase()) {
       case 'complete':
-        return 'completed';
+        return 'COMPLETED';
       case 'failed':
-        return 'failed';
+        return 'FAILED';
       case 'cancelled':
-        return 'cancelled';
+        return 'CANCELLED';
       default:
-        return 'pending';
+        return 'PENDING';
+    }
+  }
+
+  private async updatePaymentStatus(orderId: string, status: PaymentStatus): Promise<void> {
+    try {
+      await db.order.update({
+        where: { id: orderId },
+        data: {
+          status: status as any, // Cast to any to resolve type mismatch with Prisma OrderStatus
+          // You might want to add other fields like paymentDate, transactionId, etc.
+        },
+      });
+      this.log('info', `Order ${orderId} payment status updated to: ${status}`);
+    } catch (error) {
+      this.log('error', `Failed to update order ${orderId} payment status to ${status}:`, error);
+      throw error;
     }
   }
 }

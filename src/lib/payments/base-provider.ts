@@ -90,7 +90,7 @@ export abstract class BasePaymentProvider implements PaymentProviderInterface {
     return {
       success: false,
       paymentId: '',
-      status: 'failed',
+      status: 'FAILED',
       reference: '',
       error: {
         code,

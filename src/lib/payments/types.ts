@@ -79,18 +79,18 @@ export interface PaymentResponse {
   metadata?: Record<string, any>;
 }
 
-export type PaymentStatus = 
-  | 'pending'
-  | 'processing'
-  | 'completed'
-  | 'failed'
-  | 'cancelled'
-  | 'expired'
-  | 'refunded'
-  | 'partially_refunded'
-  | 'disputed'
-  | 'authorized'
-  | 'captured';
+export type PaymentStatus =
+  | 'PENDING'
+  | 'PROCESSING'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'CANCELLED'
+  | 'EXPIRED'
+  | 'REFUNDED'
+  | 'PARTIALLY_REFUNDED'
+  | 'DISPUTED'
+  | 'AUTHORIZED'
+  | 'CAPTURED';
 
 export interface PaymentError {
   code: string;

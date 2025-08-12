@@ -114,7 +114,7 @@ export class PaymentManager {
         return {
           success: false,
           paymentId: '',
-          status: 'failed',
+          status: 'FAILED',
           reference: '',
           error: {
             code: 'NO_PROVIDER_AVAILABLE',
@@ -147,7 +147,7 @@ export class PaymentManager {
       return {
         success: false,
         paymentId: '',
-        status: 'failed',
+        status: 'FAILED',
         reference: '',
         error: {
           code: 'PAYMENT_CREATION_ERROR',

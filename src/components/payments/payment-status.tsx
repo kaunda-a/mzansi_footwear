@@ -50,77 +50,77 @@ const statusConfig: Record<PaymentStatusType, {
   title: string;
   description: string;
 }> = {
-  pending: {
+  PENDING: {
     icon: <Clock className="h-5 w-5" />,
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-50 border-yellow-200',
     title: 'Payment Pending',
     description: 'Your payment is being processed. Please wait...'
   },
-  processing: {
+  PROCESSING: {
     icon: <RefreshCw className="h-5 w-5 animate-spin" />,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50 border-blue-200',
     title: 'Processing Payment',
     description: 'Your payment is currently being processed by the payment provider.'
   },
-  completed: {
+  COMPLETED: {
     icon: <CheckCircle className="h-5 w-5" />,
     color: 'text-green-600',
     bgColor: 'bg-green-50 border-green-200',
     title: 'Payment Successful',
     description: 'Your payment has been completed successfully!'
   },
-  failed: {
+  FAILED: {
     icon: <XCircle className="h-5 w-5" />,
     color: 'text-red-600',
     bgColor: 'bg-red-50 border-red-200',
     title: 'Payment Failed',
     description: 'Your payment could not be processed. Please try again.'
   },
-  cancelled: {
+  CANCELLED: {
     icon: <XCircle className="h-5 w-5" />,
     color: 'text-gray-600',
     bgColor: 'bg-gray-50 border-gray-200',
     title: 'Payment Cancelled',
     description: 'The payment was cancelled by you or the payment provider.'
   },
-  expired: {
+  EXPIRED: {
     icon: <AlertCircle className="h-5 w-5" />,
     color: 'text-orange-600',
     bgColor: 'bg-orange-50 border-orange-200',
     title: 'Payment Expired',
     description: 'The payment session has expired. Please start a new payment.'
   },
-  refunded: {
+  REFUNDED: {
     icon: <RefreshCw className="h-5 w-5" />,
     color: 'text-purple-600',
     bgColor: 'bg-purple-50 border-purple-200',
     title: 'Payment Refunded',
     description: 'This payment has been refunded to your account.'
   },
-  partially_refunded: {
+  PARTIALLY_REFUNDED: {
     icon: <RefreshCw className="h-5 w-5" />,
     color: 'text-purple-600',
     bgColor: 'bg-purple-50 border-purple-200',
     title: 'Partially Refunded',
     description: 'This payment has been partially refunded to your account.'
   },
-  disputed: {
+  DISPUTED: {
     icon: <AlertCircle className="h-5 w-5" />,
     color: 'text-red-600',
     bgColor: 'bg-red-50 border-red-200',
     title: 'Payment Disputed',
     description: 'This payment is under dispute. Please contact support.'
   },
-  authorized: {
+  AUTHORIZED: {
     icon: <Clock className="h-5 w-5" />,
     color: 'text-blue-600',
     bgColor: 'bg-blue-50 border-blue-200',
     title: 'Payment Authorized',
     description: 'Payment has been authorized and will be captured soon.'
   },
-  captured: {
+  CAPTURED: {
     icon: <CheckCircle className="h-5 w-5" />,
     color: 'text-green-600',
     bgColor: 'bg-green-50 border-green-200',
@@ -155,7 +155,7 @@ export function PaymentStatus({
     if (!autoRefresh || !statusData) return;
 
     // Don't auto-refresh for final states
-    const finalStates: PaymentStatusType[] = ['completed', 'failed', 'cancelled', 'expired', 'refunded'];
+    const finalStates: PaymentStatusType[] = ['COMPLETED', 'FAILED', 'CANCELLED', 'EXPIRED', 'REFUNDED'];
     if (finalStates.includes(statusData.status)) return;
 
     const interval = setInterval(() => {
@@ -189,7 +189,7 @@ export function PaymentStatus({
       setLastChecked(new Date());
 
       // Trigger confetti for successful payments (only once)
-      if (data.status === 'completed' && !confettiFired) {
+      if (data.status === 'COMPLETED' && !confettiFired) {
         setConfettiFired(true);
         // Trigger multiple confetti bursts for celebration
         triggerConfetti({
@@ -334,14 +334,14 @@ export function PaymentStatus({
 
           {/* Action Buttons */}
           <div className="flex flex-wrap gap-2 justify-center pt-4">
-            {statusData.status === 'failed' && (
+            {statusData.status === 'FAILED' && (
               <Button onClick={handleRetryPayment} className="flex-1 max-w-xs">
                 <RefreshCw className="mr-2 h-4 w-4" />
                 Try Again
               </Button>
             )}
             
-            {statusData.status === 'completed' && (
+            {statusData.status === 'COMPLETED' && (
               <>
                 <Button onClick={handleDownloadReceipt} variant="outline">
                   <Download className="mr-2 h-4 w-4" />
@@ -426,7 +426,7 @@ export function PaymentStatus({
       </Card>
 
       {/* Additional Information */}
-      {(statusData.status === 'pending' || statusData.status === 'processing') && (
+      {(statusData.status === 'PENDING' || statusData.status === 'PROCESSING') && (
         <Alert>
           <Clock className="h-4 w-4" />
           <AlertDescription>
@@ -435,7 +435,7 @@ export function PaymentStatus({
         </Alert>
       )}
 
-      {statusData.status === 'failed' && (
+      {statusData.status === 'FAILED' && (
         <Alert variant="destructive">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>

@@ -22,15 +22,17 @@ function FeaturedProductsSkeleton() {
 
 async function FeaturedProductsContent(): Promise<React.ReactElement | null> {
   try {
-    const { products: clientSafeProducts } = await Api.getProducts({
+    const { products } = await Api.getProducts({
       page: 1,
       limit: 8,
       featured: true
     })
 
-    if (!clientSafeProducts.length) {
+    if (!products.length) {
       return null
     }
+
+    const clientSafeProducts = JSON.parse(JSON.stringify(products))
 
     return (
       <section className="py-16">
