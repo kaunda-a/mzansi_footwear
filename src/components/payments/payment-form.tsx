@@ -229,13 +229,19 @@ export function PaymentForm({
       if (data.success) {
         toast.success('Payment initiated successfully');
         
-        // Redirect to payment provider
-        if (data.redirectUrl) {
+        if (data.metadata?.formHtml) {
+          const formContainer = document.createElement('div');
+          formContainer.innerHTML = data.metadata.formHtml;
+          document.body.appendChild(formContainer);
+          const form = formContainer.querySelector('form');
+          if (form) {
+            form.submit();
+          }
+        } else if (data.redirectUrl) {
           window.location.href = data.redirectUrl;
         } else if (data.paymentUrl) {
           window.location.href = data.paymentUrl;
         } else {
-          // Handle inline payment forms if needed
           onSuccess?.(data.paymentId, selectedProvider);
         }
       } else {
