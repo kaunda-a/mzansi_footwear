@@ -227,7 +227,7 @@ export class PayFastProvider extends BasePaymentProvider {
       name_last: request.customer.lastName,
       email_address: request.customer.email,
       m_payment_id: request.reference,
-      amount: request.amount.amount.toFixed(2),
+      amount: (request.amount.amount * 100).toString(),
       item_name: request.description,
       item_description: request.items.map(item => item.name).join(', '),
       custom_str1: request.metadata.orderId,
