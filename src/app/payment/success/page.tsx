@@ -1,6 +1,6 @@
 import React from 'react';
 import { Suspense } from 'react';
-import { PaymentStatus } from '@/components/payments/payment-status';
+import { db } from '@/lib/prisma';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 
@@ -16,9 +16,9 @@ interface PaymentSuccessPageProps {
 
 async function PaymentSuccessContent({ searchParams }: PaymentSuccessPageProps) {
   const params = await searchParams;
-  const { paymentId, provider, orderId, amount, currency } = params;
+  const { orderId } = params;
 
-  if (!paymentId || !provider) {
+  if (!orderId) {
     return (
       <div className="container mx-auto px-4 py-8">
         <Card>
@@ -26,6 +26,25 @@ async function PaymentSuccessContent({ searchParams }: PaymentSuccessPageProps) 
             <h1 className="text-2xl font-bold text-red-600 mb-4">Invalid Payment Link</h1>
             <p className="text-muted-foreground">
               The payment link is missing required information. Please contact support if you believe this is an error.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  const order = await db.order.findUnique({
+    where: { id: orderId },
+  });
+
+  if (!order) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <Card>
+          <CardContent className="py-8 text-center">
+            <h1 className="text-2xl font-bold text-red-600 mb-4">Order not found</h1>
+            <p className="text-muted-foreground">
+              We could not find your order. Please contact support if you believe this is an error.
             </p>
           </CardContent>
         </Card>
@@ -42,28 +61,12 @@ async function PaymentSuccessContent({ searchParams }: PaymentSuccessPageProps) 
         </p>
       </div>
 
-      <PaymentStatus
-        paymentId={paymentId}
-        provider={provider as any}
-        orderId={orderId}
-        amount={amount ? parseFloat(amount) : undefined}
-        currency={currency}
-        autoRefresh={true}
-        refreshInterval={5000}
-        onStatusChange={(status) => {
-          console.log('Payment status changed:', status);
-          
-          // You can add analytics tracking here
-          if (typeof window !== 'undefined' && (window as any).gtag) {
-            (window as any).gtag('event', 'payment_status_change', {
-              payment_id: paymentId,
-              provider: provider,
-              status: status,
-              order_id: orderId
-            });
-          }
-        }}
-      />
+      <Card>
+        <CardContent className="py-8 text-center">
+          <h2 className="text-xl font-semibold">Order #{order.id}</h2>
+          <p className="text-lg">Payment Status: {order.status}</p>
+        </CardContent>
+      </Card>
     </div>
   );
 }
