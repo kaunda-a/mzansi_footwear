@@ -1,9 +1,9 @@
 import Header from '@/components/layout/header';
 import { StoreFooter } from '@/components/layout/footer';
-import { MarqueeContainer } from '@/components/marquee-container';
-import { BillboardContainer } from '@/components/layout/billboard-container';
-import { CarouselBillboardContainer } from '@/components/layout/carousel-billboard-container';
-import { FeaturedProducts } from '@/components/featured-products';
+import { MarqueeContainer } from '@/components/catalog/marquee-container';
+import { BillboardContainer } from '@/components/catalog/billboard-container';
+import { CarouselBillboardContainer } from '@/components/catalog/carousel-billboard-container';
+import { FeaturedProducts } from '@/components/catalog/featured-products';
 import { ProductCatalog } from '@/features/product/components/product-catalog';
 import { Suspense } from 'react';
 
@@ -14,8 +14,8 @@ export default function HomePage() {
       <Header />
 
       <main className="flex-1">
-        {/* Hero Carousel Billboard - Database Driven */}
-        <div className="container mx-auto px-4 py-6">
+       {/* Hero Carousel Billboard - Database Driven */}
+        <div className="container mx-auto px-4">
           <CarouselBillboardContainer
             position="HEADER"
             height="h-48 md:h-64 lg:h-80"
@@ -27,7 +27,7 @@ export default function HomePage() {
         </div>
 
         {/* Popular Products */}
-        <div className="bg-muted/30 py-12">
+        <div className="bg-muted/30 py-8">
           <div className="container mx-auto px-4">
             <div className="mb-8 text-center">
               <p className="text-muted-foreground">Discover our most loved footwear</p>

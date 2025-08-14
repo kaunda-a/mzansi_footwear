@@ -6,6 +6,7 @@ import SearchInput from '../../search-input';
 import { ThemeSelector } from '../../theme-selector';
 import { ModeToggle } from '../ThemeToggle/theme-toggle';
 import { motion } from 'motion/react';
+import Link from 'next/link';
 
 export function Header() {
   return (
@@ -24,8 +25,17 @@ export function Header() {
         <div className='flex h-14 shrink-0 items-center justify-between gap-3 px-4 sm:px-6'>
           <div className='flex items-center gap-3 min-w-0 flex-1'>
             <Separator orientation='vertical' className='h-5 bg-border/60' />
-            <div className="min-w-0 flex-1">
-              <img src="/logo.svg" alt="Mzansi Footwear Logo" className="h-8 w-auto" />Mzansi Footwear
+              <div className="min-w-0 flex-1">
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="inline-block"
+              >
+                <Link href="/" className="flex items-center gap-2">
+                    <img src="/logo.svg" alt="Mzansi Footwear Logo" className="h-8 w-auto" />
+                    <span className="text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Mzansi Footwear</span>
+                </Link>
+              </motion.div>
             </div>
           </div>
 

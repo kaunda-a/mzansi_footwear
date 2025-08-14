@@ -12,7 +12,7 @@ export default auth((req) => {
                          nextUrl.pathname.startsWith('/checkout')
   const isAuthRoute = nextUrl.pathname.startsWith('/auth')
 
-  // Redirect to customer sign-in if accessing customer route without auth
+  // Redirect to sign-in if accessing customer route without auth
   if (isCustomerRoute && !isLoggedIn) {
     return NextResponse.redirect(new URL(`/auth/sign-in?callbackUrl=${encodeURIComponent(nextUrl.pathname)}`, nextUrl))
   }

@@ -4,7 +4,7 @@ import { StoreFooter } from '@/components/layout/footer';
 import { ProductCatalog } from '@/features/product/components/product-catalog';
 import { ProductFilters } from '@/features/product/components/product-filters';
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
-import { BillboardContainer } from '@/components/layout/billboard-container';
+import { BillboardContainer } from '@/components/catalog/billboard-container';
 
 interface ProductsPageProps {
   searchParams: Promise<{

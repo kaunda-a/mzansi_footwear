@@ -9,6 +9,7 @@ import NextTopLoader from 'nextjs-toploader';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
 import KBar from '@/components/kbar';
 import { Navbar } from '@/components/layout/navbar';
+import { ConfettiProvider } from '@/components/ui/confetti';
 
 import './globals.css';
 import './theme.css';
@@ -98,7 +99,9 @@ export default async function RootLayout({
             <Providers activeThemeValue={activeThemeValue as string}>
               <KBar>
                 <div className="min-h-screen flex flex-col pb-20 sm:pb-24">
-                  {children}
+                  <ConfettiProvider>
+                    {children}
+                  </ConfettiProvider>
                 </div>
                 <Navbar />
                 <Toaster />

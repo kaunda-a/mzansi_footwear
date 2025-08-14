@@ -3,7 +3,7 @@
 import { Api } from '@/lib/api'
 import { useState, useEffect } from 'react'
 import { notFound } from 'next/navigation'
-import { Billboard } from '@/components/ui/billboard'
+import { Billboard } from '@/components/catalog/billboard'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'

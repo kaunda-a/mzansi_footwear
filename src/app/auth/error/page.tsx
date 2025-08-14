@@ -1,6 +1,8 @@
 'use client'
 
 import { useSearchParams } from 'next/navigation'
+import { useEffect } from 'react'
+import { toast } from 'sonner'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -11,6 +13,7 @@ const errorMessages = {
   Configuration: 'There is a problem with the server configuration.',
   AccessDenied: 'You do not have permission to sign in.',
   Verification: 'The verification token has expired or has already been used.',
+  UserNotFound: 'You do not have an account. Please sign up first.', // Added new error message
   Default: 'An error occurred during authentication.'
 }
 
@@ -19,6 +22,12 @@ export default function AuthErrorPage() {
   const error = searchParams.get('error') as keyof typeof errorMessages
   
   const errorMessage = errorMessages[error] || errorMessages.Default
+
+  useEffect(() => {
+    if (error === 'UserNotFound') {
+      toast.error(errorMessage);
+    }
+  }, [error, errorMessage]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">

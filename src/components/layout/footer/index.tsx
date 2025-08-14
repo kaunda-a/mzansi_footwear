@@ -4,15 +4,14 @@ import { IconBrandInstagram, IconBrandTiktok, IconBrandWhatsapp, IconMail, IconP
 const footerLinks = {
 
   support: [
-    { name: 'Contact Us', href: '/contact' },
     { name: 'Shipping Info', href: '/shipping' },
     { name: 'Returns', href: '/returns' },
     { name: 'FAQ', href: '/faq' },
   ],
   company: [
     { name: 'About Us', href: '/about' },
+    { name: 'Contact Us', href: '/contact' },
     { name: 'Blog', href: '/blog' },
-    { name: 'Careers', href: '/careers' },
   ],
   legal: [
     { name: 'Privacy Policy', href: '/privacy' },
@@ -38,8 +37,9 @@ export function StoreFooter() {
               <img src="/logo.svg" alt="Mzansi Footwear Logo" className="h-8 w-auto" />
             </div>
             <p className="text-muted-foreground mb-4 max-w-sm">
-              Premium South African footwear crafted with passion and precision. 
-              Step into authentic style and exceptional comfort.
+              Your ultimate destination for premium sneakers, streetwear, and exclusive drops.
+              Born out of a deep passion for sneaker culture and a commitment to authenticity, we created this space for collectors, enthusiasts, and everyday sneaker lovers who value style, comfort, and originality.
+
             </p>
             <div className="space-y-2 text-sm text-muted-foreground">
               <div className="flex items-center space-x-2">
@@ -48,7 +48,7 @@ export function StoreFooter() {
               </div>
               <div className="flex items-center space-x-2">
                 <IconPhone className="h-4 w-4" />
-                <span>+27 21 123 4567</span>
+                <span>066 375 9103</span>
               </div>
               <div className="flex items-center space-x-2">
                 <IconMail className="h-4 w-4" />

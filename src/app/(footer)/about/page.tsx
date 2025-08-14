@@ -44,35 +44,30 @@ export default async function AboutPage({ searchParams }: AboutPageProps) {
             <Suspense fallback={<DataTableSkeleton columnCount={1} rowCount={6} filterCount={0} />}>
               <div className="container mx-auto px-4 py-8 max-w-4xl">
                 <div className="prose prose-gray dark:prose-invert max-w-none">
-                  <h2>Our Story</h2>
+                  <h2>About Us</h2>
                   <p>
-                    Founded with a passion for quality footwear and South African craftsmanship, 
-                    Mzansi Footwear has been serving customers with premium shoes since our inception.
+                    Welcome to Mzansi Footwear – your ultimate destination for premium sneakers, streetwear, and exclusive drops. Born out of a deep passion for sneaker culture and a commitment to authenticity, we created this space for collectors, enthusiasts, and everyday sneaker lovers who value style, comfort, and originality.
                   </p>
-
-                  <h2>Our Mission</h2>
                   <p>
-                    To provide high-quality, comfortable, and stylish footwear that reflects the 
-                    spirit and diversity of South Africa while maintaining affordable prices for all.
+                    At Mzansi Footwear, we believe that sneakers are more than just shoes – they’re a lifestyle, a statement, and a form of self-expression. That’s why we carefully curate our collection, offering everything from iconic classics to the latest releases from top brands like Nike, Adidas, Jordan, New Balance, and more.
                   </p>
-
-                  <h2>Our Values</h2>
+                  <h2>What sets us apart?</h2>
                   <ul>
-                    <li><strong>Quality:</strong> We source only the finest materials and work with skilled artisans</li>
-                    <li><strong>Authenticity:</strong> Every product reflects genuine South African design and culture</li>
-                    <li><strong>Sustainability:</strong> We're committed to environmentally responsible practices</li>
-                    <li><strong>Community:</strong> Supporting local communities and businesses</li>
+                    <li><strong>100% Authenticity Guarantee:</strong> Every pair we sell is verified for authenticity.</li>
+                    <li><strong>Fast & Secure Shipping:</strong> We deliver nationwide with trusted carriers.</li>
+                    <li><strong>Exceptional Customer Service:</strong> Got questions? Our team is here to help you every step of the way.</li>
                   </ul>
-
-                  <h2>Why Choose Us</h2>
                   <p>
-                    With years of experience in the footwear industry, we understand what makes a 
-                    great shoe. From comfort to durability, style to affordability - we deliver on all fronts.
+                    Whether you’re hunting for a rare grail, looking to elevate your everyday style, or shopping your first pair – we’re here to make it happen.
                   </p>
-
-                  <h2>Contact Us</h2>
                   <p>
-                    Have questions or want to learn more? Reach out to us at info@mzansifootwear.com
+                    Join our community and step into something better.
+                  </p>
+                  <p>
+                    Stay fresh. Stay original.
+                  </p>
+                  <p>
+                    Mzansi Footwear
                   </p>
                 </div>
               </div>
