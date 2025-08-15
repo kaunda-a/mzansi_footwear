@@ -217,6 +217,14 @@ export class PayFastProvider extends BasePaymentProvider {
       throw new Error('PayFast merchant credentials are not configured');
     }
 
+    // Determine the customer email to use based on test mode and merchant email
+    let customerEmail = request.customer.email;
+    if (this._config.testMode && customerEmail === 'learncrypt2@gmail.com') {
+      // In test mode, if the customer email is the same as the assumed test merchant email,
+      // use a dummy email to bypass PayFast's "same account" restriction.
+      customerEmail = 'test.customer@example.com';
+    }
+
     return {
       merchant_id: merchantId,
       merchant_key: merchantKey,
@@ -225,23 +233,25 @@ export class PayFastProvider extends BasePaymentProvider {
       notify_url: request.notifyUrl,
       name_first: request.customer.firstName,
       name_last: request.customer.lastName,
-      email_address: request.customer.email,
+      email_address: customerEmail,
+      cell_number: request.customer.phone || '', // Add cell_number, default to empty string if not provided
       m_payment_id: request.reference,
-      amount: (request.amount.amount * 100).toString(),
+      amount: parseFloat(request.amount.amount).toFixed(2),
       item_name: request.description,
       item_description: request.items.map(item => item.name).join(', '),
       custom_str1: request.metadata.orderId,
       custom_str2: request.metadata.customerId,
       email_confirmation: '1',
-      confirmation_address: request.customer.email
+      confirmation_address: customerEmail
     };
   }
 
   private generateSignature(data: Record<string, any>): string {
     const { passphrase } = this._config.credentials;
 
-    // The order of parameters is critical for PayFast signature generation.
-    const orderedKeys = [
+    // Define the exact order of parameters required by PayFast for form integration.
+    // This order is crucial for signature generation and must match PayFast's documentation.
+    const payfastParamOrder = [
       'merchant_id',
       'merchant_key',
       'return_url',
@@ -250,7 +260,7 @@ export class PayFastProvider extends BasePaymentProvider {
       'name_first',
       'name_last',
       'email_address',
-      'cell_number',
+      'cell_number', // Include if present in data, otherwise it will be skipped.
       'm_payment_id',
       'amount',
       'item_name',
@@ -268,25 +278,22 @@ export class PayFastProvider extends BasePaymentProvider {
       'email_confirmation',
       'confirmation_address',
       'payment_method',
-      'subscription_type',
-      'billing_date',
-      'recurring_amount',
-      'frequency',
-      'cycles',
     ];
 
     let paramString = '';
-    for (const key of orderedKeys) {
-      if (data[key] !== undefined && data[key] !== null && data[key] !== '') {
+    for (const key of payfastParamOrder) {
+      // Only include parameters that are present in the data object and are not null/undefined
+      if (data[key] !== undefined && data[key] !== null) {
         if (paramString !== '') {
           paramString += '&';
         }
-        paramString += `${key}=${encodeURIComponent(data[key])}`;
+        // Encode and then replace %20 with + for spaces
+        paramString += `${key}=${encodeURIComponent(data[key]).replace(/%20/g, '+').replace(/%[0-9a-f]{2}/g, (match) => match.toUpperCase())}`;
       }
     }
 
     if (passphrase) {
-      paramString += `&passphrase=${encodeURIComponent(passphrase)}`;
+      paramString += `&passphrase=${encodeURIComponent(passphrase).replace(/%20/g, "+").replace(/%[0-9a-f]{2}/g, (match) => match.toUpperCase())}`;
     }
 
     return crypto.createHash('md5').update(paramString).digest('hex');

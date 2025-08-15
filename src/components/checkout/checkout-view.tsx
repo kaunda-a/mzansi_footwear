@@ -25,6 +25,7 @@ import {
 } from '@tabler/icons-react';
 import { useCartStore } from '@/lib/cart-store';
 import { formatPrice } from '@/lib/format';
+import { PaymentForm } from '@/components/payments/payment-form';
 
 const PAYMENT_METHODS = [
   { id: 'card', name: 'Credit/Debit Card', icon: IconCreditCard },
@@ -50,6 +51,7 @@ export function CheckoutView() {
   const { items, totalPrice, totalItems, clearCart } = useCartStore();
   
   const [step, setStep] = useState(1);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [formData, setFormData] = useState({
     // Contact Information
     email: '',
@@ -105,19 +107,7 @@ export function CheckoutView() {
   };
 
   const handleSubmitOrder = async () => {
-    try {
-      // TODO: Implement order submission
-      console.log('Submitting order:', { formData, items, total });
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Clear cart and redirect to success page
-      clearCart();
-      router.push('/payment/success');
-    } catch (error) {
-      console.error('Error submitting order:', error);
-    }
+    setShowPaymentForm(true);
   };
 
   if (items.length === 0) {
@@ -133,6 +123,22 @@ export function CheckoutView() {
           Continue Shopping
         </Button>
       </div>
+    );
+  }
+
+  if (showPaymentForm) {
+    return (
+      <PaymentForm
+        orderId="temp-order-id" // Replace with actual order ID
+        amount={total}
+        items={items}
+        customer={{
+          email: formData.email,
+          phone: formData.phone,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+        }}
+      />
     );
   }
 

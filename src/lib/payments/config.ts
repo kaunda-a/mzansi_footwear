@@ -6,7 +6,7 @@ import { PaymentConfig } from './types';
  * Environment variables required:
  * - PAYFAST_MERCHANT_ID
  * - PAYFAST_MERCHANT_KEY  
- * - PAYFAST_PASSPHRASE
+ 
  * - YOCO_SECRET_KEY
  * - YOCO_PUBLIC_KEY
  * - OZOW_SITE_CODE
@@ -26,7 +26,7 @@ export const paymentConfigs: PaymentConfig[] = [
     credentials: {
       merchantId: process.env.PAYFAST_MERCHANT_ID || '',
       merchantKey: process.env.PAYFAST_MERCHANT_KEY || '',
-      passphrase: process.env.PAYFAST_PASSPHRASE || ''
+      
     },
     settings: {
       supportedMethods: ['card', 'eft', 'instant_eft'],

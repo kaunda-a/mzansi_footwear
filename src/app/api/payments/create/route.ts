@@ -49,8 +49,8 @@ export async function POST(request: NextRequest) {
 
     // Build payment request
     const paymentRequest: PaymentRequest = {
-      amount: {
-        amount: parseFloat(body.amount),
+            amount: {
+        amount: Math.round(parseFloat(body.amount) * 100) / 100, // Round to two decimal places
         currency: body.currency || 'ZAR',
         formatted: new Intl.NumberFormat('en-ZA', {
           style: 'currency',
