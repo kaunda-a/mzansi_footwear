@@ -83,28 +83,41 @@ export async function POST(request: NextRequest) {
           create: {
             firstName: body.customer.firstName,
             lastName: body.customer.lastName,
-            email: body.customer.email,
             phone: body.customer.phone,
-            street: body.shippingAddress.street,
+            addressLine1: body.shippingAddress.street,
             city: body.shippingAddress.city,
             province: body.shippingAddress.province,
             postalCode: body.shippingAddress.postalCode,
             country: body.shippingAddress.country || "South Africa",
+            type: "SHIPPING",
           }
         },
         billingAddress: body.billingAddress ? {
           create: {
             firstName: body.billingAddress.firstName || body.customer.firstName,
             lastName: body.billingAddress.lastName || body.customer.lastName,
-            email: body.billingAddress.email || body.customer.email,
             phone: body.billingAddress.phone || body.customer.phone,
-            street: body.billingAddress.street,
+            addressLine1: body.billingAddress.street,
             city: body.billingAddress.city,
             province: body.billingAddress.province,
             postalCode: body.billingAddress.postalCode,
             country: body.billingAddress.country || "South Africa",
+            type: "BILLING",
           }
-        } : undefined,
+        } : {
+          // Use shipping address as billing address if no separate billing address is provided
+          create: {
+            firstName: body.customer.firstName,
+            lastName: body.customer.lastName,
+            phone: body.customer.phone,
+            addressLine1: body.shippingAddress.street,
+            city: body.shippingAddress.city,
+            province: body.shippingAddress.province,
+            postalCode: body.shippingAddress.postalCode,
+            country: body.shippingAddress.country || "South Africa",
+            type: "BOTH",
+          }
+        },
         notes: body.notes || "",
       },
       include: {
