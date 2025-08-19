@@ -60,44 +60,27 @@ export async function POST(request: NextRequest) {
     const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
 
     // Create the order in the database
-    const order = await db.order.create({
-      data: {
-        orderNumber,
-        customerId: session.user.id,
-        totalAmount: parseFloat(body.totalAmount),
-        status: "PENDING",
-        paymentStatus: "PENDING",
-        shippingStatus: "PENDING",
-        customer: {
-          connect: { id: session.user.id }
-        },
-        items: {
-          create: body.items.map((item: any) => ({
-            productId: item.productId,
-            productVariantId: item.productVariantId,
-            quantity: item.quantity,
-            unitPrice: parseFloat(item.unitPrice),
-            totalPrice: parseFloat(item.unitPrice) * item.quantity,
-          }))
-        },
-        shippingAddress: {
-          create: {
-            firstName: body.customer.firstName,
-            lastName: body.customer.lastName,
-            phone: body.customer.phone,
-            addressLine1: body.shippingAddress.street,
-            city: body.shippingAddress.city,
-            province: body.shippingAddress.province,
-            postalCode: body.shippingAddress.postalCode,
-            country: body.shippingAddress.country || "South Africa",
-            type: "SHIPPING" as AddressType,
-            customer: {
-              connect: { id: session.user.id }
-            }
+    // First create the addresses
+    const [shippingAddress, billingAddress] = await Promise.all([
+      db.address.create({
+        data: {
+          firstName: body.customer.firstName,
+          lastName: body.customer.lastName,
+          phone: body.customer.phone,
+          addressLine1: body.shippingAddress.street,
+          city: body.shippingAddress.city,
+          province: body.shippingAddress.province,
+          postalCode: body.shippingAddress.postalCode,
+          country: body.shippingAddress.country || "South Africa",
+          type: "SHIPPING" as AddressType,
+          customer: {
+            connect: { id: session.user.id }
           }
-        },
-        billingAddress: body.billingAddress ? {
-          create: {
+        }
+      }),
+      body.billingAddress ? 
+        db.address.create({
+          data: {
             firstName: body.billingAddress.firstName || body.customer.firstName,
             lastName: body.billingAddress.lastName || body.customer.lastName,
             phone: body.billingAddress.phone || body.customer.phone,
@@ -111,9 +94,9 @@ export async function POST(request: NextRequest) {
               connect: { id: session.user.id }
             }
           }
-        } : {
-          // Use shipping address as billing address if no separate billing address is provided
-          create: {
+        }) :
+        db.address.create({
+          data: {
             firstName: body.customer.firstName,
             lastName: body.customer.lastName,
             phone: body.customer.phone,
@@ -127,6 +110,28 @@ export async function POST(request: NextRequest) {
               connect: { id: session.user.id }
             }
           }
+        })
+    ]);
+
+    // Then create the order with the address IDs
+    const order = await db.order.create({
+      data: {
+        orderNumber,
+        customerId: session.user.id,
+        totalAmount: parseFloat(body.totalAmount),
+        status: "PENDING",
+        paymentStatus: "PENDING",
+        shippingStatus: "PENDING",
+        shippingAddressId: shippingAddress.id,
+        billingAddressId: billingAddress.id,
+        items: {
+          create: body.items.map((item: any) => ({
+            productId: item.productId,
+            productVariantId: item.productVariantId,
+            quantity: item.quantity,
+            unitPrice: parseFloat(item.unitPrice),
+            totalPrice: parseFloat(item.unitPrice) * item.quantity,
+          }))
         },
         notes: body.notes || "",
       },

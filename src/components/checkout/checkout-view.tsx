@@ -114,7 +114,7 @@ export function CheckoutView({ user }: { user?: any }) {
       const orderData = {
         items: items.map(item => ({
           productId: item.productId,
-          productVariantId: item.productVariantId,
+          productVariantId: item.variantId,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
         })),

@@ -9,6 +9,7 @@ import {
   PaymentConfig,
 } from "../types";
 import { db } from "@/lib/prisma";
+import type { PaymentStatus as PrismaPaymentStatus } from "@prisma/client";
 
 interface YocoConfig {
   publicKey: string;
@@ -269,7 +270,7 @@ export class YocoProvider extends BasePaymentProvider {
         where: { id: orderId },
         data: {
           status: orderStatus,
-          paymentStatus: status,
+          paymentStatus: status as PrismaPaymentStatus,
         },
       });
       this.log("info", `Order ${orderId} payment status updated to: ${status}`);
