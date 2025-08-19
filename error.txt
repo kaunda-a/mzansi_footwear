@@ -1,1 +1,1 @@
-the yoco gateway payment might be using YOCO_PUBLIC_KEY instead of NEXT_PUBLIC_YOCO_PUBLIC_KEY, check the app or the shop/lib/ and make the changes, since the public keys are suppose to show on the browser 
+Yoco API Error: 401 {"error":{"code":401,"status":"Unauthorized","message":"The request could not be authorized"}}

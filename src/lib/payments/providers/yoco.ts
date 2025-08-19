@@ -24,17 +24,27 @@ export class YocoProvider extends BasePaymentProvider {
   constructor(config: PaymentConfig) {
     super(config);
     // Use the correct Yoco API base URL
+    // Note: Yoco uses the same endpoint for test and production, but with different credentials
     this.baseUrl = "https://api.yoco.com";
+    
+    // Log test mode status
+    if (config.testMode) {
+      this.log("warn", "Yoco provider initialized in TEST mode");
+    } else {
+      this.log("info", "Yoco provider initialized in PRODUCTION mode");
+    }
   }
 
   protected async validateConfig(): Promise<void> {
     const { publicKey, secretKey } = this._config.credentials;
     
-    // Log part of the secret key for debugging (first 10 characters)
+    // Log configuration details for debugging (without exposing secrets)
     this.log("info", "Validating Yoco config", {
       hasPublicKey: !!publicKey,
       hasSecretKey: !!secretKey,
-      secretKeyPrefix: secretKey ? secretKey.substring(0, 10) : "NONE"
+      secretKeyLength: secretKey ? secretKey.length : 0,
+      publicKeyLength: publicKey ? publicKey.length : 0,
+      testMode: this._config.testMode,
     });
 
     if (!publicKey || !secretKey) {
@@ -85,11 +95,14 @@ export class YocoProvider extends BasePaymentProvider {
           method: "POST",
           headers: headers,
           body: JSON.stringify({
-            amount: request.amount.amount * 100, // Yoco expects amount in cents
+            amount: Math.round(request.amount.amount * 100), // Yoco expects amount in cents, rounded to avoid floating point issues
             currency: request.amount.currency,
             metadata: {
               orderId: request.metadata.orderId,
               customerId: request.metadata.customerId,
+              // Add more metadata for better tracking
+              timestamp: new Date().toISOString(),
+              source: request.metadata.source || "web",
             },
             successUrl: request.returnUrl,
             cancelUrl: request.cancelUrl,
@@ -101,9 +114,14 @@ export class YocoProvider extends BasePaymentProvider {
         const errorText = await response.text();
         this.log("error", "Yoco API Error", {
           status: response.status,
+          statusText: response.statusText,
           text: errorText,
+          url: `${this.baseUrl}/online/v1/checkouts`,
+          method: "POST",
+          hasSecretKey: !!this._config.credentials.secretKey,
+          secretKeyLength: this._config.credentials.secretKey ? this._config.credentials.secretKey.length : 0,
         });
-        throw new Error(`Yoco API Error: ${response.status} ${errorText}`);
+        throw new Error(`Yoco API Error: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       const paymentData = await response.json();
@@ -140,8 +158,17 @@ export class YocoProvider extends BasePaymentProvider {
       );
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message);
+        const errorText = await response.text();
+        this.log("error", "Yoco Get Payment Status Error", {
+          status: response.status,
+          statusText: response.statusText,
+          text: errorText,
+          url: `${this.baseUrl}/online/v1/checkouts/${paymentId}`,
+          method: "GET",
+          hasSecretKey: !!this._config.credentials.secretKey,
+          secretKeyLength: this._config.credentials.secretKey ? this._config.credentials.secretKey.length : 0,
+        });
+        throw new Error(`Yoco Get Payment Status Error: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       const paymentData = await response.json();
@@ -163,12 +190,12 @@ export class YocoProvider extends BasePaymentProvider {
         {
           method: "POST",
           headers: {
-            Authorization: `Basic ${Buffer.from(`:${this._config.credentials.secretKey}`).toString("base64")}`,
+            Authorization: `Bearer ${this._config.credentials.secretKey}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
             chargeId: paymentId,
-            amount: amount ? amount * 100 : undefined, // Convert to cents if provided
+            amount: amount ? Math.round(amount * 100) : undefined, // Convert to cents if provided, rounded to avoid floating point issues
             reason: reason,
           }),
         },
@@ -176,9 +203,16 @@ export class YocoProvider extends BasePaymentProvider {
 
       if (!response.ok) {
         const errorText = await response.text();
-        throw new Error(
-          `Yoco Refund API Error: ${response.status} ${errorText}`,
-        );
+        this.log("error", "Yoco Refund API Error", {
+          status: response.status,
+          statusText: response.statusText,
+          text: errorText,
+          url: `${this.baseUrl}/online/v1/refunds`,
+          method: "POST",
+          hasSecretKey: !!this._config.credentials.secretKey,
+          secretKeyLength: this._config.credentials.secretKey ? this._config.credentials.secretKey.length : 0,
+        });
+        throw new Error(`Yoco Refund API Error: ${response.status} ${response.statusText} - ${errorText}`);
       }
 
       const refundData = await response.json();
@@ -187,9 +221,9 @@ export class YocoProvider extends BasePaymentProvider {
         id: refundData.id,
         paymentId: paymentId,
         amount: {
-          amount: refundData.amount ? refundData.amount / 100 : 0, // Convert back to main currency unit
+          amount: refundData.amount ? Math.round(refundData.amount) / 100 : 0, // Convert back to main currency unit
           currency: refundData.currency,
-          formatted: `${refundData.currency} ${(refundData.amount ? refundData.amount / 100 : 0).toFixed(2)}`,
+          formatted: `${refundData.currency} ${(refundData.amount ? Math.round(refundData.amount) / 100 : 0).toFixed(2)}`,
         },
         reason: refundData.reason,
         status: "completed",
@@ -213,17 +247,26 @@ export class YocoProvider extends BasePaymentProvider {
   }
 
   verifyWebhook(payload: string, signature: string): boolean {
-    // Yoco doesn't use a simple signature header. It uses a timestamp and the event body to create a signature.
-    // This is a simplified version and might need adjustments based on Yoco's specific implementation.
+    // Yoco webhook verification requires headers which aren't passed in the current interface
+    // For now, we're returning true but logging a warning
+    // In a production environment, you should implement proper signature verification
     this.log(
       "warn",
-      "Yoco webhook verification is not fully implemented and should be used with caution.",
+      "Yoco webhook verification is bypassed due to interface limitations. Implement proper verification in production.",
     );
     return true;
   }
 
   async processWebhook(webhook: PaymentWebhook): Promise<void> {
     try {
+      // Note: In a proper implementation, headers should be passed to verifyWebhook
+      // For now, we're skipping verification or using a simplified version
+      const isValid = this.verifyWebhook(JSON.stringify(webhook.data), webhook.signature);
+      if (!isValid) {
+        this.log("error", "Invalid webhook signature");
+        throw new Error("Invalid webhook signature");
+      }
+
       const { data } = webhook;
 
       this.log("info", "Processing Yoco webhook", {
@@ -248,7 +291,12 @@ export class YocoProvider extends BasePaymentProvider {
         return "FAILED";
       case "pending":
         return "PENDING";
+      case "cancelled":
+        return "CANCELLED";
+      case "refunded":
+        return "REFUNDED";
       default:
+        this.log("warn", `Unknown Yoco status: ${yocoStatus}, defaulting to PENDING`);
         return "PENDING";
     }
   }
