@@ -119,6 +119,9 @@ export async function POST(request: NextRequest) {
         orderNumber,
         customerId: session.user.id,
         totalAmount: parseFloat(body.totalAmount),
+        subtotal: parseFloat(body.totalAmount), // For now, we'll use totalAmount as subtotal
+        taxAmount: 0, // We'll calculate this properly later
+        shippingAmount: 0, // We'll calculate this properly later
         status: "PENDING",
         paymentStatus: "PENDING",
         shippingStatus: "PENDING",
@@ -133,7 +136,7 @@ export async function POST(request: NextRequest) {
             totalPrice: parseFloat(item.unitPrice) * item.quantity,
           }))
         },
-        notes: body.notes || "",
+        customerNotes: body.notes || "",
       },
       include: {
         customer: true,
