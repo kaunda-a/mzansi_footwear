@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { OrderService } from "@/lib/services/orders";
 import { db } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import type { AddressType } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -89,7 +90,7 @@ export async function POST(request: NextRequest) {
             province: body.shippingAddress.province,
             postalCode: body.shippingAddress.postalCode,
             country: body.shippingAddress.country || "South Africa",
-            type: "SHIPPING",
+            type: "SHIPPING" as AddressType,
           }
         },
         billingAddress: body.billingAddress ? {
@@ -102,7 +103,7 @@ export async function POST(request: NextRequest) {
             province: body.billingAddress.province,
             postalCode: body.billingAddress.postalCode,
             country: body.billingAddress.country || "South Africa",
-            type: "BILLING",
+            type: "BILLING" as AddressType,
           }
         } : {
           // Use shipping address as billing address if no separate billing address is provided
@@ -115,7 +116,7 @@ export async function POST(request: NextRequest) {
             province: body.shippingAddress.province,
             postalCode: body.shippingAddress.postalCode,
             country: body.shippingAddress.country || "South Africa",
-            type: "BOTH",
+            type: "BOTH" as AddressType,
           }
         },
         notes: body.notes || "",
