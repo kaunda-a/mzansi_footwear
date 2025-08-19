@@ -1,7 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getPaymentManager, initializePaymentManager } from '@/lib/payments/payment-manager';
-import { paymentConfigs } from '@/lib/payments/config';
-import { PaymentProvider } from '@/lib/payments/types';
+import { NextRequest, NextResponse } from "next/server";
+import {
+  getPaymentManager,
+  initializePaymentManager,
+} from "@/lib/payments/payment-manager";
+import { paymentConfigs } from "@/lib/payments/config";
+import { PaymentProvider } from "@/lib/payments/types";
 
 // Initialize payment manager
 let paymentManagerInitialized = false;
@@ -17,36 +20,36 @@ async function ensurePaymentManagerInitialized() {
 export async function POST(request: NextRequest) {
   try {
     await ensurePaymentManagerInitialized();
-    
+
     // Get provider from query params or headers
     const { searchParams } = new URL(request.url);
-    const provider = searchParams.get('provider') as PaymentProvider;
-    
+    const provider = searchParams.get("provider") as PaymentProvider;
+
     if (!provider) {
       return NextResponse.json(
-        { error: 'Provider parameter is required' },
-        { status: 400 }
+        { error: "Provider parameter is required" },
+        { status: 400 },
       );
     }
 
     // Get request body and headers
     const body = await request.text();
     const headers = Object.fromEntries(request.headers.entries());
-    
+
     // Extract signature from headers (different providers use different header names)
-    const signature = 
-      headers['x-signature'] ||
-      headers['x-payfast-signature'] ||
-      headers['x-yoco-signature'] ||
-      headers['x-ozow-signature'] ||
-      headers['signature'] ||
-      '';
+    const signature =
+      headers["x-signature"] ||
+      headers["x-payfast-signature"] ||
+      headers["x-yoco-signature"] ||
+      headers["x-ozow-signature"] ||
+      headers["signature"] ||
+      "";
 
     if (!signature) {
       console.error(`No signature found in webhook headers for ${provider}`);
       return NextResponse.json(
-        { error: 'Webhook signature is required' },
-        { status: 400 }
+        { error: "Webhook signature is required" },
+        { status: 400 },
       );
     }
 
@@ -55,8 +58,8 @@ export async function POST(request: NextRequest) {
       provider,
       bodyLength: body.length,
       hasSignature: !!signature,
-      headers: Object.keys(headers).filter(h => h.startsWith('x-')),
-      timestamp: new Date().toISOString()
+      headers: Object.keys(headers).filter((h) => h.startsWith("x-")),
+      timestamp: new Date().toISOString(),
     });
 
     // Process webhook with payment manager
@@ -65,31 +68,30 @@ export async function POST(request: NextRequest) {
       provider,
       body,
       signature,
-      headers
+      headers,
     );
 
     if (!processed) {
       console.error(`Failed to process webhook from ${provider}`);
       return NextResponse.json(
-        { error: 'Webhook processing failed' },
-        { status: 400 }
+        { error: "Webhook processing failed" },
+        { status: 400 },
       );
     }
 
     console.log(`✅ Webhook processed successfully for ${provider}`);
-    
-    // Return success response (format may vary by provider)
-    return new NextResponse('OK', { status: 200 });
 
+    // Return success response (format may vary by provider)
+    return new NextResponse("OK", { status: 200 });
   } catch (error) {
-    console.error('Webhook processing error:', error);
-    
+    console.error("Webhook processing error:", error);
+
     return NextResponse.json(
-      { 
-        error: 'Webhook processing failed',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: "Webhook processing failed",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -98,61 +100,54 @@ export async function POST(request: NextRequest) {
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const provider = searchParams.get('provider') as PaymentProvider;
-    const challenge = searchParams.get('challenge');
-    
+    const provider = searchParams.get("provider") as PaymentProvider;
+    const challenge = searchParams.get("challenge");
+
     if (!provider) {
       return NextResponse.json(
-        { error: 'Provider parameter is required' },
-        { status: 400 }
+        { error: "Provider parameter is required" },
+        { status: 400 },
       );
     }
 
     console.log(`🔍 Webhook verification request from ${provider}`, {
       provider,
       hasChallenge: !!challenge,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Handle provider-specific verification
     switch (provider) {
-      case 'payfast':
+      case "payfast":
         // PayFast doesn't typically require GET verification
-        return new NextResponse('PayFast webhook endpoint active', { status: 200 });
-        
+        return new NextResponse("PayFast webhook endpoint active", {
+          status: 200,
+        });
 
       default:
-        return new NextResponse(`${provider} webhook endpoint active`, { status: 200 });
+        return new NextResponse(`${provider} webhook endpoint active`, {
+          status: 200,
+        });
     }
-
   } catch (error) {
-    console.error('Webhook verification error:', error);
-    
+    console.error("Webhook verification error:", error);
+
     return NextResponse.json(
-      { error: 'Webhook verification failed' },
-      { status: 500 }
+      { error: "Webhook verification failed" },
+      { status: 500 },
     );
   }
 }
 
 // Handle other HTTP methods
 export async function PUT(request: NextRequest) {
-  return NextResponse.json(
-    { error: 'Method not allowed' },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }
 
 export async function DELETE(request: NextRequest) {
-  return NextResponse.json(
-    { error: 'Method not allowed' },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }
 
 export async function PATCH(request: NextRequest) {
-  return NextResponse.json(
-    { error: 'Method not allowed' },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: "Method not allowed" }, { status: 405 });
 }

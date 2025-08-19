@@ -1,12 +1,12 @@
-import { db } from '@/lib/prisma';
-import { User, UserRole } from '@prisma/client';
+import { db } from "@/lib/prisma";
+import { User, UserRole } from "@prisma/client";
 
 // User role hierarchy and permissions
 export const USER_ROLES = {
-  SUPER_ADMIN: 'SUPER_ADMIN',
-  ADMIN: 'ADMIN',
-  MANAGER: 'MANAGER',
-  STAFF: 'STAFF'
+  SUPER_ADMIN: "SUPER_ADMIN",
+  ADMIN: "ADMIN",
+  MANAGER: "MANAGER",
+  STAFF: "STAFF",
 } as const;
 
 // Role hierarchy (higher number = more permissions)
@@ -14,23 +14,24 @@ export const ROLE_HIERARCHY = {
   [USER_ROLES.STAFF]: 1,
   [USER_ROLES.MANAGER]: 2,
   [USER_ROLES.ADMIN]: 3,
-  [USER_ROLES.SUPER_ADMIN]: 4
+  [USER_ROLES.SUPER_ADMIN]: 4,
 } as const;
 
 // Role display names
 export const ROLE_DISPLAY_NAMES = {
-  [USER_ROLES.SUPER_ADMIN]: 'Super Administrator',
-  [USER_ROLES.ADMIN]: 'Administrator',
-  [USER_ROLES.MANAGER]: 'Manager',
-  [USER_ROLES.STAFF]: 'Staff Member'
+  [USER_ROLES.SUPER_ADMIN]: "Super Administrator",
+  [USER_ROLES.ADMIN]: "Administrator",
+  [USER_ROLES.MANAGER]: "Manager",
+  [USER_ROLES.STAFF]: "Staff Member",
 } as const;
 
 // Role descriptions
 export const ROLE_DESCRIPTIONS = {
-  [USER_ROLES.SUPER_ADMIN]: 'Full system access with user management capabilities',
-  [USER_ROLES.ADMIN]: 'Administrative access to most system features',
-  [USER_ROLES.MANAGER]: 'Management access to products, orders, and customers',
-  [USER_ROLES.STAFF]: 'Basic access to view and manage assigned tasks'
+  [USER_ROLES.SUPER_ADMIN]:
+    "Full system access with user management capabilities",
+  [USER_ROLES.ADMIN]: "Administrative access to most system features",
+  [USER_ROLES.MANAGER]: "Management access to products, orders, and customers",
+  [USER_ROLES.STAFF]: "Basic access to view and manage assigned tasks",
 } as const;
 
 // Permission structure type
@@ -62,7 +63,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, ResourcePermissions> = {
     billboards: { create: true, read: true, update: true, delete: true },
     marquee: { create: true, read: true, update: true, delete: true },
     analytics: { read: true },
-    settings: { read: true, update: true }
+    settings: { read: true, update: true },
   },
   [USER_ROLES.ADMIN]: {
     users: { create: false, read: true, update: false, delete: false },
@@ -72,7 +73,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, ResourcePermissions> = {
     billboards: { create: true, read: true, update: true, delete: true },
     marquee: { create: true, read: true, update: true, delete: true },
     analytics: { read: true },
-    settings: { read: true, update: false }
+    settings: { read: true, update: false },
   },
   [USER_ROLES.MANAGER]: {
     users: { create: false, read: false, update: false, delete: false },
@@ -82,7 +83,7 @@ export const ROLE_PERMISSIONS: Record<UserRole, ResourcePermissions> = {
     billboards: { create: false, read: true, update: false, delete: false },
     marquee: { create: false, read: true, update: false, delete: false },
     analytics: { read: true },
-    settings: { read: false, update: false }
+    settings: { read: false, update: false },
   },
   [USER_ROLES.STAFF]: {
     users: { create: false, read: false, update: false, delete: false },
@@ -92,34 +93,40 @@ export const ROLE_PERMISSIONS: Record<UserRole, ResourcePermissions> = {
     billboards: { create: false, read: true, update: false, delete: false },
     marquee: { create: false, read: true, update: false, delete: false },
     analytics: { read: false },
-    settings: { read: false, update: false }
-  }
+    settings: { read: false, update: false },
+  },
 } as const;
 
 // Helper functions
 export function hasPermission(
   userRole: UserRole,
   resource: keyof ResourcePermissions,
-  action: 'create' | 'read' | 'update' | 'delete'
+  action: "create" | "read" | "update" | "delete",
 ): boolean {
   const permissions = ROLE_PERMISSIONS[userRole];
   const resourcePermissions = permissions?.[resource];
   if (!resourcePermissions) return false;
 
   // Handle special cases for analytics and settings
-  if (resource === 'analytics') {
-    return action === 'read' && (resourcePermissions as any).read;
+  if (resource === "analytics") {
+    return action === "read" && (resourcePermissions as any).read;
   }
 
-  if (resource === 'settings') {
-    return (action === 'read' || action === 'update') && (resourcePermissions as any)[action];
+  if (resource === "settings") {
+    return (
+      (action === "read" || action === "update") &&
+      (resourcePermissions as any)[action]
+    );
   }
 
   // Handle standard CRUD permissions
   return (resourcePermissions as PermissionActions)[action] ?? false;
 }
 
-export function canManageUser(currentUserRole: UserRole, targetUserRole: UserRole): boolean {
+export function canManageUser(
+  currentUserRole: UserRole,
+  targetUserRole: UserRole,
+): boolean {
   // Super admins can manage anyone
   if (currentUserRole === USER_ROLES.SUPER_ADMIN) return true;
 
@@ -138,27 +145,33 @@ export function getAvailableRoles(currentUserRole: UserRole): UserRole[] {
 export function getRoleColor(role: UserRole): string {
   switch (role) {
     case USER_ROLES.SUPER_ADMIN:
-      return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+      return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200";
     case USER_ROLES.ADMIN:
-      return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+      return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
     case USER_ROLES.MANAGER:
-      return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+      return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
     case USER_ROLES.STAFF:
-      return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+      return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
     default:
-      return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+      return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200";
   }
 }
 
-export function formatUserName(firstName?: string | null, lastName?: string | null): string {
-  if (!firstName && !lastName) return 'Unknown User';
-  return `${firstName || ''} ${lastName || ''}`.trim();
+export function formatUserName(
+  firstName?: string | null,
+  lastName?: string | null,
+): string {
+  if (!firstName && !lastName) return "Unknown User";
+  return `${firstName || ""} ${lastName || ""}`.trim();
 }
 
-export function getUserInitials(firstName?: string | null, lastName?: string | null): string {
-  const first = firstName?.charAt(0)?.toUpperCase() || '';
-  const last = lastName?.charAt(0)?.toUpperCase() || '';
-  return first + last || 'U';
+export function getUserInitials(
+  firstName?: string | null,
+  lastName?: string | null,
+): string {
+  const first = firstName?.charAt(0)?.toUpperCase() || "";
+  const last = lastName?.charAt(0)?.toUpperCase() || "";
+  return first + last || "U";
 }
 
 export type UserWithDetails = User & {
@@ -230,9 +243,9 @@ export const UserService = {
 
     if (search) {
       where.OR = [
-        { email: { contains: search, mode: 'insensitive' } },
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: "insensitive" } },
+        { firstName: { contains: search, mode: "insensitive" } },
+        { lastName: { contains: search, mode: "insensitive" } },
       ];
     }
 
@@ -251,7 +264,7 @@ export const UserService = {
             },
           },
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         skip,
         take: limit,
       }),
@@ -306,7 +319,7 @@ export const UserService = {
     const [totalUsers, usersByRole] = await Promise.all([
       db.user.count(),
       db.user.groupBy({
-        by: ['role'],
+        by: ["role"],
         _count: {
           role: true,
         },
@@ -315,11 +328,13 @@ export const UserService = {
 
     return {
       totalUsers,
-      usersByRole: usersByRole.reduce((acc, item) => {
-        acc[item.role] = item._count.role;
-        return acc;
-      }, {} as Record<UserRole, number>),
+      usersByRole: usersByRole.reduce(
+        (acc, item) => {
+          acc[item.role] = item._count.role;
+          return acc;
+        },
+        {} as Record<UserRole, number>,
+      ),
     };
   },
 };
-

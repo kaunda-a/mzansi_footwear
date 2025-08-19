@@ -1,6 +1,6 @@
-import Link from 'next/link'
-import { Button } from '@/components/ui/button'
-import { IconPackage, IconShoppingBag } from '@tabler/icons-react'
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { IconPackage, IconShoppingBag } from "@tabler/icons-react";
 
 export function OrderEmptyState() {
   return (
@@ -11,7 +11,8 @@ export function OrderEmptyState() {
         </div>
         <h3 className="mt-4 text-lg font-semibold">No orders found</h3>
         <p className="mb-4 mt-2 text-sm text-muted-foreground">
-          You haven&apos;t placed any orders yet. Start shopping to see your orders here.
+          You haven&apos;t placed any orders yet. Start shopping to see your
+          orders here.
         </p>
         <Button asChild>
           <Link href="/products">
@@ -21,5 +22,5 @@ export function OrderEmptyState() {
         </Button>
       </div>
     </div>
-  )
+  );
 }

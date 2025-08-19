@@ -1,18 +1,25 @@
-'use client';
+"use client";
 
-import * as React from 'react';
-import Image from 'next/image';
-import Dropzone, { FileRejection } from 'react-dropzone';
-import { IconX, IconUpload, IconArrowUp, IconArrowDown, IconStar, IconStarFilled } from '@tabler/icons-react';
-import { toast } from 'sonner';
+import * as React from "react";
+import Image from "next/image";
+import Dropzone, { FileRejection } from "react-dropzone";
+import {
+  IconX,
+  IconUpload,
+  IconArrowUp,
+  IconArrowDown,
+  IconStar,
+  IconStarFilled,
+} from "@tabler/icons-react";
+import { toast } from "sonner";
 
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { useControllableState } from '@/hooks/use-controllable-state';
-import { cn, formatBytes } from '@/lib/utils';
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useControllableState } from "@/hooks/use-controllable-state";
+import { cn, formatBytes } from "@/lib/utils";
 
 export interface ProductImage {
   id?: string;
@@ -44,7 +51,9 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
   // Ensure images is never undefined
   const safeImages = images || [];
   const [uploading, setUploading] = React.useState(false);
-  const [uploadProgress, setUploadProgress] = React.useState<{ [key: string]: number }>({});
+  const [uploadProgress, setUploadProgress] = React.useState<{
+    [key: string]: number;
+  }>({});
 
   const handleUpload = async (files: File[]) => {
     if (safeImages.length + files.length > maxImages) {
@@ -58,13 +67,13 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
     try {
       const formData = new FormData();
       files.forEach((file) => {
-        formData.append('files', file);
+        formData.append("files", file);
       });
 
       setUploadProgress({ bulk: 25 });
 
-      const res = await fetch('/api/upload/bulk', {
-        method: 'POST',
+      const res = await fetch("/api/upload/bulk", {
+        method: "POST",
         body: formData,
       });
 
@@ -72,23 +81,25 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || 'Bulk upload failed');
+        throw new Error(errorData.error || "Bulk upload failed");
       }
 
       const data = await res.json();
 
-      const newImages: ProductImage[] = data.images.map((img: any, index: number) => ({
-        url: img.url,
-        altText: img.originalName.split('.')[0],
-        sortOrder: safeImages.length + index,
-        isPrimary: safeImages.length === 0 && index === 0, // First image is primary if no images exist
-      }));
+      const newImages: ProductImage[] = data.images.map(
+        (img: any, index: number) => ({
+          url: img.url,
+          altText: img.originalName.split(".")[0],
+          sortOrder: safeImages.length + index,
+          isPrimary: safeImages.length === 0 && index === 0, // First image is primary if no images exist
+        }),
+      );
 
       setUploadProgress({ bulk: 100 });
       setImages([...safeImages, ...newImages]);
       toast.success(`${files.length} image(s) uploaded successfully!`);
     } catch (error) {
-      toast.error((error as Error).message || 'Upload error');
+      toast.error((error as Error).message || "Upload error");
     } finally {
       setUploading(false);
       setUploadProgress({});
@@ -101,7 +112,7 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
         toast.error(`${rejection.file.name}: ${rejection.errors[0].message}`);
       });
     }
-    
+
     if (acceptedFiles.length > 0) {
       handleUpload(acceptedFiles);
     }
@@ -113,7 +124,14 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
     const reorderedImages = newImages.map((img, i) => ({
       ...img,
       sortOrder: i,
-      isPrimary: i === 0 && newImages.length > 0 ? true : (i === 0 ? false : img.isPrimary && i !== 0 ? false : img.isPrimary)
+      isPrimary:
+        i === 0 && newImages.length > 0
+          ? true
+          : i === 0
+            ? false
+            : img.isPrimary && i !== 0
+              ? false
+              : img.isPrimary,
     }));
     setImages(reorderedImages);
   };
@@ -121,29 +139,32 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
   const setPrimaryImage = (index: number) => {
     const newImages = safeImages.map((img, i) => ({
       ...img,
-      isPrimary: i === index
+      isPrimary: i === index,
     }));
     setImages(newImages);
   };
 
   const updateAltText = (index: number, altText: string) => {
     const newImages = safeImages.map((img, i) =>
-      i === index ? { ...img, altText } : img
+      i === index ? { ...img, altText } : img,
     );
     setImages(newImages);
   };
 
-  const moveImage = (index: number, direction: 'up' | 'down') => {
-    const newIndex = direction === 'up' ? index - 1 : index + 1;
+  const moveImage = (index: number, direction: "up" | "down") => {
+    const newIndex = direction === "up" ? index - 1 : index + 1;
     if (newIndex < 0 || newIndex >= safeImages.length) return;
 
     const newImages = [...safeImages];
-    [newImages[index], newImages[newIndex]] = [newImages[newIndex], newImages[index]];
+    [newImages[index], newImages[newIndex]] = [
+      newImages[newIndex],
+      newImages[index],
+    ];
 
     // Update sort orders
     const reorderedImages = newImages.map((img, i) => ({
       ...img,
-      sortOrder: i
+      sortOrder: i,
     }));
 
     setImages(reorderedImages);
@@ -152,12 +173,12 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
   return (
     <div className="space-y-4">
       {/* Upload Area */}
-      <Dropzone 
-        onDrop={onDrop} 
+      <Dropzone
+        onDrop={onDrop}
         disabled={disabled || uploading || safeImages.length >= maxImages}
         multiple={true}
         accept={{
-          'image/*': ['.jpeg', '.jpg', '.png', '.webp', '.gif']
+          "image/*": [".jpeg", ".jpg", ".png", ".webp", ".gif"],
         }}
         maxSize={5 * 1024 * 1024} // 5MB
       >
@@ -165,10 +186,11 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
           <div
             {...getRootProps()}
             className={cn(
-              'border-2 border-dashed border-gray-300 p-6 rounded-lg text-center cursor-pointer transition-colors',
-              isDragActive && 'border-blue-500 bg-blue-50',
-              (disabled || uploading || safeImages.length >= maxImages) && 'opacity-50 cursor-not-allowed',
-              !isDragActive && 'hover:bg-gray-50'
+              "border-2 border-dashed border-gray-300 p-6 rounded-lg text-center cursor-pointer transition-colors",
+              isDragActive && "border-blue-500 bg-blue-50",
+              (disabled || uploading || safeImages.length >= maxImages) &&
+                "opacity-50 cursor-not-allowed",
+              !isDragActive && "hover:bg-gray-50",
             )}
           >
             <input {...getInputProps()} />
@@ -176,10 +198,13 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
               <IconUpload className="h-8 w-8 text-muted-foreground" />
               <div>
                 <p className="text-sm font-medium">
-                  {isDragActive ? 'Drop images here' : 'Drag & drop images or click to upload'}
+                  {isDragActive
+                    ? "Drop images here"
+                    : "Drag & drop images or click to upload"}
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  {safeImages.length}/{maxImages} images • Max 5MB per image • JPEG, PNG, WebP, GIF
+                  {safeImages.length}/{maxImages} images • Max 5MB per image •
+                  JPEG, PNG, WebP, GIF
                 </p>
               </div>
             </div>
@@ -206,8 +231,12 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
       {safeImages.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <Label className="text-sm font-medium">Product Images ({safeImages.length})</Label>
-            <p className="text-xs text-muted-foreground">Use arrows to reorder • Star to set primary</p>
+            <Label className="text-sm font-medium">
+              Product Images ({safeImages.length})
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              Use arrows to reorder • Star to set primary
+            </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -216,7 +245,7 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
                 key={`${image.url}-${index}`}
                 className={cn(
                   "relative group border rounded-lg overflow-hidden bg-white",
-                  image.isPrimary && "ring-2 ring-blue-500"
+                  image.isPrimary && "ring-2 ring-blue-500",
                 )}
               >
                 {/* Reorder Buttons */}
@@ -226,7 +255,7 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
                     size="icon"
                     variant="ghost"
                     className="h-6 w-6 bg-black/50 hover:bg-black/70"
-                    onClick={() => moveImage(index, 'up')}
+                    onClick={() => moveImage(index, "up")}
                     disabled={index === 0}
                   >
                     <IconArrowUp className="h-3 w-3 text-white" />
@@ -236,7 +265,7 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
                     size="icon"
                     variant="ghost"
                     className="h-6 w-6 bg-black/50 hover:bg-black/70"
-                    onClick={() => moveImage(index, 'down')}
+                    onClick={() => moveImage(index, "down")}
                     disabled={index === safeImages.length - 1}
                   >
                     <IconArrowDown className="h-3 w-3 text-white" />
@@ -284,11 +313,13 @@ export const BulkImageUploader: React.FC<BulkImageUploaderProps> = ({
                   <div className="flex items-center gap-2">
                     <Label className="text-xs">Alt Text:</Label>
                     {image.isPrimary && (
-                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">Primary</span>
+                      <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded">
+                        Primary
+                      </span>
                     )}
                   </div>
                   <Input
-                    value={image.altText || ''}
+                    value={image.altText || ""}
                     onChange={(e) => updateAltText(index, e.target.value)}
                     placeholder="Describe this image..."
                     className="text-xs h-8"

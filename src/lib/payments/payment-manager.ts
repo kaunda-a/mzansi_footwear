@@ -1,17 +1,18 @@
-import { 
-  PaymentProvider, 
-  PaymentConfig, 
-  PaymentRequest, 
-  PaymentResponse, 
-  PaymentStatus, 
-  PaymentRefund, 
+import {
+  PaymentProvider,
+  PaymentConfig,
+  PaymentRequest,
+  PaymentResponse,
+  PaymentStatus,
+  PaymentRefund,
   PaymentWebhook,
   PaymentProviderInterface,
   PaymentAnalytics,
-  PaymentMethod
-} from './types';
+  PaymentMethod,
+} from "./types";
 
-import { PayFastProvider } from './providers/payfast';
+import { PayFastProvider } from "./providers/payfast";
+import { YocoProvider } from "./providers/yoco";
 
 export class PaymentManager {
   private providers: Map<PaymentProvider, PaymentProviderInterface> = new Map();
@@ -19,7 +20,7 @@ export class PaymentManager {
   private initialized: boolean = false;
 
   constructor(configs: PaymentConfig[]) {
-    configs.forEach(config => {
+    configs.forEach((config) => {
       this.configs.set(config.provider, config);
     });
   }
@@ -30,30 +31,37 @@ export class PaymentManager {
   async initialize(): Promise<void> {
     if (this.initialized) return;
 
-    const initPromises = Array.from(this.configs.entries()).map(async ([provider, config]) => {
-      if (!config.enabled) return;
+    const initPromises = Array.from(this.configs.entries()).map(
+      async ([provider, config]) => {
+        if (!config.enabled) return;
 
-      try {
-        const providerInstance = this.createProviderInstance(provider, config);
-        await providerInstance.initialize();
-        this.providers.set(provider, providerInstance);
-        console.log(`✅ ${provider} payment provider initialized`);
-      } catch (error) {
-        console.error(`❌ Failed to initialize ${provider} provider:`, error);
-      }
-    });
+        try {
+          const providerInstance = this.createProviderInstance(
+            provider,
+            config,
+          );
+          await providerInstance.initialize();
+          this.providers.set(provider, providerInstance);
+          console.log(`✅ ${provider} payment provider initialized`);
+        } catch (error) {
+          console.error(`❌ Failed to initialize ${provider} provider:`, error);
+        }
+      },
+    );
 
     await Promise.all(initPromises);
     this.initialized = true;
-    console.log(`🚀 Payment Manager initialized with ${this.providers.size} providers`);
+    console.log(
+      `🚀 Payment Manager initialized with ${this.providers.size} providers`,
+    );
   }
 
   /**
    * Get available payment providers
    */
   getAvailableProviders(): PaymentProvider[] {
-    return Array.from(this.providers.keys()).filter(provider => 
-      this.providers.get(provider)?.isAvailable()
+    return Array.from(this.providers.keys()).filter((provider) =>
+      this.providers.get(provider)?.isAvailable(),
     );
   }
 
@@ -61,7 +69,7 @@ export class PaymentManager {
    * Get providers that support specific payment methods
    */
   getProvidersByMethod(method: PaymentMethod): PaymentProvider[] {
-    return this.getAvailableProviders().filter(provider => {
+    return this.getAvailableProviders().filter((provider) => {
       const config = this.configs.get(provider);
       return config?.settings.supportedMethods.includes(method);
     });
@@ -70,18 +78,21 @@ export class PaymentManager {
   /**
    * Get the best provider for a payment request
    */
-  getBestProvider(request: PaymentRequest, preferredMethods?: PaymentMethod[]): PaymentProvider | null {
+  getBestProvider(
+    request: PaymentRequest,
+    preferredMethods?: PaymentMethod[],
+  ): PaymentProvider | null {
     const availableProviders = this.getAvailableProviders();
-    
+
     if (availableProviders.length === 0) return null;
 
     // Filter by preferred methods if specified
     let candidates = availableProviders;
     if (preferredMethods && preferredMethods.length > 0) {
-      candidates = availableProviders.filter(provider => {
+      candidates = availableProviders.filter((provider) => {
         const config = this.configs.get(provider);
-        return preferredMethods.some(method => 
-          config?.settings.supportedMethods.includes(method)
+        return preferredMethods.some((method) =>
+          config?.settings.supportedMethods.includes(method),
         );
       });
     }
@@ -89,8 +100,8 @@ export class PaymentManager {
     if (candidates.length === 0) candidates = availableProviders;
 
     // Simple selection logic - PayFast is the only provider
-    const priorities: PaymentProvider[] = ['payfast'];
-    
+    const priorities: PaymentProvider[] = ["yoco", "payfast"];
+
     for (const priority of priorities) {
       if (candidates.includes(priority)) {
         return priority;
@@ -104,23 +115,23 @@ export class PaymentManager {
    * Create a payment using the specified or best available provider
    */
   async createPayment(
-    request: PaymentRequest, 
-    provider?: PaymentProvider
+    request: PaymentRequest,
+    provider?: PaymentProvider,
   ): Promise<PaymentResponse> {
     try {
       const selectedProvider = provider || this.getBestProvider(request);
-      
+
       if (!selectedProvider) {
         return {
           success: false,
-          paymentId: '',
-          status: 'FAILED',
-          reference: '',
+          paymentId: "",
+          status: "FAILED",
+          reference: "",
           error: {
-            code: 'NO_PROVIDER_AVAILABLE',
-            message: 'No payment provider is available',
-            retryable: false
-          }
+            code: "NO_PROVIDER_AVAILABLE",
+            message: "No payment provider is available",
+            retryable: false,
+          },
         };
       }
 
@@ -132,28 +143,27 @@ export class PaymentManager {
       console.log(`💳 Creating payment with ${selectedProvider}`, {
         amount: request.amount.amount,
         currency: request.amount.currency,
-        customer: request.customer.email
+        customer: request.customer.email,
       });
 
       const response = await providerInstance.createPayment(request);
-      
+
       // Log the payment attempt
       await this.logPaymentAttempt(selectedProvider, request, response);
-      
-      return response;
 
+      return response;
     } catch (error) {
-      console.error('Payment creation failed:', error);
+      console.error("Payment creation failed:", error);
       return {
         success: false,
-        paymentId: '',
-        status: 'FAILED',
-        reference: '',
+        paymentId: "",
+        status: "FAILED",
+        reference: "",
         error: {
-          code: 'PAYMENT_CREATION_ERROR',
-          message: error instanceof Error ? error.message : 'Unknown error',
-          retryable: true
-        }
+          code: "PAYMENT_CREATION_ERROR",
+          message: error instanceof Error ? error.message : "Unknown error",
+          retryable: true,
+        },
       };
     }
   }
@@ -161,7 +171,10 @@ export class PaymentManager {
   /**
    * Get payment status from the appropriate provider
    */
-  async getPaymentStatus(paymentId: string, provider: PaymentProvider): Promise<PaymentStatus> {
+  async getPaymentStatus(
+    paymentId: string,
+    provider: PaymentProvider,
+  ): Promise<PaymentStatus> {
     const providerInstance = this.providers.get(provider);
     if (!providerInstance) {
       throw new Error(`Provider ${provider} not available`);
@@ -174,10 +187,10 @@ export class PaymentManager {
    * Process a refund using the appropriate provider
    */
   async refundPayment(
-    paymentId: string, 
-    provider: PaymentProvider, 
-    amount?: number, 
-    reason?: string
+    paymentId: string,
+    provider: PaymentProvider,
+    amount?: number,
+    reason?: string,
   ): Promise<PaymentRefund> {
     const providerInstance = this.providers.get(provider);
     if (!providerInstance) {
@@ -194,7 +207,7 @@ export class PaymentManager {
     provider: PaymentProvider,
     payload: string,
     signature: string,
-    headers: Record<string, string>
+    headers: Record<string, string>,
   ): Promise<boolean> {
     try {
       const providerInstance = this.providers.get(provider);
@@ -214,17 +227,16 @@ export class PaymentManager {
       const webhook: PaymentWebhook = {
         id: `${provider}_${Date.now()}`,
         provider,
-        event: headers['x-event-type'] || 'payment.update',
+        event: headers["x-event-type"] || "payment.update",
         data: JSON.parse(payload),
         signature,
         timestamp: new Date(),
-        verified: true
+        verified: true,
       };
 
       await providerInstance.processWebhook(webhook);
       console.log(`✅ Webhook processed successfully for ${provider}`);
       return true;
-
     } catch (error) {
       console.error(`Webhook processing failed for ${provider}:`, error);
       return false;
@@ -236,8 +248,8 @@ export class PaymentManager {
    */
   calculateFees(amount: number): Record<PaymentProvider, number> {
     const fees: Record<string, number> = {};
-    
-    this.getAvailableProviders().forEach(provider => {
+
+    this.getAvailableProviders().forEach((provider) => {
       const providerInstance = this.providers.get(provider);
       if (providerInstance) {
         fees[provider] = providerInstance.calculateFees(amount);
@@ -250,7 +262,10 @@ export class PaymentManager {
   /**
    * Get payment analytics across all providers
    */
-  async getAnalytics(startDate: Date, endDate: Date): Promise<PaymentAnalytics> {
+  async getAnalytics(
+    startDate: Date,
+    endDate: Date,
+  ): Promise<PaymentAnalytics> {
     // This would typically query your database for payment statistics
     // For now, return a mock structure
     return {
@@ -263,8 +278,8 @@ export class PaymentManager {
       fraudDetection: {
         flaggedTransactions: 0,
         blockedTransactions: 0,
-        falsePositives: 0
-      }
+        falsePositives: 0,
+      },
     };
   }
 
@@ -273,7 +288,7 @@ export class PaymentManager {
    */
   async healthCheck(): Promise<Record<PaymentProvider, boolean>> {
     const health: Record<string, boolean> = {};
-    
+
     for (const [provider, instance] of this.providers.entries()) {
       try {
         health[provider] = instance.isAvailable();
@@ -286,10 +301,15 @@ export class PaymentManager {
     return health as Record<PaymentProvider, boolean>;
   }
 
-  private createProviderInstance(provider: PaymentProvider, config: PaymentConfig): PaymentProviderInterface {
+  private createProviderInstance(
+    provider: PaymentProvider,
+    config: PaymentConfig,
+  ): PaymentProviderInterface {
     switch (provider) {
-      case 'payfast':
+      case "payfast":
         return new PayFastProvider(config);
+      case "yoco":
+        return new YocoProvider(config);
       default:
         throw new Error(`Unsupported payment provider: ${provider}`);
     }
@@ -298,16 +318,16 @@ export class PaymentManager {
   private async logPaymentAttempt(
     provider: PaymentProvider,
     request: PaymentRequest,
-    response: PaymentResponse
+    response: PaymentResponse,
   ): Promise<void> {
     // Log payment attempt to your database/analytics service
-    console.log('Payment attempt logged', {
+    console.log("Payment attempt logged", {
       provider,
       success: response.success,
       amount: request.amount.amount,
       currency: request.amount.currency,
       customer: request.customer.email,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 }
@@ -317,12 +337,16 @@ let paymentManager: PaymentManager | null = null;
 
 export function getPaymentManager(): PaymentManager {
   if (!paymentManager) {
-    throw new Error('Payment Manager not initialized. Call initializePaymentManager first.');
+    throw new Error(
+      "Payment Manager not initialized. Call initializePaymentManager first.",
+    );
   }
   return paymentManager;
 }
 
-export function initializePaymentManager(configs: PaymentConfig[]): PaymentManager {
+export function initializePaymentManager(
+  configs: PaymentConfig[],
+): PaymentManager {
   paymentManager = new PaymentManager(configs);
   return paymentManager;
 }

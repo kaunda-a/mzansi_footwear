@@ -1,107 +1,125 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Image from 'next/image'
-import Link from 'next/link'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   IconHeart,
   IconShoppingCart,
   IconStar,
   IconEye,
   IconGitCompare,
-  IconLogin
-} from '@tabler/icons-react'
-import { useCartStore } from '@/lib/cart-store'
-import { formatPrice } from '@/lib/format'
-import type { ProductCardProps } from '../types'
+  IconLogin,
+} from "@tabler/icons-react";
+import { useCartStore } from "@/lib/cart-store";
+import { formatPrice } from "@/lib/format";
+import type { ProductCardProps } from "../types";
 
 export function ProductCard({
   product,
   showQuickView = true,
   showCompare = true,
   priority = false,
-  compact = false
+  compact = false,
 }: ProductCardProps) {
-  const [isWishlisted, setIsWishlisted] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const { data: session } = useSession()
-  const router = useRouter()
-  const { addItem } = useCartStore()
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { data: session } = useSession();
+  const router = useRouter();
+  const { addItem } = useCartStore();
 
-  const primaryImage = product.images.find(img => img.isPrimary) || product.images[0]
-  
+  const primaryImage =
+    product.images.find((img) => img.isPrimary) || product.images[0];
+
   // Helper to check if image URL is valid for production
   const isValidImageUrl = (url: string) => {
-    if (!url) return false
+    if (!url) return false;
     // Only allow proper Cloudinary URLs in production
-    return url.startsWith('https://res.cloudinary.com/')
-  }
-  
+    return url.startsWith("https://res.cloudinary.com/");
+  };
+
   // Debug image URLs
-  if (typeof window !== 'undefined' && product.images.length > 0) {
-    console.log('Product images for', product.name, ':', product.images.map(img => ({ url: img.url, isValid: isValidImageUrl(img.url) })))
+  if (typeof window !== "undefined" && product.images.length > 0) {
+    console.log(
+      "Product images for",
+      product.name,
+      ":",
+      product.images.map((img) => ({
+        url: img.url,
+        isValid: isValidImageUrl(img.url),
+      })),
+    );
   }
-  
-  const cheapestVariant = product.variants.reduce((prev, current) => 
-    Number(prev.price) < Number(current.price) ? prev : current
-  )
-  
-  const hasDiscount = cheapestVariant?.comparePrice && 
-    Number(cheapestVariant.comparePrice) > Number(cheapestVariant.price)
-  
-  const discountPercentage = hasDiscount 
-    ? Math.round(((Number(cheapestVariant.comparePrice) - Number(cheapestVariant.price)) / Number(cheapestVariant.comparePrice)) * 100)
-    : 0
+
+  const cheapestVariant = product.variants.reduce((prev, current) =>
+    Number(prev.price) < Number(current.price) ? prev : current,
+  );
+
+  const hasDiscount =
+    cheapestVariant?.comparePrice &&
+    Number(cheapestVariant.comparePrice) > Number(cheapestVariant.price);
+
+  const discountPercentage = hasDiscount
+    ? Math.round(
+        ((Number(cheapestVariant.comparePrice) -
+          Number(cheapestVariant.price)) /
+          Number(cheapestVariant.comparePrice)) *
+          100,
+      )
+    : 0;
 
   const handleAddToCart = async (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+    e.preventDefault();
+    e.stopPropagation();
 
     // Check if user is authenticated
     if (!session) {
-      router.push(`/auth/sign-in?callbackUrl=${encodeURIComponent(window.location.href)}`)
-      return
+      router.push(
+        `/auth/sign-in?callbackUrl=${encodeURIComponent(window.location.href)}`,
+      );
+      return;
     }
 
-    if (!cheapestVariant || cheapestVariant.stock === 0) return
+    if (!cheapestVariant || cheapestVariant.stock === 0) return;
 
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       addItem({
         productId: product.id,
         variantId: cheapestVariant.id,
         name: product.name,
         price: Number(cheapestVariant.price),
-        image: primaryImage?.url || '/placeholder-product.jpg',
+        unitPrice: Number(cheapestVariant.price),
+        image: primaryImage?.url || "/placeholder-product.jpg",
         size: cheapestVariant.size,
         color: cheapestVariant.color,
         quantity: 1,
         sku: cheapestVariant.sku,
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleWishlist = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setIsWishlisted(!isWishlisted)
-  }
+    e.preventDefault();
+    e.stopPropagation();
+    setIsWishlisted(!isWishlisted);
+  };
 
   const handleQuickView = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
+    e.preventDefault();
+    e.stopPropagation();
     // TODO: Implement quick view modal
-    console.log('Quick view:', product.id)
-  }
+    console.log("Quick view:", product.id);
+  };
 
-  const inStock = product.variants.some(v => v.stock > 0)
+  const inStock = product.variants.some((v) => v.stock > 0);
 
   if (compact) {
     return (
@@ -130,12 +148,18 @@ export function ProductCard({
               {/* Compact Badges */}
               <div className="absolute top-1 left-1 flex flex-wrap gap-1">
                 {discountPercentage > 0 && (
-                  <Badge variant="destructive" className="text-[10px] px-1 py-0 h-4">
+                  <Badge
+                    variant="destructive"
+                    className="text-[10px] px-1 py-0 h-4"
+                  >
                     -{discountPercentage}%
                   </Badge>
                 )}
                 {!inStock && (
-                  <Badge variant="secondary" className="text-[10px] px-1 py-0 h-4">
+                  <Badge
+                    variant="secondary"
+                    className="text-[10px] px-1 py-0 h-4"
+                  >
                     Out
                   </Badge>
                 )}
@@ -149,7 +173,7 @@ export function ProductCard({
                 onClick={handleWishlist}
               >
                 <IconHeart
-                  className={`h-3 w-3 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`}
+                  className={`h-3 w-3 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`}
                 />
               </Button>
             </div>
@@ -192,8 +216,8 @@ export function ProductCard({
                         key={i}
                         className={`h-2 w-2 ${
                           i < Math.floor(product.averageRating || 0)
-                            ? 'fill-yellow-400 text-yellow-400'
-                            : 'text-gray-300'
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-gray-300"
                         }`}
                       />
                     ))}
@@ -207,7 +231,7 @@ export function ProductCard({
           </Link>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -263,11 +287,11 @@ export function ProductCard({
                 className="h-8 w-8 rounded-full bg-white/90 hover:bg-white"
                 onClick={handleWishlist}
               >
-                <IconHeart 
-                  className={`h-4 w-4 ${isWishlisted ? 'fill-red-500 text-red-500' : ''}`} 
+                <IconHeart
+                  className={`h-4 w-4 ${isWishlisted ? "fill-red-500 text-red-500" : ""}`}
                 />
               </Button>
-              
+
               {showQuickView && (
                 <Button
                   variant="secondary"
@@ -278,7 +302,7 @@ export function ProductCard({
                   <IconEye className="h-4 w-4" />
                 </Button>
               )}
-              
+
               {showCompare && (
                 <Button
                   variant="secondary"
@@ -347,7 +371,9 @@ export function ProductCard({
                   <IconStar
                     key={i}
                     className={`h-3 w-3 ${
-                      i < 4 ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                      i < 4
+                        ? "fill-yellow-400 text-yellow-400"
+                        : "text-gray-300"
                     }`}
                   />
                 ))}
@@ -377,5 +403,5 @@ export function ProductCard({
         </div>
       </CardContent>
     </Card>
-  )
+  );
 }

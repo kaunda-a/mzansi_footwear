@@ -1,13 +1,14 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@import 'tw-animate-css';
+@import "tw-animate-css";
 
 @custom-variant dark (&:is(.dark *));
 
-@import './theme.css';
+@import "./theme.css";
 
 /* Fix layout issues */
-html, body {
+html,
+body {
   overflow-x: hidden;
   width: 100%;
   max-width: 100vw;
@@ -333,7 +334,8 @@ html, body {
 }
 
 @keyframes navbar-item-bounce {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
   }
   50% {

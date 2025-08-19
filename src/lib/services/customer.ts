@@ -1,5 +1,11 @@
-import { db } from '@/lib/prisma';
-import type { Customer, Address, Order, Review, AddressType } from '@prisma/client';
+import { db } from "@/lib/prisma";
+import type {
+  Customer,
+  Address,
+  Order,
+  Review,
+  AddressType,
+} from "@prisma/client";
 
 export type CustomerWithDetails = Customer & {
   addresses: Address[];
@@ -43,18 +49,23 @@ export class CustomerService {
     return db.customer.create({ data });
   }
 
-  static async getCustomerById(id: string): Promise<CustomerWithDetails | null> {
+  static async getCustomerById(
+    id: string,
+  ): Promise<CustomerWithDetails | null> {
     return db.customer.findUnique({
       where: { id },
       include: {
-        addresses: { orderBy: { isDefault: 'desc' } },
+        addresses: { orderBy: { isDefault: "desc" } },
         orders: true,
         reviews: true,
       },
     });
   }
 
-  static async updateCustomer(id: string, data: UpdateCustomerData): Promise<Customer> {
+  static async updateCustomer(
+    id: string,
+    data: UpdateCustomerData,
+  ): Promise<Customer> {
     return db.customer.update({
       where: { id },
       data,
@@ -76,14 +87,14 @@ export class CustomerService {
   } = {}) {
     const skip = (page - 1) * limit;
 
-    const where: import('@prisma/client').Prisma.CustomerWhereInput = {};
+    const where: import("@prisma/client").Prisma.CustomerWhereInput = {};
 
     if (search) {
       where.OR = [
-        { email: { contains: search, mode: 'insensitive' } },
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
-        { phone: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: "insensitive" } },
+        { firstName: { contains: search, mode: "insensitive" } },
+        { lastName: { contains: search, mode: "insensitive" } },
+        { phone: { contains: search, mode: "insensitive" } },
       ];
     }
 
@@ -91,11 +102,11 @@ export class CustomerService {
       db.customer.findMany({
         where,
         include: {
-          addresses: { orderBy: { isDefault: 'desc' } },
+          addresses: { orderBy: { isDefault: "desc" } },
           orders: true,
           reviews: true,
         },
-        orderBy: { createdAt: 'desc' },
+        orderBy: { createdAt: "desc" },
         skip,
         take: limit,
       }),
@@ -137,16 +148,19 @@ export class CustomerService {
         city: data.city,
         province: data.province,
         postalCode: data.postalCode,
-        country: data.country || 'South Africa',
+        country: data.country || "South Africa",
         phone: data.phone,
         isDefault: data.isDefault || false,
       },
     });
   }
 
-  static async updateAddress(id: string, data: Partial<CreateAddressData>): Promise<Address> {
+  static async updateAddress(
+    id: string,
+    data: Partial<CreateAddressData>,
+  ): Promise<Address> {
     const address = await db.address.findUnique({ where: { id } });
-    if (!address) throw new Error('Address not found');
+    if (!address) throw new Error("Address not found");
 
     if (data.isDefault) {
       await db.address.updateMany({
@@ -169,17 +183,23 @@ export class CustomerService {
     await db.address.delete({ where: { id } });
   }
 
-  static async getCustomerAddresses(customerId: string, type?: AddressType): Promise<Address[]> {
+  static async getCustomerAddresses(
+    customerId: string,
+    type?: AddressType,
+  ): Promise<Address[]> {
     return db.address.findMany({
       where: {
         customerId,
         ...(type && { type }),
       },
-      orderBy: { isDefault: 'desc' },
+      orderBy: { isDefault: "desc" },
     });
   }
 
-  static async getDefaultAddress(customerId: string, type: AddressType): Promise<Address | null> {
+  static async getDefaultAddress(
+    customerId: string,
+    type: AddressType,
+  ): Promise<Address | null> {
     return db.address.findFirst({
       where: {
         customerId,
@@ -207,4 +227,3 @@ export class CustomerService {
     };
   }
 }
-

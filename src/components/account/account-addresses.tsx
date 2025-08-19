@@ -1,45 +1,57 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { 
-  MapPin, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Home, 
+import React, { useEffect, useState } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  MapPin,
+  Plus,
+  Edit,
+  Trash2,
+  Home,
   Building2,
-  MoreHorizontal
-} from 'lucide-react';
+  MoreHorizontal,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Api } from '@/lib/api';
-import { useSession } from 'next-auth/react';
-import { Separator } from '@/components/ui/separator';
-import { toast } from 'sonner';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
-import { 
+} from "@/components/ui/dropdown-menu";
+import { Api } from "@/lib/api";
+import { useSession } from "next-auth/react";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogDescription,
   DialogFooter,
-  DialogTrigger
-} from '@/components/ui/dialog';
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface Address {
   id: string;
-  type: 'HOME' | 'WORK' | 'OTHER';
+  type: "HOME" | "WORK" | "OTHER";
   isDefault: boolean;
   firstName: string;
   lastName: string;
@@ -61,25 +73,25 @@ export function AccountAddresses() {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [form, setForm] = useState({
-    type: 'HOME' as 'HOME' | 'WORK' | 'OTHER',
-    firstName: '',
-    lastName: '',
-    company: '',
-    addressLine1: '',
-    addressLine2: '',
-    city: '',
-    province: '',
-    postalCode: '',
-    country: 'South Africa',
-    phone: '',
+    type: "HOME" as "HOME" | "WORK" | "OTHER",
+    firstName: "",
+    lastName: "",
+    company: "",
+    addressLine1: "",
+    addressLine2: "",
+    city: "",
+    province: "",
+    postalCode: "",
+    country: "South Africa",
+    phone: "",
     isDefault: false,
   });
 
   const getAddressIcon = (type: string) => {
     switch (type) {
-      case 'HOME':
+      case "HOME":
         return <Home className="h-4 w-4" />;
-      case 'WORK':
+      case "WORK":
         return <Building2 className="h-4 w-4" />;
       default:
         return <MapPin className="h-4 w-4" />;
@@ -88,16 +100,18 @@ export function AccountAddresses() {
 
   const handleSetDefault = async (addressId: string) => {
     try {
-      const target = addresses.find(a => a.id === addressId);
+      const target = addresses.find((a) => a.id === addressId);
       if (!target) return;
       await Api.updateCustomerAddress(addressId, { isDefault: true });
-      setAddresses(prev => prev.map(addr => ({
-        ...addr,
-        isDefault: addr.id === addressId
-      })));
-      toast.success('Default address updated');
+      setAddresses((prev) =>
+        prev.map((addr) => ({
+          ...addr,
+          isDefault: addr.id === addressId,
+        })),
+      );
+      toast.success("Default address updated");
     } catch (e) {
-      toast.error('Failed to set default address');
+      toast.error("Failed to set default address");
     }
   };
 
@@ -105,11 +119,11 @@ export function AccountAddresses() {
     try {
       const ok = await Api.deleteCustomerAddress(addressId);
       if (ok) {
-        setAddresses(prev => prev.filter(addr => addr.id !== addressId));
-        toast.success('Address deleted');
+        setAddresses((prev) => prev.filter((addr) => addr.id !== addressId));
+        toast.success("Address deleted");
       }
     } catch (e) {
-      toast.error('Failed to delete address');
+      toast.error("Failed to delete address");
     }
   };
 
@@ -129,85 +143,85 @@ export function AccountAddresses() {
 
   const resetForm = () => {
     setForm({
-      type: 'HOME',
-      firstName: '',
-      lastName: '',
-      company: '',
-      addressLine1: '',
-      addressLine2: '',
-      city: '',
-      province: '',
-      postalCode: '',
-      country: 'South Africa',
-      phone: '',
+      type: "HOME",
+      firstName: "",
+      lastName: "",
+      company: "",
+      addressLine1: "",
+      addressLine2: "",
+      city: "",
+      province: "",
+      postalCode: "",
+      country: "South Africa",
+      phone: "",
       isDefault: false,
-    })
-  }
+    });
+  };
 
   const openCreate = () => {
-    resetForm()
-    setIsCreateOpen(true)
-  }
+    resetForm();
+    setIsCreateOpen(true);
+  };
 
   const openEdit = (address: Address) => {
-    setEditingAddress(address)
+    setEditingAddress(address);
     setForm({
       type: address.type,
       firstName: address.firstName,
       lastName: address.lastName,
-      company: address.company || '',
+      company: address.company || "",
       addressLine1: address.addressLine1,
-      addressLine2: address.addressLine2 || '',
+      addressLine2: address.addressLine2 || "",
       city: address.city,
       province: address.province,
       postalCode: address.postalCode,
       country: address.country,
-      phone: address.phone || '',
+      phone: address.phone || "",
       isDefault: address.isDefault,
-    })
-    setIsEditOpen(true)
-  }
+    });
+    setIsEditOpen(true);
+  };
 
   const handleChange = (field: keyof typeof form, value: any) => {
-    setForm(prev => ({ ...prev, [field]: value }))
-  }
+    setForm((prev) => ({ ...prev, [field]: value }));
+  };
 
   const refreshAddresses = async () => {
     const data = await Api.getCustomerAddresses();
-    setAddresses(data as any)
-  }
+    setAddresses(data as any);
+  };
 
   const handleCreate = async () => {
     try {
-      const created = await Api.addCustomerAddress(form)
+      const created = await Api.addCustomerAddress(form);
       if (created) {
-        toast.success('Address added')
-        setIsCreateOpen(false)
-        await refreshAddresses()
+        toast.success("Address added");
+        setIsCreateOpen(false);
+        await refreshAddresses();
       } else {
-        toast.error('Failed to add address')
+        toast.error("Failed to add address");
       }
     } catch (e) {
-      toast.error('Failed to add address')
+      toast.error("Failed to add address");
     }
-  }
+  };
 
   const handleUpdate = async () => {
-    if (!editingAddress) return
+    if (!editingAddress) return;
     try {
-      const updated = await Api.updateCustomerAddress(editingAddress.id, form)
+      const updated = await Api.updateCustomerAddress(editingAddress.id, form);
       if (updated) {
-        toast.success('Address updated')
-        setIsEditOpen(false)
-        setEditingAddress(null)
-        await refreshAddresses()
+        toast.success("Address updated");
+        setIsEditOpen(false);
+        setEditingAddress(null);
+        await refreshAddresses();
       } else {
-        toast.error('Failed to update address')
+        toast.error("Failed to update address");
       }
     } catch (e) {
-      toast.error('Failed to update address')
+      toast.error("Failed to update address");
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -253,7 +267,7 @@ export function AccountAddresses() {
           <Card key={address.id} className="relative">
             <CardHeader className="pb-4">
               <div className="flex items-start justify-between">
-                 <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   {getAddressIcon(address.type)}
                   <div>
                     <CardTitle className="text-base capitalize">
@@ -266,7 +280,7 @@ export function AccountAddresses() {
                     )}
                   </div>
                 </div>
-                
+
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm">
@@ -279,12 +293,14 @@ export function AccountAddresses() {
                       Edit
                     </DropdownMenuItem>
                     {!address.isDefault && (
-                      <DropdownMenuItem onClick={() => handleSetDefault(address.id)}>
+                      <DropdownMenuItem
+                        onClick={() => handleSetDefault(address.id)}
+                      >
                         <Home className="h-4 w-4 mr-2" />
                         Set as Default
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem 
+                    <DropdownMenuItem
                       onClick={() => handleDelete(address.id)}
                       className="text-destructive"
                     >
@@ -295,49 +311,50 @@ export function AccountAddresses() {
                 </DropdownMenu>
               </div>
             </CardHeader>
-            
+
             <CardContent>
-                 <div className="space-y-2 text-sm">
+              <div className="space-y-2 text-sm">
                 <div className="font-medium">
                   {address.firstName} {address.lastName}
                 </div>
-                
-                 {address.company && (
+
+                {address.company && (
+                  <div className="text-muted-foreground">{address.company}</div>
+                )}
+
+                <div className="text-muted-foreground">
+                  {address.addressLine1}
+                </div>
+                {address.addressLine2 && (
                   <div className="text-muted-foreground">
-                    {address.company}
+                    {address.addressLine2}
                   </div>
                 )}
-                
-                 <div className="text-muted-foreground">
-                  {address.addressLine1}
-                 </div>
-                 {address.addressLine2 && (
-                   <div className="text-muted-foreground">{address.addressLine2}</div>
-                 )}
-                
-                 <div className="text-muted-foreground">
-                  {address.city}, {address.province} {address.postalCode}
-                 </div>
-                
+
                 <div className="text-muted-foreground">
-                  {address.country}
+                  {address.city}, {address.province} {address.postalCode}
                 </div>
-                
-                 {address.phone && (
-                  <div className="text-muted-foreground">
-                    {address.phone}
-                  </div>
+
+                <div className="text-muted-foreground">{address.country}</div>
+
+                {address.phone && (
+                  <div className="text-muted-foreground">{address.phone}</div>
                 )}
               </div>
-              
+
               <div className="flex gap-2 mt-4">
-                <Button variant="outline" size="sm" className="flex-1" onClick={() => openEdit(address)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => openEdit(address)}
+                >
                   <Edit className="h-3 w-3 mr-1" />
                   Edit
                 </Button>
                 {!address.isDefault && (
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     size="sm"
                     onClick={() => handleSetDefault(address.id)}
                   >
@@ -348,9 +365,12 @@ export function AccountAddresses() {
             </CardContent>
           </Card>
         ))}
-        
+
         {/* Add New Address Card */}
-        <Card onClick={openCreate} className="border-dashed border-2 hover:border-primary/50 transition-colors cursor-pointer">
+        <Card
+          onClick={openCreate}
+          className="border-dashed border-2 hover:border-primary/50 transition-colors cursor-pointer"
+        >
           <CardContent className="flex flex-col items-center justify-center py-12">
             <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mb-4">
               <Plus className="h-6 w-6 text-muted-foreground" />
@@ -391,12 +411,17 @@ export function AccountAddresses() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Add New Address</DialogTitle>
-            <DialogDescription>Save a shipping or billing address to your account.</DialogDescription>
+            <DialogDescription>
+              Save a shipping or billing address to your account.
+            </DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
               <Label>Address Type</Label>
-              <Select value={form.type} onValueChange={(v) => handleChange('type', v as any)}>
+              <Select
+                value={form.type}
+                onValueChange={(v) => handleChange("type", v as any)}
+              >
                 <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
@@ -409,31 +434,58 @@ export function AccountAddresses() {
             </div>
             <div>
               <Label>First Name</Label>
-              <Input className="mt-1" value={form.firstName} onChange={(e) => handleChange('firstName', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.firstName}
+                onChange={(e) => handleChange("firstName", e.target.value)}
+              />
             </div>
             <div>
               <Label>Last Name</Label>
-              <Input className="mt-1" value={form.lastName} onChange={(e) => handleChange('lastName', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.lastName}
+                onChange={(e) => handleChange("lastName", e.target.value)}
+              />
             </div>
             <div className="md:col-span-2">
               <Label>Company (optional)</Label>
-              <Input className="mt-1" value={form.company} onChange={(e) => handleChange('company', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.company}
+                onChange={(e) => handleChange("company", e.target.value)}
+              />
             </div>
             <div className="md:col-span-2">
               <Label>Address Line 1</Label>
-              <Input className="mt-1" value={form.addressLine1} onChange={(e) => handleChange('addressLine1', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.addressLine1}
+                onChange={(e) => handleChange("addressLine1", e.target.value)}
+              />
             </div>
             <div className="md:col-span-2">
               <Label>Address Line 2 (optional)</Label>
-              <Input className="mt-1" value={form.addressLine2} onChange={(e) => handleChange('addressLine2', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.addressLine2}
+                onChange={(e) => handleChange("addressLine2", e.target.value)}
+              />
             </div>
             <div>
               <Label>City</Label>
-              <Input className="mt-1" value={form.city} onChange={(e) => handleChange('city', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.city}
+                onChange={(e) => handleChange("city", e.target.value)}
+              />
             </div>
             <div>
               <Label>Province</Label>
-              <Select value={form.province} onValueChange={(v) => handleChange('province', v)}>
+              <Select
+                value={form.province}
+                onValueChange={(v) => handleChange("province", v)}
+              >
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select province" />
                 </SelectTrigger>
@@ -452,23 +504,43 @@ export function AccountAddresses() {
             </div>
             <div>
               <Label>Postal Code</Label>
-              <Input className="mt-1" value={form.postalCode} onChange={(e) => handleChange('postalCode', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.postalCode}
+                onChange={(e) => handleChange("postalCode", e.target.value)}
+              />
             </div>
             <div>
               <Label>Country</Label>
-              <Input className="mt-1" value={form.country} onChange={(e) => handleChange('country', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.country}
+                onChange={(e) => handleChange("country", e.target.value)}
+              />
             </div>
             <div className="md:col-span-2">
               <Label>Phone</Label>
-              <Input className="mt-1" value={form.phone} onChange={(e) => handleChange('phone', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.phone}
+                onChange={(e) => handleChange("phone", e.target.value)}
+              />
             </div>
             <div className="md:col-span-2 flex items-center gap-2 mt-2">
-              <Checkbox checked={form.isDefault} onCheckedChange={(v) => handleChange('isDefault', Boolean(v))} id="default-create" />
-              <Label htmlFor="default-create">Set as default for this type</Label>
+              <Checkbox
+                checked={form.isDefault}
+                onCheckedChange={(v) => handleChange("isDefault", Boolean(v))}
+                id="default-create"
+              />
+              <Label htmlFor="default-create">
+                Set as default for this type
+              </Label>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsCreateOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsCreateOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleCreate}>Save Address</Button>
           </DialogFooter>
         </DialogContent>
@@ -479,12 +551,17 @@ export function AccountAddresses() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Edit Address</DialogTitle>
-            <DialogDescription>Update your saved address details.</DialogDescription>
+            <DialogDescription>
+              Update your saved address details.
+            </DialogDescription>
           </DialogHeader>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
               <Label>Address Type</Label>
-              <Select value={form.type} onValueChange={(v) => handleChange('type', v as any)}>
+              <Select
+                value={form.type}
+                onValueChange={(v) => handleChange("type", v as any)}
+              >
                 <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
@@ -497,31 +574,58 @@ export function AccountAddresses() {
             </div>
             <div>
               <Label>First Name</Label>
-              <Input className="mt-1" value={form.firstName} onChange={(e) => handleChange('firstName', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.firstName}
+                onChange={(e) => handleChange("firstName", e.target.value)}
+              />
             </div>
             <div>
               <Label>Last Name</Label>
-              <Input className="mt-1" value={form.lastName} onChange={(e) => handleChange('lastName', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.lastName}
+                onChange={(e) => handleChange("lastName", e.target.value)}
+              />
             </div>
             <div className="md:col-span-2">
               <Label>Company (optional)</Label>
-              <Input className="mt-1" value={form.company} onChange={(e) => handleChange('company', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.company}
+                onChange={(e) => handleChange("company", e.target.value)}
+              />
             </div>
             <div className="md:col-span-2">
               <Label>Address Line 1</Label>
-              <Input className="mt-1" value={form.addressLine1} onChange={(e) => handleChange('addressLine1', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.addressLine1}
+                onChange={(e) => handleChange("addressLine1", e.target.value)}
+              />
             </div>
             <div className="md:col-span-2">
               <Label>Address Line 2 (optional)</Label>
-              <Input className="mt-1" value={form.addressLine2} onChange={(e) => handleChange('addressLine2', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.addressLine2}
+                onChange={(e) => handleChange("addressLine2", e.target.value)}
+              />
             </div>
             <div>
               <Label>City</Label>
-              <Input className="mt-1" value={form.city} onChange={(e) => handleChange('city', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.city}
+                onChange={(e) => handleChange("city", e.target.value)}
+              />
             </div>
             <div>
               <Label>Province</Label>
-              <Select value={form.province} onValueChange={(v) => handleChange('province', v)}>
+              <Select
+                value={form.province}
+                onValueChange={(v) => handleChange("province", v)}
+              >
                 <SelectTrigger className="mt-1">
                   <SelectValue placeholder="Select province" />
                 </SelectTrigger>
@@ -540,23 +644,41 @@ export function AccountAddresses() {
             </div>
             <div>
               <Label>Postal Code</Label>
-              <Input className="mt-1" value={form.postalCode} onChange={(e) => handleChange('postalCode', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.postalCode}
+                onChange={(e) => handleChange("postalCode", e.target.value)}
+              />
             </div>
             <div>
               <Label>Country</Label>
-              <Input className="mt-1" value={form.country} onChange={(e) => handleChange('country', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.country}
+                onChange={(e) => handleChange("country", e.target.value)}
+              />
             </div>
             <div className="md:col-span-2">
               <Label>Phone</Label>
-              <Input className="mt-1" value={form.phone} onChange={(e) => handleChange('phone', e.target.value)} />
+              <Input
+                className="mt-1"
+                value={form.phone}
+                onChange={(e) => handleChange("phone", e.target.value)}
+              />
             </div>
             <div className="md:col-span-2 flex items-center gap-2 mt-2">
-              <Checkbox checked={form.isDefault} onCheckedChange={(v) => handleChange('isDefault', Boolean(v))} id="default-edit" />
+              <Checkbox
+                checked={form.isDefault}
+                onCheckedChange={(v) => handleChange("isDefault", Boolean(v))}
+                id="default-edit"
+              />
               <Label htmlFor="default-edit">Set as default for this type</Label>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setIsEditOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setIsEditOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleUpdate}>Save Changes</Button>
           </DialogFooter>
         </DialogContent>

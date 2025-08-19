@@ -1,14 +1,24 @@
-import Header from '@/components/layout/header';
-import { StoreFooter } from '@/components/layout/footer';
-import { CheckoutView } from '@/components/checkout/checkout-view';
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb';
+import Header from "@/components/layout/header";
+import { StoreFooter } from "@/components/layout/footer";
+import { CheckoutView } from "@/components/checkout/checkout-view";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { auth } from "@/lib/auth";
 
 export const metadata = {
-  title: 'Checkout - Mzansi Footwear',
-  description: 'Complete your purchase securely.',
+  title: "Checkout - Mzansi Footwear",
+  description: "Complete your purchase securely.",
 };
 
-export default function CheckoutPage() {
+export default async function CheckoutPage() {
+  const session = await auth();
+
   return (
     <>
       <Header />
@@ -36,7 +46,7 @@ export default function CheckoutPage() {
 
         {/* Checkout Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <CheckoutView />
+          <CheckoutView user={session?.user} />
         </div>
       </main>
       <StoreFooter />

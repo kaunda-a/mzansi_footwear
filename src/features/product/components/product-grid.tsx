@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import { ProductCard } from './product-card'
-import { Skeleton } from '@/components/ui/skeleton'
-import { IconShoppingCart } from '@tabler/icons-react'
-import type { ProductGridProps } from '../types'
+import { ProductCard } from "./product-card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { IconShoppingCart } from "@tabler/icons-react";
+import type { ProductGridProps } from "../types";
 
 function ProductGridSkeleton() {
   return (
@@ -19,7 +19,7 @@ function ProductGridSkeleton() {
         </div>
       ))}
     </div>
-  )
+  );
 }
 
 function EmptyState() {
@@ -30,29 +30,32 @@ function EmptyState() {
       </div>
       <h3 className="text-lg font-semibold mb-2">No products found</h3>
       <p className="text-muted-foreground max-w-md mx-auto">
-        Try adjusting your search or filter criteria to find what you're looking for.
+        Try adjusting your search or filter criteria to find what you're looking
+        for.
       </p>
     </div>
-  )
+  );
 }
 
-export function ProductGrid({ 
-  products, 
-  loading = false, 
-  className = '',
+export function ProductGrid({
+  products,
+  loading = false,
+  className = "",
   showQuickView = true,
-  showCompare = true
+  showCompare = true,
 }: ProductGridProps) {
   if (loading) {
-    return <ProductGridSkeleton />
+    return <ProductGridSkeleton />;
   }
 
   if (!products.length) {
-    return <EmptyState />
+    return <EmptyState />;
   }
 
   return (
-    <div className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3 md:gap-4 ${className}`}>
+    <div
+      className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3 md:gap-4 ${className}`}
+    >
       {products.map((product, index) => (
         <ProductCard
           key={product.id}
@@ -64,5 +67,5 @@ export function ProductGrid({
         />
       ))}
     </div>
-  )
+  );
 }

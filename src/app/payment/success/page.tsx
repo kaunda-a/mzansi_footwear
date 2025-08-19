@@ -1,8 +1,8 @@
-import React from 'react';
-import { Suspense } from 'react';
-import { db } from '@/lib/prisma';
-import { Card, CardContent } from '@/components/ui/card';
-import { Loader2 } from 'lucide-react';
+import React from "react";
+import { Suspense } from "react";
+import { db } from "@/lib/prisma";
+import { Card, CardContent } from "@/components/ui/card";
+import { Loader2 } from "lucide-react";
 
 interface PaymentSuccessPageProps {
   searchParams: Promise<{
@@ -14,7 +14,9 @@ interface PaymentSuccessPageProps {
   }>;
 }
 
-async function PaymentSuccessContent({ searchParams }: PaymentSuccessPageProps) {
+async function PaymentSuccessContent({
+  searchParams,
+}: PaymentSuccessPageProps) {
   const params = await searchParams;
   const { orderId } = params;
 
@@ -23,9 +25,12 @@ async function PaymentSuccessContent({ searchParams }: PaymentSuccessPageProps) 
       <div className="container mx-auto px-4 py-8">
         <Card>
           <CardContent className="py-8 text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">Invalid Payment Link</h1>
+            <h1 className="text-2xl font-bold text-red-600 mb-4">
+              Invalid Payment Link
+            </h1>
             <p className="text-muted-foreground">
-              The payment link is missing required information. Please contact support if you believe this is an error.
+              The payment link is missing required information. Please contact
+              support if you believe this is an error.
             </p>
           </CardContent>
         </Card>
@@ -42,9 +47,12 @@ async function PaymentSuccessContent({ searchParams }: PaymentSuccessPageProps) 
       <div className="container mx-auto px-4 py-8">
         <Card>
           <CardContent className="py-8 text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">Order not found</h1>
+            <h1 className="text-2xl font-bold text-red-600 mb-4">
+              Order not found
+            </h1>
             <p className="text-muted-foreground">
-              We could not find your order. Please contact support if you believe this is an error.
+              We could not find your order. Please contact support if you
+              believe this is an error.
             </p>
           </CardContent>
         </Card>
@@ -84,7 +92,9 @@ function LoadingFallback() {
   );
 }
 
-export default async function PaymentSuccessPage({ searchParams }: PaymentSuccessPageProps) {
+export default async function PaymentSuccessPage({
+  searchParams,
+}: PaymentSuccessPageProps) {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <PaymentSuccessContent searchParams={searchParams} />
@@ -93,7 +103,7 @@ export default async function PaymentSuccessPage({ searchParams }: PaymentSucces
 }
 
 export const metadata = {
-  title: 'Payment Status - Mzansi Footwear',
-  description: 'Check your payment status',
-  robots: 'noindex, nofollow', // Don't index payment pages
+  title: "Payment Status - Mzansi Footwear",
+  description: "Check your payment status",
+  robots: "noindex, nofollow", // Don't index payment pages
 };

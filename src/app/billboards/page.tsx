@@ -1,34 +1,43 @@
-import { Suspense } from 'react'
-import type { Metadata } from 'next'
-import { SearchParams } from 'nuqs/server'
-import { Header } from '@/components/layout/header'
-import { StoreFooter } from '@/components/layout/footer'
-import { Heading } from '@/components/ui/heading'
-import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
-import { BillboardListingPage } from '@/features/billboards'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import { SearchParams } from "nuqs/server";
+import { Header } from "@/components/layout/header";
+import { StoreFooter } from "@/components/layout/footer";
+import { Heading } from "@/components/ui/heading";
+import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
+import { BillboardListingPage } from "@/features/billboards";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export const metadata: Metadata = {
-  title: 'Billboards - Mzansi Footwear',
-  description: 'View current promotions, announcements, and campaigns at Mzansi Footwear.',
-  keywords: 'billboards, promotions, announcements, campaigns, sales, Mzansi Footwear',
+  title: "Billboards - Mzansi Footwear",
+  description:
+    "View current promotions, announcements, and campaigns at Mzansi Footwear.",
+  keywords:
+    "billboards, promotions, announcements, campaigns, sales, Mzansi Footwear",
   openGraph: {
-    title: 'Billboards - Mzansi Footwear',
-    description: 'Stay updated with our latest promotions and announcements.',
-    type: 'website',
+    title: "Billboards - Mzansi Footwear",
+    description: "Stay updated with our latest promotions and announcements.",
+    type: "website",
   },
   robots: {
     index: true,
     follow: true,
   },
-}
+};
 
 type pageProps = {
-  searchParams: Promise<SearchParams>
-}
+  searchParams: Promise<SearchParams>;
+};
 
 export default async function Page(props: pageProps) {
-  const searchParams = await props.searchParams
+  const searchParams = await props.searchParams;
 
   return (
     <>
@@ -74,5 +83,5 @@ export default async function Page(props: pageProps) {
       </main>
       <StoreFooter />
     </>
-  )
+  );
 }

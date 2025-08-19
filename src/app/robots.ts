@@ -1,13 +1,13 @@
-const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001';
+const baseUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3001";
 
 export default function robots() {
   return {
     rules: [
       {
-        userAgent: '*'
-      }
+        userAgent: "*",
+      },
     ],
     sitemap: `${baseUrl}/sitemap.xml`,
-    host: baseUrl
+    host: baseUrl,
   };
 }

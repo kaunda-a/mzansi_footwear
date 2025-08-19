@@ -1,21 +1,27 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { 
-  CreditCard, 
-  Smartphone, 
-  QrCode, 
-  Building2, 
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import {
+  CreditCard,
+  Smartphone,
+  QrCode,
+  Building2,
   Zap,
   Shield,
   Clock,
-  DollarSign
-} from 'lucide-react';
-import { PaymentProvider, PaymentMethod } from '@/lib/payments/types';
+  DollarSign,
+} from "lucide-react";
+import { PaymentProvider, PaymentMethod } from "@/lib/payments/types";
 
 interface PaymentProviderInfo {
   provider: PaymentProvider;
@@ -25,7 +31,7 @@ interface PaymentProviderInfo {
   minimumAmount: number;
   maximumAmount: number;
   processingFee: number;
-  processingFeeType: 'fixed' | 'percentage';
+  processingFeeType: "fixed" | "percentage";
 }
 
 interface PaymentProviderSelectorProps {
@@ -39,17 +45,18 @@ interface PaymentProviderSelectorProps {
 const methodIcons: Record<PaymentMethod, React.ReactNode> = {
   card: <CreditCard className="h-4 w-4" />,
   eft: <Building2 className="h-4 w-4" />,
-  instant_eft: <Zap className="h-4 w-4" />
+  instant_eft: <Zap className="h-4 w-4" />,
 };
 
 const methodLabels: Record<PaymentMethod, string> = {
-  card: 'Credit/Debit Card',
-  eft: 'EFT',
-  instant_eft: 'Instant EFT'
+  card: "Credit/Debit Card",
+  eft: "EFT",
+  instant_eft: "Instant EFT",
 };
 
 const providerColors: Record<PaymentProvider, string> = {
-  payfast: 'bg-blue-500'
+  payfast: "bg-blue-500",
+  yoco: "bg-yellow-500",
 };
 
 export function PaymentProviderSelector({
@@ -57,7 +64,7 @@ export function PaymentProviderSelector({
   currency,
   onProviderSelect,
   selectedProvider,
-  loading = false
+  loading = false,
 }: PaymentProviderSelectorProps) {
   const [providers, setProviders] = useState<PaymentProviderInfo[]>([]);
   const [loadingProviders, setLoadingProviders] = useState(true);
@@ -70,32 +77,34 @@ export function PaymentProviderSelector({
   const fetchAvailableProviders = async () => {
     try {
       setLoadingProviders(true);
-      const response = await fetch('/api/payments/create');
-      
+      const response = await fetch("/api/payments/create");
+
       if (!response.ok) {
-        throw new Error('Failed to fetch payment providers');
+        throw new Error("Failed to fetch payment providers");
       }
 
       const data = await response.json();
       setProviders(data.providers || []);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load payment providers');
+      setError(
+        err instanceof Error ? err.message : "Failed to load payment providers",
+      );
     } finally {
       setLoadingProviders(false);
     }
   };
 
   const calculateFee = (provider: PaymentProviderInfo): number => {
-    if (provider.processingFeeType === 'percentage') {
+    if (provider.processingFeeType === "percentage") {
       return (amount * provider.processingFee) / 100;
     }
     return provider.processingFee;
   };
 
   const formatCurrency = (value: number): string => {
-    return new Intl.NumberFormat('en-ZA', {
-      style: 'currency',
-      currency: currency
+    return new Intl.NumberFormat("en-ZA", {
+      style: "currency",
+      currency: currency,
     }).format(value);
   };
 
@@ -104,14 +113,12 @@ export function PaymentProviderSelector({
   };
 
   const getRecommendedProviders = (): PaymentProviderInfo[] => {
-    return providers
-      .filter(isProviderAvailable)
-      .sort((a, b) => {
-        // Sort by processing fee (lower is better)
-        const feeA = calculateFee(a);
-        const feeB = calculateFee(b);
-        return feeA - feeB;
-      });
+    return providers.filter(isProviderAvailable).sort((a, b) => {
+      // Sort by processing fee (lower is better)
+      const feeA = calculateFee(a);
+      const feeB = calculateFee(b);
+      return feeA - feeB;
+    });
   };
 
   if (loadingProviders) {
@@ -133,7 +140,9 @@ export function PaymentProviderSelector({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-red-600">Error Loading Payment Options</CardTitle>
+          <CardTitle className="text-red-600">
+            Error Loading Payment Options
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground mb-4">{error}</p>
@@ -146,7 +155,7 @@ export function PaymentProviderSelector({
   }
 
   const recommendedProviders = getRecommendedProviders();
-  const unavailableProviders = providers.filter(p => !isProviderAvailable(p));
+  const unavailableProviders = providers.filter((p) => !isProviderAvailable(p));
 
   return (
     <div className="space-y-6">
@@ -172,26 +181,26 @@ export function PaymentProviderSelector({
               const isSelected = selectedProvider === provider.provider;
 
               return (
-                <Card 
+                <Card
                   key={provider.provider}
                   className={`cursor-pointer transition-all hover:shadow-md ${
-                    isSelected ? 'ring-2 ring-primary' : ''
+                    isSelected ? "ring-2 ring-primary" : ""
                   }`}
                   onClick={() => onProviderSelect(provider.provider)}
                 >
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div 
+                        <div
                           className={`w-3 h-3 rounded-full ${
-                            providerColors[provider.provider] || 'bg-gray-500'
+                            providerColors[provider.provider] || "bg-gray-500"
                           }`}
                         />
-                        <CardTitle className="text-base">{provider.name}</CardTitle>
+                        <CardTitle className="text-base">
+                          {provider.name}
+                        </CardTitle>
                       </div>
-                      {isSelected && (
-                        <Badge variant="default">Selected</Badge>
-                      )}
+                      {isSelected && <Badge variant="default">Selected</Badge>}
                     </div>
                   </CardHeader>
                   <CardContent className="pt-0">
@@ -199,7 +208,11 @@ export function PaymentProviderSelector({
                       {/* Payment Methods */}
                       <div className="flex flex-wrap gap-2">
                         {provider.methods.slice(0, 3).map((method) => (
-                          <Badge key={method} variant="secondary" className="text-xs">
+                          <Badge
+                            key={method}
+                            variant="secondary"
+                            className="text-xs"
+                          >
                             <span className="mr-1">{methodIcons[method]}</span>
                             {methodLabels[method]}
                           </Badge>
@@ -220,7 +233,9 @@ export function PaymentProviderSelector({
                           <span>{formatCurrency(amount)}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-muted-foreground">Processing Fee:</span>
+                          <span className="text-muted-foreground">
+                            Processing Fee:
+                          </span>
                           <span>{formatCurrency(fee)}</span>
                         </div>
                         <Separator />
@@ -248,9 +263,9 @@ export function PaymentProviderSelector({
               <Card key={provider.provider} className="opacity-50">
                 <CardHeader className="pb-3">
                   <div className="flex items-center gap-3">
-                    <div 
+                    <div
                       className={`w-3 h-3 rounded-full ${
-                        providerColors[provider.provider] || 'bg-gray-500'
+                        providerColors[provider.provider] || "bg-gray-500"
                       }`}
                     />
                     <CardTitle className="text-base">{provider.name}</CardTitle>
@@ -258,8 +273,9 @@ export function PaymentProviderSelector({
                 </CardHeader>
                 <CardContent className="pt-0">
                   <p className="text-sm text-muted-foreground">
-                    Available for amounts between {formatCurrency(provider.minimumAmount)} 
-                    {' '}and {formatCurrency(provider.maximumAmount)}
+                    Available for amounts between{" "}
+                    {formatCurrency(provider.minimumAmount)} and{" "}
+                    {formatCurrency(provider.maximumAmount)}
                   </p>
                 </CardContent>
               </Card>
@@ -268,15 +284,17 @@ export function PaymentProviderSelector({
         </div>
       )}
 
-      {recommendedProviders.length === 0 && unavailableProviders.length === 0 && (
-        <Card>
-          <CardContent className="py-8 text-center">
-            <p className="text-muted-foreground">
-              No payment providers are currently available. Please try again later.
-            </p>
-          </CardContent>
-        </Card>
-      )}
+      {recommendedProviders.length === 0 &&
+        unavailableProviders.length === 0 && (
+          <Card>
+            <CardContent className="py-8 text-center">
+              <p className="text-muted-foreground">
+                No payment providers are currently available. Please try again
+                later.
+              </p>
+            </CardContent>
+          </Card>
+        )}
     </div>
   );
 }

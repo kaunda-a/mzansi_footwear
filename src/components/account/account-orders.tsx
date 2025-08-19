@@ -1,31 +1,43 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { 
-  Package, 
-  Search, 
-  Filter, 
-  Eye, 
-  Download, 
-  Truck, 
-  CheckCircle, 
-  XCircle, 
+import React, { useState, useEffect } from "react";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
+import {
+  Package,
+  Search,
+  Filter,
+  Eye,
+  Download,
+  Truck,
+  CheckCircle,
+  XCircle,
   Clock,
   RotateCcw,
   Star,
-  MessageSquare
-} from 'lucide-react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Api } from '@/lib/api';
-import { useSession } from 'next-auth/react';
-import { formatPrice } from '@/lib/format';
+  MessageSquare,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Api } from "@/lib/api";
+import { useSession } from "next-auth/react";
+import { formatPrice } from "@/lib/format";
 
 interface OrderItem {
   id: string;
@@ -41,7 +53,14 @@ interface Order {
   id: string;
   orderNumber: string;
   createdAt: Date;
-  status: 'PENDING' | 'CONFIRMED' | 'PROCESSING' | 'SHIPPED' | 'DELIVERED' | 'CANCELLED' | 'REFUNDED';
+  status:
+    | "PENDING"
+    | "CONFIRMED"
+    | "PROCESSING"
+    | "SHIPPED"
+    | "DELIVERED"
+    | "CANCELLED"
+    | "REFUNDED";
   totalAmount: number;
   items: OrderItem[];
   shippingAddress?: any;
@@ -53,44 +72,47 @@ interface Order {
 }
 
 const statusConfig = {
-  PENDING: { color: 'bg-yellow-500', icon: Clock, label: 'Pending' },
-  CONFIRMED: { color: 'bg-blue-500', icon: CheckCircle, label: 'Confirmed' },
-  PROCESSING: { color: 'bg-blue-500', icon: Package, label: 'Processing' },
-  SHIPPED: { color: 'bg-purple-500', icon: Truck, label: 'Shipped' },
-  DELIVERED: { color: 'bg-green-500', icon: CheckCircle, label: 'Delivered' },
-  CANCELLED: { color: 'bg-red-500', icon: XCircle, label: 'Cancelled' },
-  REFUNDED: { color: 'bg-orange-500', icon: RotateCcw, label: 'Refunded' }
+  PENDING: { color: "bg-yellow-500", icon: Clock, label: "Pending" },
+  CONFIRMED: { color: "bg-blue-500", icon: CheckCircle, label: "Confirmed" },
+  PROCESSING: { color: "bg-blue-500", icon: Package, label: "Processing" },
+  SHIPPED: { color: "bg-purple-500", icon: Truck, label: "Shipped" },
+  DELIVERED: { color: "bg-green-500", icon: CheckCircle, label: "Delivered" },
+  CANCELLED: { color: "bg-red-500", icon: XCircle, label: "Cancelled" },
+  REFUNDED: { color: "bg-orange-500", icon: RotateCcw, label: "Refunded" },
 };
 
 export function AccountOrders() {
   const { data: session } = useSession();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [sortBy, setSortBy] = useState<string>('date-desc');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("date-desc");
 
   useEffect(() => {
     async function fetchOrders() {
       try {
         if (session?.user?.email) {
           const response = await Api.getOrders({ userId: session.user.id });
-          setOrders(response.orders.map(order => ({
-            ...order,
-            totalAmount: order.totalAmount.toNumber(),
-            items: order.items.map(item => ({
-              id: item.id,
-              name: item.product.name,
-              image: item.product.images[0]?.url || '/placeholder-product.jpg', // Provide a fallback image
-              price: item.unitPrice.toNumber(),
-              quantity: item.quantity,
-              size: item.productVariant?.size,
-              color: item.productVariant?.color,
-            }))
-          })));
+          setOrders(
+            response.orders.map((order) => ({
+              ...order,
+              totalAmount: order.totalAmount.toNumber(),
+              items: order.items.map((item) => ({
+                id: item.id,
+                name: item.product.name,
+                image:
+                  item.product.images[0]?.url || "/placeholder-product.jpg", // Provide a fallback image
+                price: item.unitPrice.toNumber(),
+                quantity: item.quantity,
+                size: item.productVariant?.size,
+                color: item.productVariant?.color,
+              })),
+            })),
+          );
         }
       } catch (error) {
-        console.error('Error fetching orders:', error);
+        console.error("Error fetching orders:", error);
       } finally {
         setLoading(false);
       }
@@ -99,22 +121,26 @@ export function AccountOrders() {
     fetchOrders();
   }, [session]);
 
-  const filteredOrders = orders.filter(order => {
-    const matchesSearch = order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         order.items.some(item => item.name.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesStatus = statusFilter === 'all' || order.status.toLowerCase() === statusFilter;
+  const filteredOrders = orders.filter((order) => {
+    const matchesSearch =
+      order.orderNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      order.items.some((item) =>
+        item.name.toLowerCase().includes(searchQuery.toLowerCase()),
+      );
+    const matchesStatus =
+      statusFilter === "all" || order.status.toLowerCase() === statusFilter;
     return matchesSearch && matchesStatus;
   });
 
   const sortedOrders = [...filteredOrders].sort((a, b) => {
     switch (sortBy) {
-      case 'date-desc':
+      case "date-desc":
         return b.createdAt.getTime() - a.createdAt.getTime();
-      case 'date-asc':
+      case "date-asc":
         return a.createdAt.getTime() - b.createdAt.getTime();
-      case 'total-desc':
+      case "total-desc":
         return Number(b.totalAmount) - Number(a.totalAmount);
-      case 'total-asc':
+      case "total-asc":
         return Number(a.totalAmount) - Number(b.totalAmount);
       default:
         return 0;
@@ -122,10 +148,10 @@ export function AccountOrders() {
   });
 
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-ZA', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return date.toLocaleDateString("en-ZA", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -155,9 +181,7 @@ export function AccountOrders() {
                 <Package className="h-5 w-5" />
                 My Orders
               </CardTitle>
-              <CardDescription>
-                Track and manage your orders
-              </CardDescription>
+              <CardDescription>Track and manage your orders</CardDescription>
             </div>
             <Badge variant="secondary" className="text-sm">
               {orders.length} Total Orders
@@ -214,10 +238,9 @@ export function AccountOrders() {
               <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-semibold mb-2">No orders found</h3>
               <p className="text-muted-foreground mb-4">
-                {searchQuery || statusFilter !== 'all' 
-                  ? 'Try adjusting your search or filters'
-                  : 'You haven\'t placed any orders yet'
-                }
+                {searchQuery || statusFilter !== "all"
+                  ? "Try adjusting your search or filters"
+                  : "You haven't placed any orders yet"}
               </p>
               <Button asChild>
                 <Link href="/products">Start Shopping</Link>
@@ -233,13 +256,15 @@ export function AccountOrders() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div>
-                        <h3 className="font-semibold">Order {order.orderNumber}</h3>
+                        <h3 className="font-semibold">
+                          Order {order.orderNumber}
+                        </h3>
                         <p className="text-sm text-muted-foreground">
                           Placed on {formatDate(order.createdAt)}
                         </p>
                       </div>
-                      <Badge 
-                        variant="secondary" 
+                      <Badge
+                        variant="secondary"
                         className={`${statusConfig[order.status].color} text-white`}
                       >
                         <StatusIcon className="h-3 w-3 mr-1" />
@@ -247,9 +272,12 @@ export function AccountOrders() {
                       </Badge>
                     </div>
                     <div className="text-right">
-                      <p className="font-semibold text-lg">{formatPrice(order.totalAmount)}</p>
+                      <p className="font-semibold text-lg">
+                        {formatPrice(order.totalAmount)}
+                      </p>
                       <p className="text-sm text-muted-foreground">
-                        {order.items.length} item{order.items.length > 1 ? 's' : ''}
+                        {order.items.length} item
+                        {order.items.length > 1 ? "s" : ""}
                       </p>
                     </div>
                   </div>
@@ -261,7 +289,7 @@ export function AccountOrders() {
                       <div key={item.id} className="flex items-center gap-4">
                         <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden">
                           <Image
-                            src={item.image || '/placeholder-product.jpg'}
+                            src={item.image || "/placeholder-product.jpg"}
                             alt={item.name}
                             width={64}
                             height={64}
@@ -277,7 +305,9 @@ export function AccountOrders() {
                           </div>
                         </div>
                         <div className="text-right">
-                          <p className="font-medium">{formatPrice(item.price)}</p>
+                          <p className="font-medium">
+                            {formatPrice(item.price)}
+                          </p>
                         </div>
                       </div>
                     ))}
@@ -289,16 +319,26 @@ export function AccountOrders() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                     <div>
                       <p className="text-muted-foreground">Shipping Address</p>
-                      <p className="font-medium">{order.shippingAddress ? `${order.shippingAddress.addressLine1}, ${order.shippingAddress.city}` : '—'}</p>
+                      <p className="font-medium">
+                        {order.shippingAddress
+                          ? `${order.shippingAddress.addressLine1}, ${order.shippingAddress.city}`
+                          : "—"}
+                      </p>
                     </div>
                     <div>
                       <p className="text-muted-foreground">Payment Status</p>
-                      <p className="font-medium">{order.payments && order.payments[0] ? order.payments[0].status : '—'}</p>
+                      <p className="font-medium">
+                        {order.payments && order.payments[0]
+                          ? order.payments[0].status
+                          : "—"}
+                      </p>
                     </div>
                     {order.trackingNumber && (
                       <div>
                         <p className="text-muted-foreground">Tracking Number</p>
-                        <p className="font-medium font-mono">{order.trackingNumber}</p>
+                        <p className="font-medium font-mono">
+                          {order.trackingNumber}
+                        </p>
                       </div>
                     )}
                   </div>
@@ -317,11 +357,16 @@ export function AccountOrders() {
                         Track Package
                       </Button>
                     )}
-                    <Button variant="outline" size="sm" disabled title="Coming soon">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled
+                      title="Coming soon"
+                    >
                       <Download className="h-4 w-4 mr-1" />
                       Download Invoice
                     </Button>
-                    {order.status === 'DELIVERED' && (
+                    {order.status === "DELIVERED" && (
                       <>
                         <Button variant="outline" size="sm">
                           <Star className="h-4 w-4 mr-1" />

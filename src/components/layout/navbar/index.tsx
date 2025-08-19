@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import { usePathname } from 'next/navigation'
-import { useSession } from 'next-auth/react'
-import Link from 'next/link'
+import { usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 import {
   IconHome,
   IconCategory,
@@ -10,79 +10,81 @@ import {
   IconUser,
   IconHeart,
   IconPackage,
-  IconSearch
-} from '@tabler/icons-react'
-import { useCartStore } from '@/lib/cart-store'
-import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
-import { motion, AnimatePresence } from 'motion/react'
-import { useEffect, useState } from 'react'
+  IconSearch,
+} from "@tabler/icons-react";
+import { useCartStore } from "@/lib/cart-store";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { motion, AnimatePresence } from "motion/react";
+import { useEffect, useState } from "react";
 
 interface NavItem {
-  id: string
-  label: string
-  icon: React.ComponentType<{ className?: string }>
-  href: string
-  badge?: number
-  color?: string
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  href: string;
+  badge?: number;
+  color?: string;
 }
 
 export function Navbar() {
-  const pathname = usePathname()
-  const { data: session } = useSession()
-  const { items } = useCartStore()
-  const [mounted, setMounted] = useState(false)
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const { items } = useCartStore();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
-  const cartItemCount = items.reduce((total, item) => total + item.quantity, 0)
+  const cartItemCount = items.reduce((total, item) => total + item.quantity, 0);
 
   const navItems: NavItem[] = [
     {
-      id: 'home',
-      label: 'Home',
+      id: "home",
+      label: "Home",
       icon: IconHome,
-      href: '/',
-      color: 'text-blue-500'
+      href: "/",
+      color: "text-blue-500",
     },
     {
-      id: 'products',
-      label: 'Products',
+      id: "products",
+      label: "Products",
       icon: IconCategory,
-      href: '/products',
-      color: 'text-purple-500'
+      href: "/products",
+      color: "text-purple-500",
     },
     {
-      id: 'cart',
-      label: 'Cart',
+      id: "cart",
+      label: "Cart",
       icon: IconShoppingCart,
-      href: '/cart',
+      href: "/cart",
       badge: cartItemCount,
-      color: 'text-green-500'
+      color: "text-green-500",
     },
     {
-      id: 'account',
-      label: session ? 'Account' : 'Sign In',
+      id: "account",
+      label: session ? "Account" : "Sign In",
       icon: IconUser,
-      href: session ? '/account' : `/auth/sign-in?callbackUrl=${encodeURIComponent(pathname)}`,
-      color: 'text-orange-500'
-    }
-  ]
+      href: session
+        ? "/account"
+        : `/auth/sign-in?callbackUrl=${encodeURIComponent(pathname)}`,
+      color: "text-orange-500",
+    },
+  ];
 
   const isActive = (href: string) => {
-    if (href === '/') {
-      return pathname === '/'
+    if (href === "/") {
+      return pathname === "/";
     }
-    return pathname.startsWith(href)
-  }
+    return pathname.startsWith(href);
+  };
 
   if (!mounted) {
-    return null
+    return null;
   }
 
-  const hideNavbarPaths = ['/auth/sign-in', '/auth/sign-up'];
+  const hideNavbarPaths = ["/auth/sign-in", "/auth/sign-up"];
   if (hideNavbarPaths.includes(pathname)) {
     return null;
   }
@@ -113,8 +115,8 @@ export function Navbar() {
           <div className="relative px-2 py-2">
             <div className="flex items-center justify-between gap-0.5">
               {navItems.map((item, index) => {
-                const Icon = item.icon
-                const active = isActive(item.href)
+                const Icon = item.icon;
+                const active = isActive(item.href);
 
                 return (
                   <motion.div
@@ -125,7 +127,7 @@ export function Navbar() {
                       delay: index * 0.04,
                       type: "spring",
                       stiffness: 500,
-                      damping: 30
+                      damping: 30,
                     }}
                     className="relative flex-1"
                   >
@@ -135,7 +137,7 @@ export function Navbar() {
                         "relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-xl transition-all duration-200 group",
                         "hover:bg-accent/40 active:bg-accent/60 active:scale-95",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-1",
-                        "min-h-[60px] sm:min-h-[68px]"
+                        "min-h-[60px] sm:min-h-[68px]",
                       )}
                       aria-label={item.label}
                     >
@@ -147,7 +149,11 @@ export function Navbar() {
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0, scale: 0.8 }}
-                            transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 400,
+                              damping: 30,
+                            }}
                             className="absolute inset-0 bg-primary/12 rounded-xl border border-primary/25 shadow-inner"
                           />
                         )}
@@ -159,7 +165,11 @@ export function Navbar() {
                           whileHover={{ scale: 1.08, y: -1 }}
                           whileTap={{ scale: 0.92 }}
                           animate={active ? { scale: 1.05 } : { scale: 1 }}
-                          transition={{ type: "spring", stiffness: 400, damping: 25 }}
+                          transition={{
+                            type: "spring",
+                            stiffness: 400,
+                            damping: 25,
+                          }}
                           className="relative"
                         >
                           <Icon
@@ -167,7 +177,7 @@ export function Navbar() {
                               "h-5 w-5 sm:h-6 sm:w-6 transition-colors duration-200",
                               active
                                 ? "text-primary"
-                                : "text-muted-foreground group-hover:text-foreground"
+                                : "text-muted-foreground group-hover:text-foreground",
                             )}
                           />
 
@@ -178,14 +188,18 @@ export function Navbar() {
                                 initial={{ scale: 0, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
                                 exit={{ scale: 0, opacity: 0 }}
-                                transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                                transition={{
+                                  type: "spring",
+                                  stiffness: 500,
+                                  damping: 25,
+                                }}
                                 className="absolute -top-1 -right-1 sm:-top-1.5 sm:-right-1.5"
                               >
                                 <Badge
                                   variant="destructive"
                                   className="h-4 w-4 sm:h-5 sm:w-5 p-0 flex items-center justify-center text-[8px] sm:text-[9px] font-bold border border-background/60 shadow-lg"
                                 >
-                                  {item.badge > 99 ? '99+' : item.badge}
+                                  {item.badge > 99 ? "99+" : item.badge}
                                 </Badge>
                               </motion.div>
                             )}
@@ -199,7 +213,7 @@ export function Navbar() {
                           "text-[9px] sm:text-[10px] font-medium transition-colors duration-200 text-center leading-tight max-w-full truncate px-1",
                           active
                             ? "text-primary font-semibold"
-                            : "text-muted-foreground group-hover:text-foreground"
+                            : "text-muted-foreground group-hover:text-foreground",
                         )}
                       >
                         {item.label}
@@ -212,19 +226,23 @@ export function Navbar() {
                             initial={{ scaleX: 0, opacity: 0 }}
                             animate={{ scaleX: 1, opacity: 1 }}
                             exit={{ scaleX: 0, opacity: 0 }}
-                            transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                            transition={{
+                              type: "spring",
+                              stiffness: 500,
+                              damping: 30,
+                            }}
                             className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-primary rounded-full"
                           />
                         )}
                       </AnimatePresence>
                     </Link>
                   </motion.div>
-                )
+                );
               })}
             </div>
           </div>
         </div>
       </div>
     </motion.nav>
-  )
+  );
 }

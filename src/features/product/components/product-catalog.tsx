@@ -1,27 +1,31 @@
-import React, { Suspense } from 'react'
-import { ProductGrid } from './product-grid'
-import { ProductPagination } from './product-pagination'
-import { ProductSort as ProductSortComponent } from './product-sort'
-import { Skeleton } from '@/components/ui/skeleton'
-import { Api } from '@/lib/api'
-import { ProductWithDetails, ProductFilters, ProductSort } from '@/lib/services'
+import React, { Suspense } from "react";
+import { ProductGrid } from "./product-grid";
+import { ProductPagination } from "./product-pagination";
+import { ProductSort as ProductSortComponent } from "./product-sort";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Api } from "@/lib/api";
+import {
+  ProductWithDetails,
+  ProductFilters,
+  ProductSort,
+} from "@/lib/services";
 
 interface ProductCatalogProps {
   searchParams: {
-    page?: string
-    sort?: string
-    category?: string
-    brand?: string
-    minPrice?: string
-    maxPrice?: string
-    search?: string
-    size?: string
-    color?: string
-  }
-  showSort?: boolean
-  showPagination?: boolean
-  limit?: number
-  featured?: boolean
+    page?: string;
+    sort?: string;
+    category?: string;
+    brand?: string;
+    minPrice?: string;
+    maxPrice?: string;
+    search?: string;
+    size?: string;
+    color?: string;
+  };
+  showSort?: boolean;
+  showPagination?: boolean;
+  limit?: number;
+  featured?: boolean;
 }
 
 function ProductCatalogSkeleton() {
@@ -32,7 +36,7 @@ function ProductCatalogSkeleton() {
         <Skeleton className="h-4 w-32" />
         <Skeleton className="h-10 w-48" />
       </div>
-      
+
       {/* Grid skeleton */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3 md:gap-4">
         {[...Array(14)].map((_, i) => (
@@ -47,7 +51,7 @@ function ProductCatalogSkeleton() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 async function ProductCatalogContent({
@@ -55,39 +59,39 @@ async function ProductCatalogContent({
   showSort = true,
   showPagination = true,
   limit = 12,
-  featured = false
+  featured = false,
 }: ProductCatalogProps): Promise<React.ReactElement> {
-  const page = parseInt(searchParams.page || '1')
-  const sortParam = searchParams.sort || 'newest'
+  const page = parseInt(searchParams.page || "1");
+  const sortParam = searchParams.sort || "newest";
 
   // Build filters
   const filters: ProductFilters = {
     isActive: true,
-    status: 'ACTIVE',
-  }
+    status: "ACTIVE",
+  };
 
   if (searchParams.search) {
-    filters.search = searchParams.search
+    filters.search = searchParams.search;
   }
 
   if (searchParams.category) {
-    filters.categoryId = searchParams.category
+    filters.categoryId = searchParams.category;
   }
 
   if (searchParams.brand) {
-    filters.brandId = searchParams.brand
+    filters.brandId = searchParams.brand;
   }
 
   if (searchParams.minPrice) {
-    filters.minPrice = parseFloat(searchParams.minPrice)
+    filters.minPrice = parseFloat(searchParams.minPrice);
   }
 
   if (searchParams.maxPrice) {
-    filters.maxPrice = parseFloat(searchParams.maxPrice)
+    filters.maxPrice = parseFloat(searchParams.maxPrice);
   }
 
   if (featured) {
-    filters.isFeatured = true
+    filters.isFeatured = true;
   }
 
   // Note: size and color filtering would need to be handled at the variant level
@@ -96,25 +100,25 @@ async function ProductCatalogContent({
   // Build sort
   const sort: ProductSort = (() => {
     switch (sortParam) {
-      case 'oldest':
-        return { field: 'createdAt', direction: 'asc' }
-      case 'price-low-high':
-        return { field: 'price', direction: 'asc' }
-      case 'price-high-low':
-        return { field: 'price', direction: 'desc' }
-      case 'name-a-z':
-        return { field: 'name', direction: 'asc' }
-      case 'name-z-a':
-        return { field: 'name', direction: 'desc' }
-      case 'featured':
-        return { field: 'createdAt', direction: 'desc' } // fallback since isFeatured not in ProductSort
-      case 'rating':
-        return { field: 'createdAt', direction: 'desc' } // fallback since rating not in ProductSort
-      case 'newest':
+      case "oldest":
+        return { field: "createdAt", direction: "asc" };
+      case "price-low-high":
+        return { field: "price", direction: "asc" };
+      case "price-high-low":
+        return { field: "price", direction: "desc" };
+      case "name-a-z":
+        return { field: "name", direction: "asc" };
+      case "name-z-a":
+        return { field: "name", direction: "desc" };
+      case "featured":
+        return { field: "createdAt", direction: "desc" }; // fallback since isFeatured not in ProductSort
+      case "rating":
+        return { field: "createdAt", direction: "desc" }; // fallback since rating not in ProductSort
+      case "newest":
       default:
-        return { field: 'createdAt', direction: 'desc' }
+        return { field: "createdAt", direction: "desc" };
     }
-  })()
+  })();
 
   try {
     const { products: clientSafeProducts, pagination } = await Api.getProducts({
@@ -124,10 +128,14 @@ async function ProductCatalogContent({
       search: searchParams.search,
       category: searchParams.category,
       brand: searchParams.brand,
-      minPrice: searchParams.minPrice ? parseFloat(searchParams.minPrice) : undefined,
-      maxPrice: searchParams.maxPrice ? parseFloat(searchParams.maxPrice) : undefined,
+      minPrice: searchParams.minPrice
+        ? parseFloat(searchParams.minPrice)
+        : undefined,
+      maxPrice: searchParams.maxPrice
+        ? parseFloat(searchParams.maxPrice)
+        : undefined,
       featured,
-    })
+    });
 
     return (
       <div className="space-y-6">
@@ -135,17 +143,19 @@ async function ProductCatalogContent({
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="text-sm text-muted-foreground">
             {pagination.total === 0 ? (
-              'No products found'
+              "No products found"
             ) : (
               <>
-                Showing {((page - 1) * limit) + 1}-{Math.min(page * limit, pagination.total)} of {pagination.total} products
+                Showing {(page - 1) * limit + 1}-
+                {Math.min(page * limit, pagination.total)} of {pagination.total}{" "}
+                products
                 {searchParams.search && (
                   <span> for "{searchParams.search}"</span>
                 )}
               </>
             )}
           </div>
-          
+
           {showSort && clientSafeProducts.length > 0 && (
             <ProductSortComponent currentSort={sortParam} />
           )}
@@ -156,16 +166,16 @@ async function ProductCatalogContent({
 
         {/* Pagination */}
         {showPagination && pagination.pages > 1 && (
-          <ProductPagination 
+          <ProductPagination
             currentPage={page}
             totalPages={pagination.pages}
             totalItems={pagination.total}
           />
         )}
       </div>
-    )
+    );
   } catch (error) {
-    console.error('Error loading products:', error)
+    console.error("Error loading products:", error);
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-semibold mb-2">Something went wrong</h3>
@@ -173,7 +183,7 @@ async function ProductCatalogContent({
           We couldn't load the products. Please try again later.
         </p>
       </div>
-    )
+    );
   }
 }
 
@@ -182,5 +192,5 @@ export function ProductCatalog(props: ProductCatalogProps) {
     <Suspense fallback={<ProductCatalogSkeleton />}>
       <ProductCatalogContent {...props} />
     </Suspense>
-  )
+  );
 }

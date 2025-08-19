@@ -1,70 +1,85 @@
-import { db } from '@/lib/prisma'
-import type { Product, Category, Brand, ProductVariant, ProductImage, Prisma, ProductStatus } from '@prisma/client'
-import { Decimal } from '@prisma/client/runtime/library'
+import { db } from "@/lib/prisma";
+import type {
+  Product,
+  Category,
+  Brand,
+  ProductVariant,
+  ProductImage,
+  Prisma,
+  ProductStatus,
+} from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
 
-export type ProductWithDetails = Omit<Product, 'averageRating'> & {
-  category: Category
-  brand: Brand
-  variants: Array<Omit<ProductVariant, 'price' | 'comparePrice' | 'costPrice' | 'weight'> & {
-    price: Decimal;
-    comparePrice: Decimal | null;
-    costPrice: Decimal | null;
-    weight: Decimal | null;
-  }>
-  images: { id: string; url: string; altText: string | null; isPrimary: boolean }[]
+export type ProductWithDetails = Omit<Product, "averageRating"> & {
+  category: Category;
+  brand: Brand;
+  variants: Array<
+    Omit<ProductVariant, "price" | "comparePrice" | "costPrice" | "weight"> & {
+      price: Decimal;
+      comparePrice: Decimal | null;
+      costPrice: Decimal | null;
+      weight: Decimal | null;
+    }
+  >;
+  images: {
+    id: string;
+    url: string;
+    altText: string | null;
+    isPrimary: boolean;
+  }[];
   _count: {
-    reviews: number
-  }
-  averageRating: number
-  reviewCount: number
-}
+    reviews: number;
+  };
+  averageRating: number;
+  reviewCount: number;
+};
 
 export type ProductFilters = {
-  search?: string
-  categoryId?: string
-  brandId?: string
-  status?: ProductStatus
-  isActive?: boolean
-  isFeatured?: boolean
-  minPrice?: number
-  maxPrice?: number
-}
+  search?: string;
+  categoryId?: string;
+  brandId?: string;
+  status?: ProductStatus;
+  isActive?: boolean;
+  isFeatured?: boolean;
+  minPrice?: number;
+  maxPrice?: number;
+};
 
 export type ProductSort = {
-  field: 'name' | 'createdAt' | 'updatedAt' | 'price'
-  direction: 'asc' | 'desc'
-}
+  field: "name" | "createdAt" | "updatedAt" | "price";
+  direction: "asc" | "desc";
+};
 
 export class ProductService {
   static async getProducts({
     filters = {},
-    sort = { field: 'createdAt', direction: 'desc' },
+    sort = { field: "createdAt", direction: "desc" },
     page = 1,
-    limit = 10
+    limit = 10,
   }: {
-    filters?: ProductFilters
-    sort?: ProductSort
-    page?: number
-    limit?: number
+    filters?: ProductFilters;
+    sort?: ProductSort;
+    page?: number;
+    limit?: number;
   } = {}) {
-    const skip = (page - 1) * limit
+    const skip = (page - 1) * limit;
 
-    const where: any = {}
+    const where: any = {};
 
     // Apply filters
     if (filters.search) {
       where.OR = [
-        { name: { contains: filters.search, mode: 'insensitive' } },
-        { description: { contains: filters.search, mode: 'insensitive' } },
-        { sku: { contains: filters.search, mode: 'insensitive' } }
-      ]
+        { name: { contains: filters.search, mode: "insensitive" } },
+        { description: { contains: filters.search, mode: "insensitive" } },
+        { sku: { contains: filters.search, mode: "insensitive" } },
+      ];
     }
 
-    if (filters.categoryId) where.categoryId = filters.categoryId
-    if (filters.brandId) where.brandId = filters.brandId
-    if (filters.status) where.status = filters.status
-    if (filters.isActive !== undefined) where.isActive = filters.isActive
-    if (filters.isFeatured !== undefined) where.isFeatured = filters.isFeatured
+    if (filters.categoryId) where.categoryId = filters.categoryId;
+    if (filters.brandId) where.brandId = filters.brandId;
+    if (filters.status) where.status = filters.status;
+    if (filters.isActive !== undefined) where.isActive = filters.isActive;
+    if (filters.isFeatured !== undefined) where.isFeatured = filters.isFeatured;
 
     // Price filtering (based on variants)
     if (filters.minPrice || filters.maxPrice) {
@@ -72,94 +87,100 @@ export class ProductService {
         some: {
           price: {
             ...(filters.minPrice && { gte: filters.minPrice }),
-            ...(filters.maxPrice && { lte: filters.maxPrice })
-          }
-        }
-      }
+            ...(filters.maxPrice && { lte: filters.maxPrice }),
+          },
+        },
+      };
     }
 
-    const orderBy: any = {}
-    if (sort.field === 'price') {
+    const orderBy: any = {};
+    if (sort.field === "price") {
       // Sort by minimum variant price
       orderBy.variants = {
         _min: {
-          price: sort.direction
-        }
-      }
+          price: sort.direction,
+        },
+      };
     } else {
-      orderBy[sort.field] = sort.direction
+      orderBy[sort.field] = sort.direction;
     }
 
     try {
       const [products, total] = await Promise.all([
         db.product.findMany({
-        where,
-        include: {
-          category: true,
-          brand: true,
-          variants: {
-            orderBy: { price: 'asc' },
-            take: 1 // Get cheapest variant for display
+          where,
+          include: {
+            category: true,
+            brand: true,
+            variants: {
+              orderBy: { price: "asc" },
+              take: 1, // Get cheapest variant for display
+            },
+            images: {
+              orderBy: { sortOrder: "asc" },
+            },
+            _count: {
+              select: { reviews: true },
+            },
+            reviews: {
+              select: { rating: true },
+            },
           },
-          images: {
-            orderBy: { sortOrder: 'asc' }
-          },
-          _count: {
-            select: { reviews: true }
-          },
-          reviews: {
-            select: { rating: true }
-          }
+          orderBy,
+          skip,
+          take: limit,
+        }),
+        db.product.count({ where }),
+      ]);
+
+      return {
+        products: products.map((product) => {
+          const reviews = (product as any).reviews || [];
+          const averageRating =
+            reviews.length > 0
+              ? reviews.reduce(
+                  (sum: number, review: any) => sum + review.rating,
+                  0,
+                ) / reviews.length
+              : 0;
+
+          return {
+            ...product,
+            variants: product.variants.map((variant) => ({
+              ...variant,
+              price: variant.price,
+              comparePrice: variant.comparePrice,
+              costPrice: variant.costPrice,
+              weight: variant.weight,
+            })),
+            averageRating,
+            reviewCount: product._count.reviews,
+          };
+        }),
+        pagination: {
+          page,
+          limit,
+          total,
+          pages: Math.ceil(total / limit),
         },
-        orderBy,
-        skip,
-        take: limit
-      }),
-      db.product.count({ where })
-    ])
-
-    return {
-      products: products.map(product => {
-        const reviews = (product as any).reviews || []
-        const averageRating = reviews.length > 0
-          ? reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / reviews.length
-          : 0
-
-        return {
-          ...product,
-          variants: product.variants.map(variant => ({
-            ...variant,
-            price: variant.price,
-            comparePrice: variant.comparePrice,
-            costPrice: variant.costPrice,
-            weight: variant.weight
-          })),
-          averageRating,
-          reviewCount: product._count.reviews
-        }
-      }),
-      pagination: {
-        page,
-        limit,
-        total,
-        pages: Math.ceil(total / limit)
-      }
-    }
+      };
     } catch (error) {
-      console.error('Error fetching products:', error)
+      console.error("Error fetching products:", error);
       return {
         products: [],
         pagination: {
           page,
           limit,
           total: 0,
-          pages: 0
-        }
-      }
+          pages: 0,
+        },
+      };
     }
   }
 
-  static async getProductBySlug(slug: string): Promise<ProductWithDetails | null> {
+  static async getProductBySlug(
+    slug: string,
+  ): Promise<ProductWithDetails | null> {
     const product = await db.product.findUnique({
       where: { slug },
       include: {
@@ -167,33 +188,35 @@ export class ProductService {
         brand: true,
         variants: {
           where: { isActive: true },
-          orderBy: { price: 'asc' }
+          orderBy: { price: "asc" },
         },
         images: {
-          orderBy: { sortOrder: 'asc' }
+          orderBy: { sortOrder: "asc" },
         },
         _count: {
-          select: { reviews: true }
+          select: { reviews: true },
         },
         reviews: {
-          select: { rating: true }
-        }
-      }
-    })
+          select: { rating: true },
+        },
+      },
+    });
 
-    if (!product) return null
+    if (!product) return null;
 
     // Calculate average rating from reviews
-    const reviews = (product as any).reviews || []
-    const averageRating = reviews.length > 0
-      ? reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / reviews.length
-      : 0
+    const reviews = (product as any).reviews || [];
+    const averageRating =
+      reviews.length > 0
+        ? reviews.reduce((sum: number, review: any) => sum + review.rating, 0) /
+          reviews.length
+        : 0;
 
     return {
       ...product,
       averageRating,
-      reviewCount: product._count.reviews
-    } as ProductWithDetails
+      reviewCount: product._count.reviews,
+    } as ProductWithDetails;
   }
 
   static async getProductById(id: string): Promise<ProductWithDetails | null> {
@@ -203,39 +226,41 @@ export class ProductService {
         category: true,
         brand: true,
         variants: {
-          orderBy: { price: 'asc' }
+          orderBy: { price: "asc" },
         },
         images: {
-          orderBy: { sortOrder: 'asc' }
+          orderBy: { sortOrder: "asc" },
         },
         _count: {
-          select: { reviews: true }
+          select: { reviews: true },
         },
         reviews: {
-          select: { rating: true }
-        }
-      }
-    })
+          select: { rating: true },
+        },
+      },
+    });
 
-    if (!product) return null
+    if (!product) return null;
 
     // Calculate average rating
-    const averageRating = product.reviews.length > 0
-      ? product.reviews.reduce((sum, review) => sum + review.rating, 0) / product.reviews.length
-      : 0
+    const averageRating =
+      product.reviews.length > 0
+        ? product.reviews.reduce((sum, review) => sum + review.rating, 0) /
+          product.reviews.length
+        : 0;
 
     return {
       ...product,
-      variants: product.variants.map(variant => ({
+      variants: product.variants.map((variant) => ({
         ...variant,
         price: variant.price,
         comparePrice: variant.comparePrice,
         costPrice: variant.costPrice,
-        weight: variant.weight
+        weight: variant.weight,
       })),
       averageRating,
-      reviewCount: product._count.reviews
-    }
+      reviewCount: product._count.reviews,
+    };
   }
 
   static async getFeaturedProducts(limit = 8): Promise<ProductWithDetails[]> {
@@ -243,43 +268,47 @@ export class ProductService {
       where: {
         isFeatured: true,
         isActive: true,
-        status: 'ACTIVE'
+        status: "ACTIVE",
       },
       include: {
         category: true,
         brand: true,
         variants: {
           where: { isActive: true },
-          orderBy: { price: 'asc' },
-          take: 1
+          orderBy: { price: "asc" },
+          take: 1,
         },
         images: {
           where: { isPrimary: true },
-          take: 1
+          take: 1,
         },
         _count: {
-          select: { reviews: true }
+          select: { reviews: true },
         },
         reviews: {
-          select: { rating: true }
-        }
+          select: { rating: true },
+        },
       },
       take: limit,
-      orderBy: { createdAt: 'desc' }
-    })
+      orderBy: { createdAt: "desc" },
+    });
 
-    return products.map(product => {
-      const reviews = (product as any).reviews || []
-      const averageRating = reviews.length > 0
-        ? reviews.reduce((sum: number, review: any) => sum + review.rating, 0) / reviews.length
-        : 0
+    return products.map((product) => {
+      const reviews = (product as any).reviews || [];
+      const averageRating =
+        reviews.length > 0
+          ? reviews.reduce(
+              (sum: number, review: any) => sum + review.rating,
+              0,
+            ) / reviews.length
+          : 0;
 
       return {
         ...product,
         averageRating,
-        reviewCount: product._count.reviews
-      }
-    })
+        reviewCount: product._count.reviews,
+      };
+    });
   }
 
   static async getCategories() {
@@ -287,11 +316,11 @@ export class ProductService {
       where: { isActive: true },
       include: {
         _count: {
-          select: { products: true }
-        }
+          select: { products: true },
+        },
       },
-      orderBy: { sortOrder: 'asc' }
-    })
+      orderBy: { sortOrder: "asc" },
+    });
   }
 
   static async getCategoryById(id: string) {
@@ -299,20 +328,23 @@ export class ProductService {
       where: { id },
       include: {
         _count: {
-          select: { products: true }
-        }
-      }
-    })
+          select: { products: true },
+        },
+      },
+    });
   }
 
   static async createCategory(data: {
-    name: string
-    description?: string
-    imageUrl?: string
-    isActive: boolean
+    name: string;
+    description?: string;
+    imageUrl?: string;
+    isActive: boolean;
   }) {
     // Generate slug from name
-    const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    const slug = data.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
 
     return db.category.create({
       data: {
@@ -320,43 +352,46 @@ export class ProductService {
         slug,
         description: data.description,
         imageUrl: data.imageUrl,
-        isActive: data.isActive
+        isActive: data.isActive,
       },
       include: {
         _count: {
-          select: { products: true }
-        }
-      }
-    })
+          select: { products: true },
+        },
+      },
+    });
   }
 
-  static async updateCategory(id: string, data: {
-    name?: string
-    description?: string
-    imageUrl?: string
-    isActive?: boolean
-  }) {
+  static async updateCategory(
+    id: string,
+    data: {
+      name?: string;
+      description?: string;
+      imageUrl?: string;
+      isActive?: boolean;
+    },
+  ) {
     return db.category.update({
       where: { id },
       data,
       include: {
         _count: {
-          select: { products: true }
-        }
-      }
-    })
+          select: { products: true },
+        },
+      },
+    });
   }
 
   static async deleteCategory(id: string) {
     return db.category.delete({
-      where: { id }
-    })
+      where: { id },
+    });
   }
 
   static async getProductsCountByCategory(categoryId: string) {
     return db.product.count({
-      where: { categoryId }
-    })
+      where: { categoryId },
+    });
   }
 
   static async getBrands() {
@@ -364,11 +399,11 @@ export class ProductService {
       where: { isActive: true },
       include: {
         _count: {
-          select: { products: true }
-        }
+          select: { products: true },
+        },
       },
-      orderBy: { name: 'asc' }
-    })
+      orderBy: { name: "asc" },
+    });
   }
 
   static async getBrandById(id: string) {
@@ -376,21 +411,24 @@ export class ProductService {
       where: { id },
       include: {
         _count: {
-          select: { products: true }
-        }
-      }
-    })
+          select: { products: true },
+        },
+      },
+    });
   }
 
   static async createBrand(data: {
-    name: string
-    description?: string
-    logoUrl?: string
-    websiteUrl?: string
-    isActive: boolean
+    name: string;
+    description?: string;
+    logoUrl?: string;
+    websiteUrl?: string;
+    isActive: boolean;
   }) {
     // Generate slug from name
-    const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    const slug = data.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
 
     return db.brand.create({
       data: {
@@ -399,62 +437,65 @@ export class ProductService {
         description: data.description,
         logoUrl: data.logoUrl,
         website: data.websiteUrl,
-        isActive: data.isActive
+        isActive: data.isActive,
       },
       include: {
         _count: {
-          select: { products: true }
-        }
-      }
-    })
+          select: { products: true },
+        },
+      },
+    });
   }
 
-  static async updateBrand(id: string, data: {
-    name?: string
-    description?: string
-    logoUrl?: string
-    websiteUrl?: string
-    isActive?: boolean
-  }) {
+  static async updateBrand(
+    id: string,
+    data: {
+      name?: string;
+      description?: string;
+      logoUrl?: string;
+      websiteUrl?: string;
+      isActive?: boolean;
+    },
+  ) {
     return db.brand.update({
       where: { id },
       data,
       include: {
         _count: {
-          select: { products: true }
-        }
-      }
-    })
+          select: { products: true },
+        },
+      },
+    });
   }
 
   static async deleteBrand(id: string) {
     return db.brand.delete({
-      where: { id }
-    })
+      where: { id },
+    });
   }
 
   static async getProductsCountByBrand(brandId: string) {
     return db.product.count({
-      where: { brandId }
-    })
+      where: { brandId },
+    });
   }
 
   static async getProductVariants(productId: string) {
     const variants = await db.productVariant.findMany({
       where: {
         productId,
-        isActive: true
+        isActive: true,
       },
-      orderBy: { price: 'asc' }
-    })
+      orderBy: { price: "asc" },
+    });
 
-    return variants.map(variant => ({
+    return variants.map((variant) => ({
       ...variant,
       price: Number(variant.price),
       comparePrice: variant.comparePrice ? Number(variant.comparePrice) : null,
       costPrice: variant.costPrice ? Number(variant.costPrice) : null,
-      weight: variant.weight ? Number(variant.weight) : null
-    }))
+      weight: variant.weight ? Number(variant.weight) : null,
+    }));
   }
 
   static async updateStock(variantId: string, quantity: number) {
@@ -462,33 +503,36 @@ export class ProductService {
       where: { id: variantId },
       data: {
         stock: {
-          decrement: quantity
-        }
-      }
-    })
+          decrement: quantity,
+        },
+      },
+    });
   }
 
   static async createProduct(data: {
-    name: string
-    description: string
-    sku: string
-    price: number
-    compareAtPrice?: number
-    costPrice?: number
-    trackQuantity: boolean
-    quantity: number
-    lowStockThreshold?: number
-    weight?: number
-    categoryId: string
-    brandId: string
-    tags?: string[]
-    isActive: boolean
-    isFeatured: boolean
-    images?: string[]
-    createdBy: string
+    name: string;
+    description: string;
+    sku: string;
+    price: number;
+    compareAtPrice?: number;
+    costPrice?: number;
+    trackQuantity: boolean;
+    quantity: number;
+    lowStockThreshold?: number;
+    weight?: number;
+    categoryId: string;
+    brandId: string;
+    tags?: string[];
+    isActive: boolean;
+    isFeatured: boolean;
+    images?: string[];
+    createdBy: string;
   }) {
     // Generate slug from name
-    const slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+    const slug = data.name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, "");
 
     return db.product.create({
       data: {
@@ -498,15 +542,15 @@ export class ProductService {
         sku: data.sku,
         categoryId: data.categoryId,
         brandId: data.brandId,
-        status: data.isActive ? 'ACTIVE' : 'DRAFT',
+        status: data.isActive ? "ACTIVE" : "DRAFT",
         isActive: data.isActive,
         isFeatured: data.isFeatured,
         tags: data.tags || [],
         // Create default variant with pricing info
         variants: {
           create: {
-            size: 'Default',
-            color: 'Default',
+            size: "Default",
+            color: "Default",
             sku: `${data.sku}-DEFAULT-DEF`,
             price: data.price,
             comparePrice: data.compareAtPrice,
@@ -514,20 +558,21 @@ export class ProductService {
             stock: data.quantity,
             lowStockThreshold: data.lowStockThreshold || 5,
             weight: data.weight,
-            isActive: true
-          }
+            isActive: true,
+          },
         },
         // Create images if provided
-        ...(data.images && data.images.length > 0 && {
-          images: {
-            create: data.images.map((url, index) => ({
-              url,
-              altText: data.name,
-              isPrimary: index === 0,
-              sortOrder: index
-            }))
-          }
-        })
+        ...(data.images &&
+          data.images.length > 0 && {
+            images: {
+              create: data.images.map((url, index) => ({
+                url,
+                altText: data.name,
+                isPrimary: index === 0,
+                sortOrder: index,
+              })),
+            },
+          }),
       },
       include: {
         category: true,
@@ -535,56 +580,65 @@ export class ProductService {
         variants: true,
         images: true,
         _count: {
-          select: { reviews: true }
-        }
-      }
-    })
+          select: { reviews: true },
+        },
+      },
+    });
   }
 
-  static async updateProduct(id: string, data: {
-    name?: string
-    description?: string
-    sku?: string
-    price?: number
-    compareAtPrice?: number
-    costPrice?: number
-    trackQuantity?: boolean
-    quantity?: number
-    lowStockThreshold?: number
-    weight?: number
-    categoryId?: string
-    brandId?: string
-    tags?: string[]
-    isActive?: boolean
-    isFeatured?: boolean
-    images?: string[]
-  }) {
-    const updateData: any = {}
+  static async updateProduct(
+    id: string,
+    data: {
+      name?: string;
+      description?: string;
+      sku?: string;
+      price?: number;
+      compareAtPrice?: number;
+      costPrice?: number;
+      trackQuantity?: boolean;
+      quantity?: number;
+      lowStockThreshold?: number;
+      weight?: number;
+      categoryId?: string;
+      brandId?: string;
+      tags?: string[];
+      isActive?: boolean;
+      isFeatured?: boolean;
+      images?: string[];
+    },
+  ) {
+    const updateData: any = {};
 
     // Update product fields
     if (data.name) {
-      updateData.name = data.name
-      updateData.slug = data.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')
+      updateData.name = data.name;
+      updateData.slug = data.name
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/(^-|-$)/g, "");
     }
-    if (data.description !== undefined) updateData.description = data.description
-    if (data.sku) updateData.sku = data.sku
-    if (data.categoryId) updateData.categoryId = data.categoryId
-    if (data.brandId) updateData.brandId = data.brandId
-    if (data.tags !== undefined) updateData.tags = data.tags
+    if (data.description !== undefined)
+      updateData.description = data.description;
+    if (data.sku) updateData.sku = data.sku;
+    if (data.categoryId) updateData.categoryId = data.categoryId;
+    if (data.brandId) updateData.brandId = data.brandId;
+    if (data.tags !== undefined) updateData.tags = data.tags;
     if (data.isActive !== undefined) {
-      updateData.isActive = data.isActive
-      updateData.status = data.isActive ? 'ACTIVE' : 'DRAFT'
+      updateData.isActive = data.isActive;
+      updateData.status = data.isActive ? "ACTIVE" : "DRAFT";
     }
-    if (data.isFeatured !== undefined) updateData.isFeatured = data.isFeatured
+    if (data.isFeatured !== undefined) updateData.isFeatured = data.isFeatured;
 
     // Update default variant if pricing/inventory data provided
-    const variantUpdate: any = {}
-    if (data.price !== undefined) variantUpdate.price = data.price
-    if (data.compareAtPrice !== undefined) variantUpdate.comparePrice = data.compareAtPrice
-    if (data.costPrice !== undefined) variantUpdate.costPrice = data.costPrice
-    if (data.quantity !== undefined) variantUpdate.stock = data.quantity
-    if (data.lowStockThreshold !== undefined) variantUpdate.lowStockThreshold = data.lowStockThreshold
-    if (data.weight !== undefined) variantUpdate.weight = data.weight
+    const variantUpdate: any = {};
+    if (data.price !== undefined) variantUpdate.price = data.price;
+    if (data.compareAtPrice !== undefined)
+      variantUpdate.comparePrice = data.compareAtPrice;
+    if (data.costPrice !== undefined) variantUpdate.costPrice = data.costPrice;
+    if (data.quantity !== undefined) variantUpdate.stock = data.quantity;
+    if (data.lowStockThreshold !== undefined)
+      variantUpdate.lowStockThreshold = data.lowStockThreshold;
+    if (data.weight !== undefined) variantUpdate.weight = data.weight;
 
     return db.product.update({
       where: { id },
@@ -595,12 +649,12 @@ export class ProductService {
           variants: {
             updateMany: {
               where: {
-                size: 'Default',
-                color: 'Default'
+                size: "Default",
+                color: "Default",
               },
-              data: variantUpdate
-            }
-          }
+              data: variantUpdate,
+            },
+          },
         }),
         // Handle images update if provided
         ...(data.images && {
@@ -608,12 +662,12 @@ export class ProductService {
             deleteMany: {},
             create: data.images.map((url, index) => ({
               url,
-              altText: data.name || 'Product image',
+              altText: data.name || "Product image",
               isPrimary: index === 0,
-              sortOrder: index
-            }))
-          }
-        })
+              sortOrder: index,
+            })),
+          },
+        }),
       },
       include: {
         category: true,
@@ -621,38 +675,39 @@ export class ProductService {
         variants: true,
         images: true,
         _count: {
-          select: { reviews: true }
-        }
-      }
-    })
+          select: { reviews: true },
+        },
+      },
+    });
   }
 
   static async deleteProduct(id: string) {
     // Delete in correct order due to foreign key constraints
-    await db.productImage.deleteMany({ where: { productId: id } })
-    await db.productVariant.deleteMany({ where: { productId: id } })
-    return db.product.delete({ where: { id } })
+    await db.productImage.deleteMany({ where: { productId: id } });
+    await db.productVariant.deleteMany({ where: { productId: id } });
+    return db.product.delete({ where: { id } });
   }
 
   static async getProductStats() {
-    const [totalProducts, activeProducts, lowStockVariants, categories] = await Promise.all([
-      db.product.count(),
-      db.product.count({ where: { isActive: true, status: 'ACTIVE' } }),
-      db.productVariant.count({
-        where: {
-          stock: {
-            lte: db.productVariant.fields.lowStockThreshold
-          }
-        }
-      }),
-      db.category.count({ where: { isActive: true } })
-    ])
+    const [totalProducts, activeProducts, lowStockVariants, categories] =
+      await Promise.all([
+        db.product.count(),
+        db.product.count({ where: { isActive: true, status: "ACTIVE" } }),
+        db.productVariant.count({
+          where: {
+            stock: {
+              lte: db.productVariant.fields.lowStockThreshold,
+            },
+          },
+        }),
+        db.category.count({ where: { isActive: true } }),
+      ]);
 
     return {
       totalProducts,
       activeProducts,
       lowStockVariants,
-      categories
-    }
+      categories,
+    };
   }
 }

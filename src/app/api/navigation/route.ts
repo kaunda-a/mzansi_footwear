@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
-import { db } from '@/lib/prisma';
+import { NextResponse } from "next/server";
+import { db } from "@/lib/prisma";
 
 export async function GET() {
   try {
@@ -17,21 +17,21 @@ export async function GET() {
             products: {
               where: {
                 isActive: true,
-                status: 'ACTIVE'
-              }
-            }
-          }
-        }
+                status: "ACTIVE",
+              },
+            },
+          },
+        },
       },
       orderBy: [
-        { 
+        {
           products: {
-            _count: 'desc' // Order by product count (most popular first)
-          }
+            _count: "desc", // Order by product count (most popular first)
+          },
         },
-        { name: 'asc' }
+        { name: "asc" },
       ],
-      take: 10 // Limit to top 10 categories
+      take: 10, // Limit to top 10 categories
     });
 
     // Get active brands for navigation
@@ -48,48 +48,52 @@ export async function GET() {
             products: {
               where: {
                 isActive: true,
-                status: 'ACTIVE'
-              }
-            }
-          }
-        }
+                status: "ACTIVE",
+              },
+            },
+          },
+        },
       },
       orderBy: [
-        { 
+        {
           products: {
-            _count: 'desc' // Order by product count (most popular first)
-          }
+            _count: "desc", // Order by product count (most popular first)
+          },
         },
-        { name: 'asc' }
+        { name: "asc" },
       ],
-      take: 10 // Limit to top 10 brands
+      take: 10, // Limit to top 10 brands
     });
 
     // Filter out categories and brands with no products
-    const filteredCategories = categories.filter((cat: any) => cat._count.products > 0);
-    const filteredBrands = brands.filter((brand: any) => brand._count.products > 0);
+    const filteredCategories = categories.filter(
+      (cat: any) => cat._count.products > 0,
+    );
+    const filteredBrands = brands.filter(
+      (brand: any) => brand._count.products > 0,
+    );
 
     const navigationData = {
       categories: filteredCategories.map((cat: any) => ({
         id: cat.id,
         name: cat.name,
         slug: cat.slug,
-        productCount: cat._count.products
+        productCount: cat._count.products,
       })),
       brands: filteredBrands.map((brand: any) => ({
         id: brand.id,
         name: brand.name,
         slug: brand.slug,
-        productCount: brand._count.products
-      }))
+        productCount: brand._count.products,
+      })),
     };
 
     return NextResponse.json(navigationData);
   } catch (error) {
-    console.error('Error fetching navigation data:', error);
+    console.error("Error fetching navigation data:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch navigation data' },
-      { status: 500 }
+      { error: "Failed to fetch navigation data" },
+      { status: 500 },
     );
   }
 }

@@ -1,39 +1,48 @@
-import { Suspense } from 'react'
-import type { Metadata } from 'next'
-import { SearchParams } from 'nuqs/server'
-import Header from '@/components/layout/header'
-import { StoreFooter } from '@/components/layout/footer'
-import { Heading } from '@/components/ui/heading'
-import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
-import { OrderListingPage } from '@/features/orders'
-import { searchParamsCache, serialize } from '@/lib/searchparams'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import { SearchParams } from "nuqs/server";
+import Header from "@/components/layout/header";
+import { StoreFooter } from "@/components/layout/footer";
+import { Heading } from "@/components/ui/heading";
+import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
+import { OrderListingPage } from "@/features/orders";
+import { searchParamsCache, serialize } from "@/lib/searchparams";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export const metadata: Metadata = {
-  title: 'My Orders - Mzansi Footwear',
-  description: 'View your order history, track shipments, and manage your purchases at Mzansi Footwear.',
-  keywords: 'orders, order history, track order, purchase history, Mzansi Footwear',
+  title: "My Orders - Mzansi Footwear",
+  description:
+    "View your order history, track shipments, and manage your purchases at Mzansi Footwear.",
+  keywords:
+    "orders, order history, track order, purchase history, Mzansi Footwear",
   openGraph: {
-    title: 'My Orders - Mzansi Footwear',
-    description: 'View your order history and track your purchases.',
-    type: 'website',
+    title: "My Orders - Mzansi Footwear",
+    description: "View your order history and track your purchases.",
+    type: "website",
   },
   robots: {
     index: false, // Private customer data
     follow: true,
   },
-}
+};
 
 type pageProps = {
-  searchParams: Promise<SearchParams>
-}
+  searchParams: Promise<SearchParams>;
+};
 
 export default async function Page(props: pageProps) {
-  const searchParams = await props.searchParams
+  const searchParams = await props.searchParams;
   // Allow nested RSCs to access the search params (in a type-safe way)
-  searchParamsCache.parse(searchParams)
+  searchParamsCache.parse(searchParams);
 
-  const key = serialize({ ...searchParams })
+  const key = serialize({ ...searchParams });
 
   return (
     <>
@@ -75,7 +84,11 @@ export default async function Page(props: pageProps) {
           <Suspense
             key={key}
             fallback={
-              <DataTableSkeleton columnCount={6} rowCount={10} filterCount={3} />
+              <DataTableSkeleton
+                columnCount={6}
+                rowCount={10}
+                filterCount={3}
+              />
             }
           >
             <OrderListingPage />
@@ -84,5 +97,5 @@ export default async function Page(props: pageProps) {
       </main>
       <StoreFooter />
     </>
-  )
+  );
 }

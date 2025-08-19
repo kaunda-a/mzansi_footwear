@@ -33,10 +33,10 @@ import {
   IconBrandGithub,
   IconBell,
   IconSpeakerphone,
-  IconUsers
-} from '@tabler/icons-react';
-import Image from 'next/image';
-import * as React from 'react';
+  IconUsers,
+} from "@tabler/icons-react";
+import Image from "next/image";
+import * as React from "react";
 
 export type Icon = React.ComponentType<IconProps>;
 
@@ -85,5 +85,5 @@ export const Icons = {
   check: IconCheck,
   notification: IconBell,
   announcement: IconSpeakerphone,
-  shoppingBag: IconShoppingBag
+  shoppingBag: IconShoppingBag,
 };

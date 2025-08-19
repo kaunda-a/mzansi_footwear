@@ -1,16 +1,16 @@
-import type { BillboardWithCreator } from '@/lib/services/billboard'
+import type { BillboardWithCreator } from "@/lib/services/billboard";
 
 export interface BillboardListingProps {
   searchParams?: {
-    page?: string
-    type?: string
-    position?: string
-    search?: string
-  }
+    page?: string;
+    type?: string;
+    position?: string;
+    search?: string;
+  };
 }
 
 export interface BillboardViewProps {
-  billboardId: string
+  billboardId: string;
 }
 
-export type { BillboardWithCreator }
+export type { BillboardWithCreator };

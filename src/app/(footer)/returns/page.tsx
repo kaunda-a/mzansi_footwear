@@ -1,20 +1,28 @@
-import { Suspense } from 'react'
-import type { Metadata } from 'next'
-import { SearchParams } from 'nuqs/server'
-import { Header } from '@/components/layout/header'
-import { StoreFooter } from '@/components/layout/footer'
-import { Heading } from '@/components/ui/heading'
-import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import { SearchParams } from "nuqs/server";
+import { Header } from "@/components/layout/header";
+import { StoreFooter } from "@/components/layout/footer";
+import { Heading } from "@/components/ui/heading";
+import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export const metadata: Metadata = {
-  title: 'Returns & Refunds | Mzansi Footwear',
-  description: 'Learn about our return policy, refund process, and how to exchange items at Mzansi Footwear.',
-  keywords: 'returns, refunds, exchange, return policy, Mzansi Footwear',
-}
+  title: "Returns & Refunds | Mzansi Footwear",
+  description:
+    "Learn about our return policy, refund process, and how to exchange items at Mzansi Footwear.",
+  keywords: "returns, refunds, exchange, return policy, Mzansi Footwear",
+};
 
 interface ReturnsPageProps {
-  searchParams: Promise<SearchParams>
+  searchParams: Promise<SearchParams>;
 }
 
 export default async function ReturnsPage({ searchParams }: ReturnsPageProps) {
@@ -45,21 +53,28 @@ export default async function ReturnsPage({ searchParams }: ReturnsPageProps) {
               <div className="container mx-auto px-4 py-8 max-w-4xl">
                 <div className="prose prose-gray dark:prose-invert max-w-none">
                   <p className="text-lg text-muted-foreground">
-                    We want you to be completely satisfied with your purchase. Here's our return policy.
+                    We want you to be completely satisfied with your purchase.
+                    Here's our return policy.
                   </p>
 
                   <h2>Return Policy</h2>
                   <p>
-                    You may return most new, unworn items within 30 days of delivery for a full refund. 
-                    Items must be in their original condition with all tags attached.
+                    You may return most new, unworn items within 30 days of
+                    delivery for a full refund. Items must be in their original
+                    condition with all tags attached.
                   </p>
 
                   <h2>Return Process</h2>
                   <ol>
-                    <li>Contact our customer service team at returns@mzansifootwear.com</li>
+                    <li>
+                      Contact our customer service team at
+                      returns@mzansifootwear.com
+                    </li>
                     <li>Provide your order number and reason for return</li>
                     <li>We'll send you a prepaid return label</li>
-                    <li>Package your items securely and attach the return label</li>
+                    <li>
+                      Package your items securely and attach the return label
+                    </li>
                     <li>Drop off at your nearest courier location</li>
                   </ol>
 
@@ -77,8 +92,9 @@ export default async function ReturnsPage({ searchParams }: ReturnsPageProps) {
 
                   <h2>Exchanges</h2>
                   <p>
-                    Need a different size or color? We offer free exchanges within 30 days. 
-                    Follow the same return process and indicate you'd like an exchange.
+                    Need a different size or color? We offer free exchanges
+                    within 30 days. Follow the same return process and indicate
+                    you'd like an exchange.
                   </p>
 
                   <h2>Items We Cannot Accept</h2>
@@ -91,20 +107,22 @@ export default async function ReturnsPage({ searchParams }: ReturnsPageProps) {
 
                   <h2>Return Shipping</h2>
                   <p>
-                    We provide prepaid return labels for defective items or our errors. 
-                    For other returns, customers are responsible for return shipping costs.
+                    We provide prepaid return labels for defective items or our
+                    errors. For other returns, customers are responsible for
+                    return shipping costs.
                   </p>
 
                   <h2>Damaged or Defective Items</h2>
                   <p>
-                    If you receive damaged or defective items, contact us immediately at 
-                    support@mzansifootwear.com. We'll arrange for a replacement or full refund.
+                    If you receive damaged or defective items, contact us
+                    immediately at support@mzansifootwear.com. We'll arrange for
+                    a replacement or full refund.
                   </p>
 
                   <h2>Questions?</h2>
                   <p>
-                    Contact our customer service team at returns@mzansifootwear.com for 
-                    assistance with your return.
+                    Contact our customer service team at
+                    returns@mzansifootwear.com for assistance with your return.
                   </p>
                 </div>
               </div>
@@ -114,5 +132,5 @@ export default async function ReturnsPage({ searchParams }: ReturnsPageProps) {
       </div>
       <StoreFooter />
     </div>
-  )
+  );
 }

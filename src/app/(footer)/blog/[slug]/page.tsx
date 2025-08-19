@@ -1,17 +1,26 @@
-import { Suspense } from 'react'
-import { notFound } from 'next/navigation'
-import type { Metadata } from 'next'
-import Header from '@/components/layout/header'
-import { StoreFooter } from '@/components/layout/footer'
-import FormCardSkeleton from '@/components/form-card-skeleton'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import { Suspense } from "react";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import Header from "@/components/layout/header";
+import { StoreFooter } from "@/components/layout/footer";
+import FormCardSkeleton from "@/components/form-card-skeleton";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 interface BlogPostPageProps {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }>;
 }
 
-export async function generateMetadata(props: BlogPostPageProps): Promise<Metadata> {
-  const params = await props.params
+export async function generateMetadata(
+  props: BlogPostPageProps,
+): Promise<Metadata> {
+  const params = await props.params;
 
   // TODO: Replace with actual blog service when implemented
   // For now, return basic metadata
@@ -22,21 +31,21 @@ export async function generateMetadata(props: BlogPostPageProps): Promise<Metada
     openGraph: {
       title: `Blog Post - Mzansi Footwear`,
       description: `Read our latest blog post about footwear trends and fashion.`,
-      type: 'article',
+      type: "article",
     },
     robots: {
       index: true,
       follow: true,
     },
-  }
+  };
 }
 
 export default async function Page(props: BlogPostPageProps) {
-  const params = await props.params
+  const params = await props.params;
 
   // TODO: Add blog service integration when blog functionality is implemented
   // For now, show a coming soon message
-  
+
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -68,14 +77,14 @@ export default async function Page(props: BlogPostPageProps) {
             <div className="prose prose-gray dark:prose-invert max-w-4xl mx-auto">
               <h1>Blog Post Coming Soon</h1>
               <p className="text-lg text-muted-foreground">
-                Individual blog posts are not yet implemented. This page structure 
-                is ready for when blog functionality is added.
+                Individual blog posts are not yet implemented. This page
+                structure is ready for when blog functionality is added.
               </p>
-              
+
               <h2>What to Expect</h2>
               <p>
-                Once our blog system is implemented, you'll be able to read detailed 
-                articles about:
+                Once our blog system is implemented, you'll be able to read
+                detailed articles about:
               </p>
               <ul>
                 <li>Latest footwear trends</li>
@@ -96,5 +105,5 @@ export default async function Page(props: BlogPostPageProps) {
       </main>
       <StoreFooter />
     </div>
-  )
+  );
 }

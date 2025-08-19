@@ -1,29 +1,29 @@
-'use client'
+"use client";
 
-import { Api } from '@/lib/api'
-import { useState, useEffect } from 'react'
-import { Marquee, SimpleMarquee } from './marquee-ui'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { 
-  IconMessageCircle, 
-  IconCalendar, 
+import { Api } from "@/lib/api";
+import { useState, useEffect } from "react";
+import { Marquee, SimpleMarquee } from "./marquee-ui";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  IconMessageCircle,
+  IconCalendar,
   IconFlag,
-  IconInfoCircle, 
-  IconCheck, 
-  IconAlertTriangle, 
+  IconInfoCircle,
+  IconCheck,
+  IconAlertTriangle,
   IconAlertCircle,
   IconBell,
   IconTag,
   IconServer,
   IconPackage,
-  IconShoppingCart
-} from '@tabler/icons-react'
-import { formatDate } from '@/lib/format'
-import Link from 'next/link'
-import type { MarqueeListingProps } from '../types'
+  IconShoppingCart,
+} from "@tabler/icons-react";
+import { formatDate } from "@/lib/format";
+import Link from "next/link";
+import type { MarqueeListingProps } from "../types";
 
 const typeIcons: Record<string, any> = {
   INFO: IconInfoCircle,
@@ -34,8 +34,8 @@ const typeIcons: Record<string, any> = {
   PROMOTION: IconTag,
   SYSTEM: IconServer,
   INVENTORY: IconPackage,
-  ORDER: IconShoppingCart
-}
+  ORDER: IconShoppingCart,
+};
 
 function MarqueeListingSkeleton() {
   return (
@@ -67,7 +67,7 @@ function MarqueeListingSkeleton() {
         </Card>
       ))}
     </div>
-  )
+  );
 }
 
 function EmptyState() {
@@ -81,57 +81,62 @@ function EmptyState() {
         There are currently no active marquee messages to display.
       </p>
     </div>
-  )
+  );
 }
 
 function MarqueeListingContent({ searchParams }: MarqueeListingProps) {
-  const [messages, setMessages] = useState<any[]>([])
-  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, pages: 0 })
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [messages, setMessages] = useState<any[]>([]);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    pages: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const page = parseInt(searchParams?.page || '1')
-  const type = searchParams?.type
-  const search = searchParams?.search
+  const page = parseInt(searchParams?.page || "1");
+  const type = searchParams?.type;
+  const search = searchParams?.search;
 
   useEffect(() => {
     async function fetchMessages() {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
         const result = await Api.getAllMarqueeMessages({
           page,
           limit: 10,
           type,
           search,
-        })
-        setMessages(result.messages)
-        setPagination(result.pagination)
+        });
+        setMessages(result.messages);
+        setPagination(result.pagination);
       } catch (err) {
-        setError('Failed to load marquee messages')
-        console.error('Error loading marquee messages:', err)
+        setError("Failed to load marquee messages");
+        console.error("Error loading marquee messages:", err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchMessages()
-  }, [page, type, search])
+    fetchMessages();
+  }, [page, type, search]);
 
-  if (loading) return <MarqueeListingSkeleton />
+  if (loading) return <MarqueeListingSkeleton />;
   if (error) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-semibold mb-2">Something went wrong</h3>
         <p className="text-muted-foreground">{error}</p>
       </div>
-    )
+    );
   }
 
-  const filteredMessages = messages
+  const filteredMessages = messages;
 
   if (!filteredMessages.length) {
-    return <EmptyState />
+    return <EmptyState />;
   }
 
   return (
@@ -164,9 +169,11 @@ function MarqueeListingContent({ searchParams }: MarqueeListingProps) {
       {/* Messages List */}
       <div className="space-y-6">
         {filteredMessages.map((message: any) => {
-          const Icon = typeIcons[message.type] || IconInfoCircle
-          const isExpired = message.endDate && new Date(message.endDate) < new Date()
-          const isScheduled = message.startDate && new Date(message.startDate) > new Date()
+          const Icon = typeIcons[message.type] || IconInfoCircle;
+          const isExpired =
+            message.endDate && new Date(message.endDate) < new Date();
+          const isScheduled =
+            message.startDate && new Date(message.startDate) > new Date();
 
           return (
             <Card key={message.id} className="overflow-hidden">
@@ -179,11 +186,11 @@ function MarqueeListingContent({ searchParams }: MarqueeListingProps) {
                       <Badge variant="outline" className="capitalize">
                         {message.type.toLowerCase()}
                       </Badge>
-                      <Badge 
+                      <Badge
                         variant={message.isActive ? "default" : "secondary"}
                         className="text-xs"
                       >
-                        {message.isActive ? 'Active' : 'Inactive'}
+                        {message.isActive ? "Active" : "Inactive"}
                       </Badge>
                       {isExpired && (
                         <Badge variant="destructive" className="text-xs">
@@ -196,18 +203,18 @@ function MarqueeListingContent({ searchParams }: MarqueeListingProps) {
                         </Badge>
                       )}
                     </div>
-                    
+
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <IconFlag className="h-4 w-4" />
                         <span>Priority {message.priority}</span>
                       </div>
-                      
+
                       <div className="flex items-center gap-1">
                         <IconCalendar className="h-4 w-4" />
                         <span>Created {formatDate(message.createdAt)}</span>
                       </div>
-                      
+
                       {message.endDate && (
                         <div className="flex items-center gap-1">
                           <IconCalendar className="h-4 w-4" />
@@ -216,26 +223,25 @@ function MarqueeListingContent({ searchParams }: MarqueeListingProps) {
                       )}
                     </div>
                   </div>
-                  
+
                   <Button variant="outline" size="sm" asChild>
-                    <Link href={`/marquee/${message.id}`}>
-                      View Details
-                    </Link>
+                    <Link href={`/marquee/${message.id}`}>View Details</Link>
                   </Button>
                 </div>
               </CardHeader>
-              
+
               <CardContent>
                 <div className="space-y-4">
                   <div className="bg-muted/50 rounded-lg p-4">
                     <p className="text-sm font-mono">{message.message}</p>
                   </div>
-                  
+
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-muted-foreground">
-                      Created by {message.creator.firstName} {message.creator.lastName}
+                      Created by {message.creator.firstName}{" "}
+                      {message.creator.lastName}
                     </div>
-                    
+
                     <div className="flex items-center gap-2">
                       {message.isActive && !isExpired && !isScheduled && (
                         <Badge variant="default" className="text-xs">
@@ -247,7 +253,7 @@ function MarqueeListingContent({ searchParams }: MarqueeListingProps) {
                 </div>
               </CardContent>
             </Card>
-          )
+          );
         })}
       </div>
 
@@ -260,9 +266,9 @@ function MarqueeListingContent({ searchParams }: MarqueeListingProps) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 export function MarqueeListingPage(props: MarqueeListingProps) {
-  return <MarqueeListingContent {...props} />
+  return <MarqueeListingContent {...props} />;
 }

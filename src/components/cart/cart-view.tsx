@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Badge } from '@/components/ui/badge';
-import { Input } from '@/components/ui/input';
+import { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import {
   IconMinus,
   IconPlus,
@@ -17,22 +17,22 @@ import {
   IconTruck,
   IconShield,
   IconArrowRight,
-  IconTag
-} from '@tabler/icons-react';
-import { useCartStore } from '@/lib/cart-store';
-import { formatPrice } from '@/lib/format';
+  IconTag,
+} from "@tabler/icons-react";
+import { useCartStore } from "@/lib/cart-store";
+import { formatPrice } from "@/lib/format";
 
 export function CartView() {
-  const { 
-    items, 
-    updateQuantity, 
-    removeItem, 
+  const {
+    items,
+    updateQuantity,
+    removeItem,
     totalPrice,
     totalItems,
-    clearCart 
+    clearCart,
   } = useCartStore();
-  
-  const [promoCode, setPromoCode] = useState('');
+
+  const [promoCode, setPromoCode] = useState("");
   const [promoApplied, setPromoApplied] = useState(false);
   const [promoDiscount, setPromoDiscount] = useState(0);
 
@@ -52,7 +52,7 @@ export function CartView() {
 
   const handleApplyPromo = () => {
     // Mock promo code logic
-    if (promoCode.toLowerCase() === 'save10') {
+    if (promoCode.toLowerCase() === "save10") {
       setPromoApplied(true);
       setPromoDiscount(subtotal * 0.1); // 10% discount
     }
@@ -73,13 +73,11 @@ export function CartView() {
           Your cart is empty
         </h2>
         <p className="text-gray-600 mb-8 max-w-md mx-auto">
-          Looks like you haven't added any items to your cart yet. 
-          Start shopping to fill it up!
+          Looks like you haven't added any items to your cart yet. Start
+          shopping to fill it up!
         </p>
         <Button asChild size="lg">
-          <Link href="/products">
-            Continue Shopping
-          </Link>
+          <Link href="/products">Continue Shopping</Link>
         </Button>
       </div>
     );
@@ -92,7 +90,7 @@ export function CartView() {
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
           <p className="text-gray-600 mt-2">
-            {totalItems} item{totalItems !== 1 ? 's' : ''} in your cart
+            {totalItems} item{totalItems !== 1 ? "s" : ""} in your cart
           </p>
         </div>
         <Button variant="outline" onClick={clearCart}>
@@ -116,7 +114,7 @@ export function CartView() {
                       className="object-cover"
                     />
                   </div>
-                  
+
                   {/* Product Details */}
                   <div className="flex-1 space-y-2">
                     <div className="flex justify-between">
@@ -132,9 +130,7 @@ export function CartView() {
                         <p className="text-gray-600">
                           {item.color} • {item.size}
                         </p>
-                        <p className="text-sm text-gray-500">
-                          SKU: {item.sku}
-                        </p>
+                        <p className="text-sm text-gray-500">SKU: {item.sku}</p>
                       </div>
                       <div className="text-right">
                         <p className="font-semibold text-lg">
@@ -145,7 +141,7 @@ export function CartView() {
                         </p>
                       </div>
                     </div>
-                    
+
                     {/* Quantity and Actions */}
                     <div className="flex items-center justify-between pt-2">
                       <div className="flex items-center space-x-2">
@@ -153,7 +149,9 @@ export function CartView() {
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                          onClick={() =>
+                            handleQuantityChange(item.id, item.quantity - 1)
+                          }
                         >
                           <IconMinus className="h-3 w-3" />
                         </Button>
@@ -164,12 +162,14 @@ export function CartView() {
                           variant="outline"
                           size="icon"
                           className="h-8 w-8"
-                          onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                          onClick={() =>
+                            handleQuantityChange(item.id, item.quantity + 1)
+                          }
                         >
                           <IconPlus className="h-3 w-3" />
                         </Button>
                       </div>
-                      
+
                       <div className="flex items-center space-x-2">
                         <Button
                           variant="ghost"
@@ -215,7 +215,7 @@ export function CartView() {
                   onChange={(e) => setPromoCode(e.target.value)}
                   disabled={promoApplied}
                 />
-                <Button 
+                <Button
                   onClick={handleApplyPromo}
                   disabled={!promoCode || promoApplied}
                 >
@@ -242,7 +242,7 @@ export function CartView() {
                   <span>Subtotal ({totalItems} items)</span>
                   <span>{formatPrice(subtotal)}</span>
                 </div>
-                
+
                 <div className="flex justify-between">
                   <span className="flex items-center">
                     <IconTruck className="mr-1 h-4 w-4" />
@@ -256,12 +256,12 @@ export function CartView() {
                     )}
                   </span>
                 </div>
-                
+
                 <div className="flex justify-between">
                   <span>VAT (15%)</span>
                   <span>{formatPrice(tax)}</span>
                 </div>
-                
+
                 {promoApplied && (
                   <div className="flex justify-between text-green-600">
                     <span>Discount</span>
@@ -269,32 +269,30 @@ export function CartView() {
                   </div>
                 )}
               </div>
-              
+
               <Separator />
-              
+
               <div className="flex justify-between text-lg font-semibold">
                 <span>Total</span>
                 <span>{formatPrice(finalTotal)}</span>
               </div>
-              
+
               {shipping === 0 && (
                 <div className="flex items-center text-sm text-green-600">
                   <IconShield className="mr-1 h-4 w-4" />
                   Free shipping applied
                 </div>
               )}
-              
+
               <Button size="lg" className="w-full" asChild>
                 <Link href="/checkout">
                   Proceed to Checkout
                   <IconArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
-              
+
               <Button variant="outline" size="lg" className="w-full" asChild>
-                <Link href="/products">
-                  Continue Shopping
-                </Link>
+                <Link href="/products">Continue Shopping</Link>
               </Button>
             </CardContent>
           </Card>

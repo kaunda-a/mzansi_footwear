@@ -1,29 +1,31 @@
-import { ImageResponse } from 'next/og';
+import { ImageResponse } from "next/og";
 // Logo will be handled differently in OpenGraph image
-import { join } from 'path';
-import { readFile } from 'fs/promises';
+import { join } from "path";
+import { readFile } from "fs/promises";
 
 export type Props = {
   title?: string;
 };
 
 export default async function OpengraphImage(
-  props?: Props
+  props?: Props,
 ): Promise<ImageResponse> {
   const { title } = {
     ...{
-      title: 'Mzansi Footwear'
+      title: "Mzansi Footwear",
     },
-    ...props
+    ...props,
   };
 
   let font: ArrayBuffer | undefined;
 
   try {
-    const file = await readFile(join(process.cwd(), './src/fonts/Inter-Bold.ttf'));
+    const file = await readFile(
+      join(process.cwd(), "./src/fonts/Inter-Bold.ttf"),
+    );
     font = Uint8Array.from(file).buffer;
   } catch (error) {
-    console.warn('Could not load font file for opengraph image:', error);
+    console.warn("Could not load font file for opengraph image:", error);
     // Continue without custom font
   }
 
@@ -42,13 +44,13 @@ export default async function OpengraphImage(
       ...(font && {
         fonts: [
           {
-            name: 'Inter',
+            name: "Inter",
             data: font,
-            style: 'normal',
-            weight: 700
-          }
-        ]
-      })
-    }
+            style: "normal",
+            weight: 700,
+          },
+        ],
+      }),
+    },
   );
 }

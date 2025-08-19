@@ -1,87 +1,91 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
-import { Textarea } from '@/components/ui/textarea';
-import { Checkbox } from '@/components/ui/checkbox';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
+import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   IconCreditCard,
   IconTruck,
   IconShield,
   IconLock,
-  IconCheck
-} from '@tabler/icons-react';
-import { useCartStore } from '@/lib/cart-store';
-import { formatPrice } from '@/lib/format';
+  IconCheck,
+} from "@tabler/icons-react";
+import { useCartStore } from "@/lib/cart-store";
+import { formatPrice } from "@/lib/format";
+import { PaymentForm } from "@/components/payments/payment-form";
 
 const PAYMENT_METHODS = [
-  { id: 'card', name: 'Credit/Debit Card', icon: IconCreditCard },
-  { id: 'payfast', name: 'PayFast', icon: IconShield },
-  { id: 'ozow', name: 'Ozow', icon: IconTruck },
-  { id: 'snapscan', name: 'SnapScan', icon: IconCheck },
+  { id: "card", name: "Credit/Debit Card", icon: IconCreditCard },
+  { id: "payfast", name: "PayFast", icon: IconShield },
+  { id: "yoco", name: "Yoco", icon: IconCreditCard }, // Added Yoco
+  { id: "ozow", name: "Ozow", icon: IconTruck },
+  { id: "snapscan", name: "SnapScan", icon: IconCheck },
 ];
 
 const SA_PROVINCES = [
-  'Eastern Cape',
-  'Free State',
-  'Gauteng',
-  'KwaZulu-Natal',
-  'Limpopo',
-  'Mpumalanga',
-  'Northern Cape',
-  'North West',
-  'Western Cape'
+  "Eastern Cape",
+  "Free State",
+  "Gauteng",
+  "KwaZulu-Natal",
+  "Limpopo",
+  "Mpumalanga",
+  "Northern Cape",
+  "North West",
+  "Western Cape",
 ];
 
-export function CheckoutView() {
+export function CheckoutView({ user }: { user?: any }) {
   const router = useRouter();
   const { items, totalPrice, totalItems, clearCart } = useCartStore();
-  
+
   const [step, setStep] = useState(1);
+  const [showPaymentForm, setShowPaymentForm] = useState(false);
+  const [orderId, setOrderId] = useState<string>("");
   const [formData, setFormData] = useState({
     // Contact Information
-    email: '',
-    phone: '',
-    
+    email: user?.email || "",
+    phone: "",
+
     // Shipping Address
-    firstName: '',
-    lastName: '',
-    company: '',
-    address1: '',
-    address2: '',
-    city: '',
-    province: '',
-    postalCode: '',
-    
+    firstName: user?.name?.split(" ")[0] || "",
+    lastName: user?.name?.split(" ").slice(1).join(" ") || "",
+    company: "",
+    address1: "",
+    address2: "",
+    city: "",
+    province: "",
+    postalCode: "",
+
     // Billing Address
     billingDifferent: false,
-    billingFirstName: '',
-    billingLastName: '',
-    billingCompany: '',
-    billingAddress1: '',
-    billingAddress2: '',
-    billingCity: '',
-    billingProvince: '',
-    billingPostalCode: '',
-    
+    billingFirstName: "",
+    billingLastName: "",
+    billingCompany: "",
+    billingAddress1: "",
+    billingAddress2: "",
+    billingCity: "",
+    billingProvince: "",
+    billingPostalCode: "",
+
     // Payment
-    paymentMethod: '',
-    
+    paymentMethod: "",
+
     // Order Notes
-    orderNotes: '',
-    
+    orderNotes: "",
+
     // Terms
     acceptTerms: false,
     subscribeNewsletter: false,
@@ -93,7 +97,7 @@ export function CheckoutView() {
   const total = subtotal + shipping + tax;
 
   const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleNextStep = () => {
@@ -106,17 +110,59 @@ export function CheckoutView() {
 
   const handleSubmitOrder = async () => {
     try {
-      // TODO: Implement order submission
-      console.log('Submitting order:', { formData, items, total });
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      // Clear cart and redirect to success page
-      clearCart();
-      router.push('/payment/success');
+      // Prepare order data
+      const orderData = {
+        items: items.map(item => ({
+          productId: item.productId,
+          productVariantId: item.productVariantId,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+        })),
+        totalAmount: total,
+        customer: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phone: formData.phone,
+        },
+        shippingAddress: {
+          street: formData.address1 + (formData.address2 ? ` ${formData.address2}` : ""),
+          city: formData.city,
+          province: formData.province,
+          postalCode: formData.postalCode,
+        },
+        billingAddress: formData.billingDifferent ? {
+          firstName: formData.billingFirstName,
+          lastName: formData.billingLastName,
+          street: formData.billingAddress1 + (formData.billingAddress2 ? ` ${formData.billingAddress2}` : ""),
+          city: formData.billingCity,
+          province: formData.billingProvince,
+          postalCode: formData.billingPostalCode,
+        } : undefined,
+        notes: formData.orderNotes,
+      };
+
+      // Create the order
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to create order");
+      }
+
+      // Show payment form with the actual order ID
+      setOrderId(result.order.id);
+      setShowPaymentForm(true);
     } catch (error) {
-      console.error('Error submitting order:', error);
+      console.error("Error creating order:", error);
+      alert("Failed to create order. Please try again.");
     }
   };
 
@@ -129,10 +175,26 @@ export function CheckoutView() {
         <p className="text-gray-600 mb-8">
           Add some items to your cart before proceeding to checkout.
         </p>
-        <Button onClick={() => router.push('/products')}>
+        <Button onClick={() => router.push("/products")}>
           Continue Shopping
         </Button>
       </div>
+    );
+  }
+
+  if (showPaymentForm) {
+    return (
+      <PaymentForm
+        orderId={orderId}
+        amount={total}
+        items={items}
+        customer={{
+          email: formData.email,
+          phone: formData.phone,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+        }}
+      />
     );
   }
 
@@ -141,25 +203,29 @@ export function CheckoutView() {
       {/* Progress Steps */}
       <div className="flex items-center justify-center space-x-8">
         {[
-          { number: 1, title: 'Information' },
-          { number: 2, title: 'Shipping' },
-          { number: 3, title: 'Payment' }
+          { number: 1, title: "Information" },
+          { number: 2, title: "Shipping" },
+          { number: 3, title: "Payment" },
         ].map((stepItem) => (
           <div key={stepItem.number} className="flex items-center">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-              step >= stepItem.number 
-                ? 'bg-primary text-white' 
-                : 'bg-gray-200 text-gray-600'
-            }`}>
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                step >= stepItem.number
+                  ? "bg-primary text-white"
+                  : "bg-gray-200 text-gray-600"
+              }`}
+            >
               {step > stepItem.number ? (
                 <IconCheck className="h-4 w-4" />
               ) : (
                 stepItem.number
               )}
             </div>
-            <span className={`ml-2 text-sm ${
-              step >= stepItem.number ? 'text-gray-900' : 'text-gray-500'
-            }`}>
+            <span
+              className={`ml-2 text-sm ${
+                step >= stepItem.number ? "text-gray-900" : "text-gray-500"
+              }`}
+            >
               {stepItem.title}
             </span>
           </div>
@@ -182,7 +248,9 @@ export function CheckoutView() {
                       id="email"
                       type="email"
                       value={formData.email}
-                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("email", e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -192,7 +260,9 @@ export function CheckoutView() {
                       id="phone"
                       type="tel"
                       value={formData.phone}
-                      onChange={(e) => handleInputChange('phone', e.target.value)}
+                      onChange={(e) =>
+                        handleInputChange("phone", e.target.value)
+                      }
                       required
                     />
                   </div>
@@ -201,14 +271,18 @@ export function CheckoutView() {
                 <Separator />
 
                 <div>
-                  <h3 className="text-lg font-semibold mb-4">Shipping Address</h3>
+                  <h3 className="text-lg font-semibold mb-4">
+                    Shipping Address
+                  </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="firstName">First Name *</Label>
                       <Input
                         id="firstName"
                         value={formData.firstName}
-                        onChange={(e) => handleInputChange('firstName', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("firstName", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -217,7 +291,9 @@ export function CheckoutView() {
                       <Input
                         id="lastName"
                         value={formData.lastName}
-                        onChange={(e) => handleInputChange('lastName', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("lastName", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -226,7 +302,9 @@ export function CheckoutView() {
                       <Input
                         id="company"
                         value={formData.company}
-                        onChange={(e) => handleInputChange('company', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("company", e.target.value)
+                        }
                       />
                     </div>
                     <div className="md:col-span-2">
@@ -234,16 +312,22 @@ export function CheckoutView() {
                       <Input
                         id="address1"
                         value={formData.address1}
-                        onChange={(e) => handleInputChange('address1', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("address1", e.target.value)
+                        }
                         required
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <Label htmlFor="address2">Address Line 2 (Optional)</Label>
+                      <Label htmlFor="address2">
+                        Address Line 2 (Optional)
+                      </Label>
                       <Input
                         id="address2"
                         value={formData.address2}
-                        onChange={(e) => handleInputChange('address2', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("address2", e.target.value)
+                        }
                       />
                     </div>
                     <div>
@@ -251,7 +335,9 @@ export function CheckoutView() {
                       <Input
                         id="city"
                         value={formData.city}
-                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("city", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -259,7 +345,9 @@ export function CheckoutView() {
                       <Label htmlFor="province">Province *</Label>
                       <Select
                         value={formData.province}
-                        onValueChange={(value) => handleInputChange('province', value)}
+                        onValueChange={(value) =>
+                          handleInputChange("province", value)
+                        }
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select province" />
@@ -278,7 +366,9 @@ export function CheckoutView() {
                       <Input
                         id="postalCode"
                         value={formData.postalCode}
-                        onChange={(e) => handleInputChange('postalCode', e.target.value)}
+                        onChange={(e) =>
+                          handleInputChange("postalCode", e.target.value)
+                        }
                         required
                       />
                     </div>
@@ -286,9 +376,7 @@ export function CheckoutView() {
                 </div>
 
                 <div className="flex justify-end">
-                  <Button onClick={handleNextStep}>
-                    Continue to Shipping
-                  </Button>
+                  <Button onClick={handleNextStep}>Continue to Shipping</Button>
                 </div>
               </CardContent>
             </Card>
@@ -307,11 +395,13 @@ export function CheckoutView() {
                         <IconTruck className="h-5 w-5 text-blue-600 mr-2" />
                         <div>
                           <p className="font-medium">Standard Delivery</p>
-                          <p className="text-sm text-gray-600">2-3 business days</p>
+                          <p className="text-sm text-gray-600">
+                            2-3 business days
+                          </p>
                         </div>
                       </div>
                       <span className="font-medium">
-                        {shipping === 0 ? 'FREE' : formatPrice(shipping)}
+                        {shipping === 0 ? "FREE" : formatPrice(shipping)}
                       </span>
                     </div>
                   </div>
@@ -323,7 +413,9 @@ export function CheckoutView() {
                     id="orderNotes"
                     placeholder="Special delivery instructions..."
                     value={formData.orderNotes}
-                    onChange={(e) => handleInputChange('orderNotes', e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("orderNotes", e.target.value)
+                    }
                   />
                 </div>
 
@@ -331,9 +423,7 @@ export function CheckoutView() {
                   <Button variant="outline" onClick={handlePrevStep}>
                     Back
                   </Button>
-                  <Button onClick={handleNextStep}>
-                    Continue to Payment
-                  </Button>
+                  <Button onClick={handleNextStep}>Continue to Payment</Button>
                 </div>
               </CardContent>
             </Card>
@@ -354,10 +444,12 @@ export function CheckoutView() {
                       key={method.id}
                       className={`border rounded-lg p-4 cursor-pointer transition-colors ${
                         formData.paymentMethod === method.id
-                          ? 'border-primary bg-primary/5'
-                          : 'border-gray-200 hover:border-gray-300'
+                          ? "border-primary bg-primary/5"
+                          : "border-gray-200 hover:border-gray-300"
                       }`}
-                      onClick={() => handleInputChange('paymentMethod', method.id)}
+                      onClick={() =>
+                        handleInputChange("paymentMethod", method.id)
+                      }
                     >
                       <div className="flex items-center">
                         <method.icon className="h-5 w-5 mr-3" />
@@ -372,25 +464,32 @@ export function CheckoutView() {
                     <Checkbox
                       id="acceptTerms"
                       checked={formData.acceptTerms}
-                      onCheckedChange={(checked) => handleInputChange('acceptTerms', checked)}
+                      onCheckedChange={(checked) =>
+                        handleInputChange("acceptTerms", checked)
+                      }
                     />
                     <Label htmlFor="acceptTerms" className="text-sm">
-                      I accept the{' '}
+                      I accept the{" "}
                       <a href="/terms" className="text-primary hover:underline">
                         Terms and Conditions
-                      </a>{' '}
-                      and{' '}
-                      <a href="/privacy" className="text-primary hover:underline">
+                      </a>{" "}
+                      and{" "}
+                      <a
+                        href="/privacy"
+                        className="text-primary hover:underline"
+                      >
                         Privacy Policy
                       </a>
                     </Label>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2">
                     <Checkbox
                       id="subscribeNewsletter"
                       checked={formData.subscribeNewsletter}
-                      onCheckedChange={(checked) => handleInputChange('subscribeNewsletter', checked)}
+                      onCheckedChange={(checked) =>
+                        handleInputChange("subscribeNewsletter", checked)
+                      }
                     />
                     <Label htmlFor="subscribeNewsletter" className="text-sm">
                       Subscribe to our newsletter for exclusive offers
@@ -402,7 +501,7 @@ export function CheckoutView() {
                   <Button variant="outline" onClick={handlePrevStep}>
                     Back
                   </Button>
-                  <Button 
+                  <Button
                     onClick={handleSubmitOrder}
                     disabled={!formData.acceptTerms || !formData.paymentMethod}
                     size="lg"
@@ -432,7 +531,7 @@ export function CheckoutView() {
                       </p>
                     </div>
                     <span className="font-medium">
-                      {formatPrice(item.price * item.quantity)}
+                      {formatPrice(item.unitPrice * item.quantity)}
                     </span>
                   </div>
                 ))}
@@ -447,7 +546,7 @@ export function CheckoutView() {
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? 'FREE' : formatPrice(shipping)}</span>
+                  <span>{shipping === 0 ? "FREE" : formatPrice(shipping)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>VAT (15%)</span>

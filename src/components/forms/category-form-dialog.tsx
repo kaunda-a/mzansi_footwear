@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { Button } from '@/components/ui/button';
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@/components/ui/dialog';
+} from "@/components/ui/dialog";
 import {
   Form,
   FormControl,
@@ -17,21 +17,24 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { IconLoader2, IconPlus, IconEdit } from '@tabler/icons-react';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
-import * as z from 'zod';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { IconLoader2, IconPlus, IconEdit } from "@tabler/icons-react";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import * as z from "zod";
 
 const categoryFormSchema = z.object({
-  name: z.string().min(1, 'Category name is required').max(100, 'Name must be less than 100 characters'),
+  name: z
+    .string()
+    .min(1, "Category name is required")
+    .max(100, "Name must be less than 100 characters"),
   description: z.string().optional(),
-  imageUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
+  imageUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   isActive: z.boolean().default(true),
 });
 
@@ -43,7 +46,11 @@ interface CategoryFormDialogProps {
   trigger?: React.ReactNode;
 }
 
-export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFormDialogProps) {
+export function CategoryFormDialog({
+  category,
+  onSuccess,
+  trigger,
+}: CategoryFormDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const isEdit = !!category;
@@ -51,9 +58,9 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
   const form = useForm<CategoryFormValues>({
     resolver: zodResolver(categoryFormSchema),
     defaultValues: {
-      name: category?.name || '',
-      description: category?.description || '',
-      imageUrl: category?.imageUrl || '',
+      name: category?.name || "",
+      description: category?.description || "",
+      imageUrl: category?.imageUrl || "",
       isActive: category?.isActive ?? true,
     },
   });
@@ -68,29 +75,33 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
         imageUrl: data.imageUrl || undefined,
       };
 
-      const url = isEdit ? `/api/categories/${category.id}` : '/api/categories';
-      const method = isEdit ? 'PUT' : 'POST';
+      const url = isEdit ? `/api/categories/${category.id}` : "/api/categories";
+      const method = isEdit ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(formattedData),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Something went wrong');
+        throw new Error(errorData.error || "Something went wrong");
       }
 
-      toast.success(isEdit ? 'Category updated successfully' : 'Category created successfully');
+      toast.success(
+        isEdit
+          ? "Category updated successfully"
+          : "Category created successfully",
+      );
       setOpen(false);
       form.reset();
       onSuccess?.();
     } catch (error: any) {
       // Error already handled by toast.error below
-      toast.error(error.message || 'Something went wrong');
+      toast.error(error.message || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -117,19 +128,28 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
       </DialogTrigger>
       <DialogContent className="w-[95vw] max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>{isEdit ? 'Edit Category' : 'Create Category'}</DialogTitle>
+          <DialogTitle>
+            {isEdit ? "Edit Category" : "Create Category"}
+          </DialogTitle>
           <DialogDescription>
-            {isEdit ? 'Update the category information.' : 'Add a new category for organizing products.'}
+            {isEdit
+              ? "Update the category information."
+              : "Add a new category for organizing products."}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-1">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 px-1"
+          >
             <FormField
               control={form.control}
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">Category Name</FormLabel>
+                  <FormLabel className="text-sm font-medium">
+                    Category Name
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="Enter category name"
@@ -147,7 +167,9 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">Description (Optional)</FormLabel>
+                  <FormLabel className="text-sm font-medium">
+                    Description (Optional)
+                  </FormLabel>
                   <FormControl>
                     <Textarea
                       placeholder="Enter category description"
@@ -165,7 +187,9 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
               name="imageUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium">Image URL (Optional)</FormLabel>
+                  <FormLabel className="text-sm font-medium">
+                    Image URL (Optional)
+                  </FormLabel>
                   <FormControl>
                     <Input
                       placeholder="https://example.com/image.jpg"
@@ -184,7 +208,9 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
               render={({ field }) => (
                 <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 sm:p-4">
                   <div className="space-y-0.5 flex-1 min-w-0">
-                    <FormLabel className="text-sm sm:text-base font-medium">Active Status</FormLabel>
+                    <FormLabel className="text-sm sm:text-base font-medium">
+                      Active Status
+                    </FormLabel>
                     <div className="text-xs sm:text-sm text-muted-foreground">
                       Enable this category to be available for products
                     </div>
@@ -209,9 +235,15 @@ export function CategoryFormDialog({ category, onSuccess, trigger }: CategoryFor
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={loading} className="w-full sm:w-auto text-sm">
-                {loading && <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isEdit ? 'Update Category' : 'Create Category'}
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full sm:w-auto text-sm"
+              >
+                {loading && (
+                  <IconLoader2 className="mr-2 h-4 w-4 animate-spin" />
+                )}
+                {isEdit ? "Update Category" : "Create Category"}
               </Button>
             </DialogFooter>
           </form>

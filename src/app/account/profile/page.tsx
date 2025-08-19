@@ -1,21 +1,30 @@
-import { Suspense } from 'react'
-import type { Metadata } from 'next'
-import { SearchParams } from 'nuqs/server'
-import { Header } from '@/components/layout/header'
-import { StoreFooter } from '@/components/layout/footer'
-import { Heading } from '@/components/ui/heading'
-import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
-import { AccountProfile } from '@/components/account/account-profile'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import { SearchParams } from "nuqs/server";
+import { Header } from "@/components/layout/header";
+import { StoreFooter } from "@/components/layout/footer";
+import { Heading } from "@/components/ui/heading";
+import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
+import { AccountProfile } from "@/components/account/account-profile";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export const metadata: Metadata = {
-  title: 'Profile | Mzansi Footwear',
-  description: 'Manage your personal information, preferences and account settings at Mzansi Footwear.',
-  keywords: 'profile, personal information, account settings, preferences, Mzansi Footwear',
-}
+  title: "Profile | Mzansi Footwear",
+  description:
+    "Manage your personal information, preferences and account settings at Mzansi Footwear.",
+  keywords:
+    "profile, personal information, account settings, preferences, Mzansi Footwear",
+};
 
 interface ProfilePageProps {
-  searchParams: Promise<SearchParams>
+  searchParams: Promise<SearchParams>;
 }
 
 export default async function ProfilePage({ searchParams }: ProfilePageProps) {
@@ -46,7 +55,15 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
             />
           </div>
           <div className="mx-auto grid w-full max-w-6xl items-start gap-6">
-            <Suspense fallback={<DataTableSkeleton columnCount={3} rowCount={8} filterCount={0} />}>
+            <Suspense
+              fallback={
+                <DataTableSkeleton
+                  columnCount={3}
+                  rowCount={8}
+                  filterCount={0}
+                />
+              }
+            >
               <AccountProfile />
             </Suspense>
           </div>
@@ -54,5 +71,5 @@ export default async function ProfilePage({ searchParams }: ProfilePageProps) {
       </div>
       <StoreFooter />
     </div>
-  )
+  );
 }

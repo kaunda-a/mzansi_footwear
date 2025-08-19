@@ -1,42 +1,42 @@
-'use client'
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { useState, useEffect } from 'react'
-import { Api } from '@/lib/api'
-import { formatPrice } from '@/lib/format'
-import Link from 'next/link'
-import { 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from "react";
+import { Api } from "@/lib/api";
+import { formatPrice } from "@/lib/format";
+import Link from "next/link";
+import {
   IconPackage,
   IconTruck,
   IconArrowRight,
   IconTrendingUp,
-  IconCalendar
-} from '@tabler/icons-react'
+  IconCalendar,
+} from "@tabler/icons-react";
 
 interface AccountAnalyticsProps {
-  className?: string
+  className?: string;
 }
 
 export function AccountAnalytics({ className }: AccountAnalyticsProps) {
-  const [analytics, setAnalytics] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
+  const [analytics, setAnalytics] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchAnalytics() {
       try {
-        const analyticsData = await Api.getCustomerAnalytics()
-        setAnalytics(analyticsData)
+        const analyticsData = await Api.getCustomerAnalytics();
+        setAnalytics(analyticsData);
       } catch (error) {
-        console.error('Error fetching analytics:', error)
+        console.error("Error fetching analytics:", error);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchAnalytics()
-  }, [])
+    fetchAnalytics();
+  }, []);
 
   if (loading) {
     return (
@@ -51,7 +51,7 @@ export function AccountAnalytics({ className }: AccountAnalyticsProps) {
           ))}
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -62,9 +62,15 @@ export function AccountAnalytics({ className }: AccountAnalyticsProps) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Orders</p>
-                <p className="text-2xl font-bold">{analytics?.totalOrders || 0}</p>
-                <p className="text-xs text-muted-foreground mt-1">All time purchases</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Orders
+                </p>
+                <p className="text-2xl font-bold">
+                  {analytics?.totalOrders || 0}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  All time purchases
+                </p>
               </div>
               <IconPackage className="h-8 w-8 text-blue-500" />
             </div>
@@ -75,9 +81,15 @@ export function AccountAnalytics({ className }: AccountAnalyticsProps) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Total Spent</p>
-                <p className="text-2xl font-bold">{formatPrice(analytics?.totalSpent || 0)}</p>
-                <p className="text-xs text-muted-foreground mt-1">Lifetime value</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Total Spent
+                </p>
+                <p className="text-2xl font-bold">
+                  {formatPrice(analytics?.totalSpent || 0)}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Lifetime value
+                </p>
               </div>
               <IconTrendingUp className="h-8 w-8 text-green-500" />
             </div>
@@ -88,9 +100,15 @@ export function AccountAnalytics({ className }: AccountAnalyticsProps) {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-muted-foreground">Favorite Category</p>
-                <p className="text-lg font-bold">{analytics?.favoriteCategories?.[0]?.name || 'None'}</p>
-                <p className="text-xs text-muted-foreground mt-1">Most purchased</p>
+                <p className="text-sm font-medium text-muted-foreground">
+                  Favorite Category
+                </p>
+                <p className="text-lg font-bold">
+                  {analytics?.favoriteCategories?.[0]?.name || "None"}
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Most purchased
+                </p>
               </div>
               <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
                 <span className="text-purple-600 font-bold text-sm">
@@ -122,7 +140,10 @@ export function AccountAnalytics({ className }: AccountAnalyticsProps) {
           {analytics?.recentPurchases?.length > 0 ? (
             <div className="space-y-4">
               {analytics.recentPurchases.map((order: any) => (
-                <div key={order.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                <div
+                  key={order.id}
+                  className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+                >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
                       <IconPackage className="h-5 w-5 text-primary" />
@@ -131,13 +152,18 @@ export function AccountAnalytics({ className }: AccountAnalyticsProps) {
                       <p className="font-medium">Order #{order.id.slice(-8)}</p>
                       <p className="text-sm text-muted-foreground flex items-center gap-1">
                         <IconCalendar className="h-3 w-3" />
-                        {new Date(order.date).toLocaleDateString()} • {order.itemCount} items
+                        {new Date(order.date).toLocaleDateString()} •{" "}
+                        {order.itemCount} items
                       </p>
                     </div>
                   </div>
                   <div className="text-right">
                     <p className="font-semibold">{formatPrice(order.total)}</p>
-                    <Badge variant={order.status === 'DELIVERED' ? 'default' : 'secondary'}>
+                    <Badge
+                      variant={
+                        order.status === "DELIVERED" ? "default" : "secondary"
+                      }
+                    >
                       {order.status}
                     </Badge>
                   </div>
@@ -148,7 +174,9 @@ export function AccountAnalytics({ className }: AccountAnalyticsProps) {
             <div className="text-center py-12">
               <IconPackage className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
               <h3 className="font-semibold mb-2">No orders yet</h3>
-              <p className="text-muted-foreground mb-4">Start shopping to see your orders here</p>
+              <p className="text-muted-foreground mb-4">
+                Start shopping to see your orders here
+              </p>
               <Button asChild>
                 <Link href="/products">Browse Products</Link>
               </Button>
@@ -169,8 +197,13 @@ export function AccountAnalytics({ className }: AccountAnalyticsProps) {
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
               {analytics.spendingTrend.map((month: any) => (
-                <div key={month.month} className="text-center p-3 border rounded-lg">
-                  <p className="text-xs text-muted-foreground mb-1">{month.month}</p>
+                <div
+                  key={month.month}
+                  className="text-center p-3 border rounded-lg"
+                >
+                  <p className="text-xs text-muted-foreground mb-1">
+                    {month.month}
+                  </p>
                   <p className="font-semibold">{formatPrice(month.amount)}</p>
                 </div>
               ))}
@@ -187,19 +220,13 @@ export function AccountAnalytics({ className }: AccountAnalyticsProps) {
           </CardHeader>
           <CardContent className="space-y-3">
             <Button variant="outline" className="w-full justify-start" asChild>
-              <Link href="/account/profile">
-                Update Profile Information
-              </Link>
+              <Link href="/account/profile">Update Profile Information</Link>
             </Button>
             <Button variant="outline" className="w-full justify-start" asChild>
-              <Link href="/account/addresses">
-                Manage Shipping Addresses
-              </Link>
+              <Link href="/account/addresses">Manage Shipping Addresses</Link>
             </Button>
             <Button variant="outline" className="w-full justify-start" asChild>
-              <Link href="/account/orders">
-                Track Your Orders
-              </Link>
+              <Link href="/account/orders">Track Your Orders</Link>
             </Button>
           </CardContent>
         </Card>
@@ -224,5 +251,5 @@ export function AccountAnalytics({ className }: AccountAnalyticsProps) {
         </Card>
       </div>
     </div>
-  )
+  );
 }

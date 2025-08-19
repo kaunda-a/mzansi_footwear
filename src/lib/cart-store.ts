@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 export interface CartItem {
   id: string;
   productId: string;
   variantId: string;
   name: string;
+  unitPrice: number;
   price: number;
   image: string;
   size: string;
@@ -21,9 +22,9 @@ export interface CartStore {
   isOpen: boolean;
   totalItems: number;
   totalPrice: number;
-  
+
   // Actions
-  addItem: (item: Omit<CartItem, 'id'>) => void;
+  addItem: (item: Omit<CartItem, "id">) => void;
   removeItem: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   clearCart: () => void;
@@ -43,18 +44,24 @@ export const useCartStore = create<CartStore>()(
       addItem: (newItem) => {
         const items = get().items;
         const existingItemIndex = items.findIndex(
-          (item) => item.variantId === newItem.variantId
+          (item) => item.variantId === newItem.variantId,
         );
 
         if (existingItemIndex > -1) {
           // Update quantity if item already exists
           const updatedItems = [...items];
           updatedItems[existingItemIndex].quantity += newItem.quantity;
-          
+
           set({
             items: updatedItems,
-            totalItems: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
-            totalPrice: updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+            totalItems: updatedItems.reduce(
+              (sum, item) => sum + item.quantity,
+              0,
+            ),
+            totalPrice: updatedItems.reduce(
+              (sum, item) => sum + item.unitPrice * item.quantity,
+              0,
+            ),
           });
         } else {
           // Add new item
@@ -63,11 +70,17 @@ export const useCartStore = create<CartStore>()(
             id: `${newItem.variantId}-${Date.now()}`,
           };
           const updatedItems = [...items, itemWithId];
-          
+
           set({
             items: updatedItems,
-            totalItems: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
-            totalPrice: updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+            totalItems: updatedItems.reduce(
+              (sum, item) => sum + item.quantity,
+              0,
+            ),
+            totalPrice: updatedItems.reduce(
+              (sum, item) => sum + item.unitPrice * item.quantity,
+              0,
+            ),
           });
         }
       },
@@ -75,11 +88,17 @@ export const useCartStore = create<CartStore>()(
       removeItem: (id) => {
         const items = get().items;
         const updatedItems = items.filter((item) => item.id !== id);
-        
+
         set({
           items: updatedItems,
-          totalItems: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
-          totalPrice: updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+          totalItems: updatedItems.reduce(
+            (sum, item) => sum + item.quantity,
+            0,
+          ),
+          totalPrice: updatedItems.reduce(
+            (sum, item) => sum + item.unitPrice * item.quantity,
+            0,
+          ),
         });
       },
 
@@ -91,13 +110,19 @@ export const useCartStore = create<CartStore>()(
 
         const items = get().items;
         const updatedItems = items.map((item) =>
-          item.id === id ? { ...item, quantity } : item
+          item.id === id ? { ...item, quantity } : item,
         );
-        
+
         set({
           items: updatedItems,
-          totalItems: updatedItems.reduce((sum, item) => sum + item.quantity, 0),
-          totalPrice: updatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+          totalItems: updatedItems.reduce(
+            (sum, item) => sum + item.quantity,
+            0,
+          ),
+          totalPrice: updatedItems.reduce(
+            (sum, item) => sum + item.unitPrice * item.quantity,
+            0,
+          ),
         });
       },
 
@@ -114,12 +139,12 @@ export const useCartStore = create<CartStore>()(
       toggleCart: () => set((state) => ({ isOpen: !state.isOpen })),
     }),
     {
-      name: 'cart-storage',
+      name: "cart-storage",
       partialize: (state) => ({
         items: state.items,
         totalItems: state.totalItems,
         totalPrice: state.totalPrice,
       }),
-    }
-  )
+    },
+  ),
 );

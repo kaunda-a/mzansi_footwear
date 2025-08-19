@@ -1,34 +1,44 @@
-import { Suspense } from 'react'
-import type { Metadata } from 'next'
-import { SearchParams } from 'nuqs/server'
-import Header from '@/components/layout/header'
-import { StoreFooter } from '@/components/layout/footer'
-import { Heading } from '@/components/ui/heading'
-import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
-import { MarqueeListingPage } from '@/features/marquee'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import { SearchParams } from "nuqs/server";
+import Header from "@/components/layout/header";
+import { StoreFooter } from "@/components/layout/footer";
+import { Heading } from "@/components/ui/heading";
+import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
+import { MarqueeListingPage } from "@/features/marquee";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export const metadata: Metadata = {
-  title: 'Marquee Messages - Mzansi Footwear',
-  description: 'View current announcements, alerts, and important messages from Mzansi Footwear.',
-  keywords: 'marquee, messages, announcements, alerts, notifications, Mzansi Footwear',
+  title: "Marquee Messages - Mzansi Footwear",
+  description:
+    "View current announcements, alerts, and important messages from Mzansi Footwear.",
+  keywords:
+    "marquee, messages, announcements, alerts, notifications, Mzansi Footwear",
   openGraph: {
-    title: 'Marquee Messages - Mzansi Footwear',
-    description: 'Stay updated with our latest announcements and important messages.',
-    type: 'website',
+    title: "Marquee Messages - Mzansi Footwear",
+    description:
+      "Stay updated with our latest announcements and important messages.",
+    type: "website",
   },
   robots: {
     index: true,
     follow: true,
   },
-}
+};
 
 type pageProps = {
-  searchParams: Promise<SearchParams>
-}
+  searchParams: Promise<SearchParams>;
+};
 
 export default async function Page(props: pageProps) {
-  const searchParams = await props.searchParams
+  const searchParams = await props.searchParams;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -74,5 +84,5 @@ export default async function Page(props: pageProps) {
       </main>
       <StoreFooter />
     </div>
-  )
+  );
 }

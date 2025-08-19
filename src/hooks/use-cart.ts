@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useCartStore } from '@/lib/cart-store';
+import { useCartStore } from "@/lib/cart-store";
 
 /**
  * Custom hook that provides cart functionality

@@ -1,7 +1,11 @@
-'use client';
+"use client";
 
-import { LoadingSkeleton, LoadingCard, LoadingTable } from '@/components/ui/loading';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import {
+  LoadingSkeleton,
+  LoadingCard,
+  LoadingTable,
+} from "@/components/ui/loading";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 // Dashboard Overview Loading
 export function DashboardOverviewLoading() {
@@ -174,7 +178,10 @@ export function OrderDetailsLoading() {
             </CardHeader>
             <CardContent className="space-y-4">
               {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex items-center space-x-4 p-4 border rounded">
+                <div
+                  key={i}
+                  className="flex items-center space-x-4 p-4 border rounded"
+                >
                   <LoadingSkeleton className="h-16 w-16" />
                   <div className="flex-1 space-y-2">
                     <LoadingSkeleton className="h-4 w-48" />

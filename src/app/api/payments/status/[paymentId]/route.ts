@@ -1,8 +1,11 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getPaymentManager, initializePaymentManager } from '@/lib/payments/payment-manager';
-import { paymentConfigs } from '@/lib/payments/config';
-import { PaymentProvider } from '@/lib/payments/types';
-import { auth } from '@/lib/auth';
+import { NextRequest, NextResponse } from "next/server";
+import {
+  getPaymentManager,
+  initializePaymentManager,
+} from "@/lib/payments/payment-manager";
+import { paymentConfigs } from "@/lib/payments/config";
+import { PaymentProvider } from "@/lib/payments/types";
+import { auth } from "@/lib/auth";
 
 // Initialize payment manager
 let paymentManagerInitialized = false;
@@ -17,7 +20,7 @@ async function ensurePaymentManagerInitialized() {
 
 export async function GET(
   request: NextRequest,
-  context: { params: Promise<{ paymentId: string }> }
+  context: { params: Promise<{ paymentId: string }> },
 ) {
   try {
     await ensurePaymentManagerInitialized();
@@ -25,27 +28,27 @@ export async function GET(
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
+        { error: "Authentication required" },
+        { status: 401 },
       );
     }
 
     const params = await context.params;
     const { paymentId } = params;
     const { searchParams } = new URL(request.url);
-    const provider = searchParams.get('provider') as PaymentProvider;
+    const provider = searchParams.get("provider") as PaymentProvider;
 
     if (!paymentId) {
       return NextResponse.json(
-        { error: 'Payment ID is required' },
-        { status: 400 }
+        { error: "Payment ID is required" },
+        { status: 400 },
       );
     }
 
     if (!provider) {
       return NextResponse.json(
-        { error: 'Provider parameter is required' },
-        { status: 400 }
+        { error: "Provider parameter is required" },
+        { status: 400 },
       );
     }
 
@@ -53,7 +56,7 @@ export async function GET(
       paymentId,
       provider,
       userId: session.user.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Get payment status from provider
@@ -68,7 +71,7 @@ export async function GET(
     //     customerId: session.user.id
     //   }
     // });
-    
+
     // if (!payment) {
     //   return NextResponse.json(
     //     { error: 'Payment not found or access denied' },
@@ -92,20 +95,19 @@ export async function GET(
     console.log(`✅ Payment status retrieved`, {
       paymentId,
       status,
-      provider
+      provider,
     });
 
     return NextResponse.json(response);
-
   } catch (error) {
-    console.error('Payment status check error:', error);
-    
+    console.error("Payment status check error:", error);
+
     return NextResponse.json(
-      { 
-        error: 'Failed to check payment status',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: "Failed to check payment status",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
@@ -113,7 +115,7 @@ export async function GET(
 // Update payment status (for internal use or admin)
 export async function PUT(
   request: NextRequest,
-  context: { params: Promise<{ paymentId: string }> }
+  context: { params: Promise<{ paymentId: string }> },
 ) {
   try {
     await ensurePaymentManagerInitialized();
@@ -121,8 +123,8 @@ export async function PUT(
     const session = await auth();
     if (!session?.user) {
       return NextResponse.json(
-        { error: 'Authentication required' },
-        { status: 401 }
+        { error: "Authentication required" },
+        { status: 401 },
       );
     }
 
@@ -137,13 +139,13 @@ export async function PUT(
     const params = await context.params;
     const { paymentId } = params;
     const body = await request.json();
-    
+
     const { status, notes, provider } = body;
 
     if (!status || !provider) {
       return NextResponse.json(
-        { error: 'Status and provider are required' },
-        { status: 400 }
+        { error: "Status and provider are required" },
+        { status: 400 },
       );
     }
 
@@ -153,7 +155,7 @@ export async function PUT(
       provider,
       updatedBy: session.user.id,
       notes,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
 
     // Here you would update your database
@@ -173,26 +175,25 @@ export async function PUT(
       status,
       updatedAt: new Date().toISOString(),
       updatedBy: session.user.id,
-      notes
+      notes,
     };
 
     console.log(`✅ Payment status updated`, {
       paymentId,
       status,
-      updatedBy: session.user.id
+      updatedBy: session.user.id,
     });
 
     return NextResponse.json(response);
-
   } catch (error) {
-    console.error('Payment status update error:', error);
-    
+    console.error("Payment status update error:", error);
+
     return NextResponse.json(
-      { 
-        error: 'Failed to update payment status',
-        details: error instanceof Error ? error.message : 'Unknown error'
+      {
+        error: "Failed to update payment status",
+        details: error instanceof Error ? error.message : "Unknown error",
       },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,47 +1,47 @@
-'use client'
+"use client";
 
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
-import type { ProductSortProps } from '../types'
+} from "@/components/ui/select";
+import type { ProductSortProps } from "../types";
 
 const sortOptions = [
-  { value: 'newest', label: 'Newest First' },
-  { value: 'oldest', label: 'Oldest First' },
-  { value: 'price-low-high', label: 'Price: Low to High' },
-  { value: 'price-high-low', label: 'Price: High to Low' },
-  { value: 'name-a-z', label: 'Name: A to Z' },
-  { value: 'name-z-a', label: 'Name: Z to A' },
-  { value: 'featured', label: 'Featured' },
-  { value: 'rating', label: 'Highest Rated' },
-]
+  { value: "newest", label: "Newest First" },
+  { value: "oldest", label: "Oldest First" },
+  { value: "price-low-high", label: "Price: Low to High" },
+  { value: "price-high-low", label: "Price: High to Low" },
+  { value: "name-a-z", label: "Name: A to Z" },
+  { value: "name-z-a", label: "Name: Z to A" },
+  { value: "featured", label: "Featured" },
+  { value: "rating", label: "Highest Rated" },
+];
 
 export function ProductSort({ currentSort, onSortChange }: ProductSortProps) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   const handleSortChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    
-    if (value === 'newest') {
-      params.delete('sort')
-    } else {
-      params.set('sort', value)
-    }
-    
-    // Reset to first page when sort changes
-    params.delete('page')
-    
-    router.push(`?${params.toString()}`)
-    onSortChange?.(value)
-  }
+    const params = new URLSearchParams(searchParams.toString());
 
-  const selectedSort = currentSort || searchParams.get('sort') || 'newest'
+    if (value === "newest") {
+      params.delete("sort");
+    } else {
+      params.set("sort", value);
+    }
+
+    // Reset to first page when sort changes
+    params.delete("page");
+
+    router.push(`?${params.toString()}`);
+    onSortChange?.(value);
+  };
+
+  const selectedSort = currentSort || searchParams.get("sort") || "newest";
 
   return (
     <div className="flex items-center gap-2">
@@ -59,5 +59,5 @@ export function ProductSort({ currentSort, onSortChange }: ProductSortProps) {
         </SelectContent>
       </Select>
     </div>
-  )
+  );
 }

@@ -1,29 +1,26 @@
-import { BillboardService, BillboardPosition } from '@/lib/services'
-import { Billboard, CompactBillboard } from '@/components/catalog/billboard'
+import { BillboardService, BillboardPosition } from "@/lib/services";
+import { Billboard, CompactBillboard } from "@/components/catalog/billboard";
 
 interface BillboardContainerProps {
-  position: BillboardPosition
-  compact?: boolean
-  className?: string
+  position: BillboardPosition;
+  compact?: boolean;
+  className?: string;
 }
 
 export async function BillboardContainer({
   position,
   compact = false,
-  className
+  className,
 }: BillboardContainerProps) {
   try {
-    const billboards = await BillboardService.getActiveBillboards(position)
+    const billboards = await BillboardService.getActiveBillboards(position);
 
-    if (!billboards.length) return null
+    if (!billboards.length) return null;
 
     if (compact && billboards.length === 1) {
       return (
-        <CompactBillboard
-          billboard={billboards[0]}
-          className={className}
-        />
-      )
+        <CompactBillboard billboard={billboards[0]} className={className} />
+      );
     }
 
     return (
@@ -33,9 +30,9 @@ export async function BillboardContainer({
         autoRotate={billboards.length > 1}
         showControls
       />
-    )
+    );
   } catch (error) {
     // Error handled by returning null (no billboards shown)
-    return null
+    return null;
   }
 }

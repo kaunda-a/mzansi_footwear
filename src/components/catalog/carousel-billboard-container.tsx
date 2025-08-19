@@ -1,29 +1,29 @@
-import { BillboardService, BillboardPosition } from '@/lib/services'
-import { CarouselBillboard } from '@/components/catalog/carousel-billboard'
+import { BillboardService, BillboardPosition } from "@/lib/services";
+import { CarouselBillboard } from "@/components/catalog/carousel-billboard";
 
 interface CarouselBillboardContainerProps {
-  position: BillboardPosition
-  height?: string
-  className?: string
-  autoPlay?: boolean
-  autoPlayInterval?: number
-  showDots?: boolean
-  showArrows?: boolean
+  position: BillboardPosition;
+  height?: string;
+  className?: string;
+  autoPlay?: boolean;
+  autoPlayInterval?: number;
+  showDots?: boolean;
+  showArrows?: boolean;
 }
 
 export async function CarouselBillboardContainer({
   position,
-  height = 'h-64 md:h-80 lg:h-96',
+  height = "h-64 md:h-80 lg:h-96",
   className,
   autoPlay = true,
   autoPlayInterval = 5000,
   showDots = true,
-  showArrows = true
+  showArrows = true,
 }: CarouselBillboardContainerProps) {
   try {
-    const billboards = await BillboardService.getActiveBillboards(position)
+    const billboards = await BillboardService.getActiveBillboards(position);
 
-    if (!billboards.length) return null
+    if (!billboards.length) return null;
 
     return (
       <CarouselBillboard
@@ -35,9 +35,9 @@ export async function CarouselBillboardContainer({
         showDots={showDots}
         showArrows={showArrows}
       />
-    )
+    );
   } catch (error) {
     // Error handled by returning null (no billboards shown)
-    return null
+    return null;
   }
 }

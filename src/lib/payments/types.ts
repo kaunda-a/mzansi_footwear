@@ -1,12 +1,9 @@
 // South African Payment Gateway Types
-export type PaymentProvider = 'payfast';
+export type PaymentProvider = "payfast" | "yoco";
 
-export type PaymentMethod =
-  | 'card'
-  | 'eft'
-  | 'instant_eft';
+export type PaymentMethod = "card" | "eft" | "instant_eft";
 
-export type Currency = 'ZAR' | 'USD' | 'EUR' | 'GBP';
+export type Currency = "ZAR" | "USD" | "EUR" | "GBP";
 
 export interface PaymentAmount {
   amount: number;
@@ -45,7 +42,7 @@ export interface PaymentMetadata {
   orderId: string;
   customerId: string;
   sessionId?: string;
-  source: 'web' | 'mobile' | 'api';
+  source: "web" | "mobile" | "api";
   userAgent?: string;
   ipAddress?: string;
   [key: string]: any;
@@ -80,17 +77,17 @@ export interface PaymentResponse {
 }
 
 export type PaymentStatus =
-  | 'PENDING'
-  | 'PROCESSING'
-  | 'COMPLETED'
-  | 'FAILED'
-  | 'CANCELLED'
-  | 'EXPIRED'
-  | 'REFUNDED'
-  | 'PARTIALLY_REFUNDED'
-  | 'DISPUTED'
-  | 'AUTHORIZED'
-  | 'CAPTURED';
+  | "PENDING"
+  | "PROCESSING"
+  | "COMPLETED"
+  | "FAILED"
+  | "CANCELLED"
+  | "EXPIRED"
+  | "REFUNDED"
+  | "PARTIALLY_REFUNDED"
+  | "DISPUTED"
+  | "AUTHORIZED"
+  | "CAPTURED";
 
 export interface PaymentError {
   code: string;
@@ -114,7 +111,7 @@ export interface PaymentRefund {
   paymentId: string;
   amount: PaymentAmount;
   reason: string;
-  status: 'pending' | 'completed' | 'failed';
+  status: "pending" | "completed" | "failed";
   createdAt: Date;
   processedAt?: Date;
 }
@@ -138,7 +135,7 @@ export interface PaymentConfig {
     minimumAmount?: number;
     maximumAmount?: number;
     processingFee?: number;
-    processingFeeType?: 'fixed' | 'percentage';
+    processingFeeType?: "fixed" | "percentage";
     [key: string]: any;
   };
 }
@@ -146,11 +143,15 @@ export interface PaymentConfig {
 export interface PaymentProviderInterface {
   readonly provider: PaymentProvider;
   readonly config: PaymentConfig;
-  
+
   initialize(): Promise<void>;
   createPayment(request: PaymentRequest): Promise<PaymentResponse>;
   getPaymentStatus(paymentId: string): Promise<PaymentStatus>;
-  refundPayment(paymentId: string, amount?: number, reason?: string): Promise<PaymentRefund>;
+  refundPayment(
+    paymentId: string,
+    amount?: number,
+    reason?: string,
+  ): Promise<PaymentRefund>;
   verifyWebhook(payload: string, signature: string): boolean;
   processWebhook(webhook: PaymentWebhook): Promise<void>;
   calculateFees(amount: number): number;

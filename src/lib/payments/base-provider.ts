@@ -1,14 +1,14 @@
-import { 
-  PaymentProvider, 
-  PaymentConfig, 
-  PaymentRequest, 
-  PaymentResponse, 
-  PaymentStatus, 
-  PaymentRefund, 
+import {
+  PaymentProvider,
+  PaymentConfig,
+  PaymentRequest,
+  PaymentResponse,
+  PaymentStatus,
+  PaymentRefund,
   PaymentWebhook,
   PaymentProviderInterface,
-  PaymentError
-} from './types';
+  PaymentError,
+} from "./types";
 
 export abstract class BasePaymentProvider implements PaymentProviderInterface {
   abstract readonly provider: PaymentProvider;
@@ -28,7 +28,7 @@ export abstract class BasePaymentProvider implements PaymentProviderInterface {
    */
   async initialize(): Promise<void> {
     if (this._initialized) return;
-    
+
     await this.validateConfig();
     await this.setupProvider();
     this._initialized = true;
@@ -38,19 +38,22 @@ export abstract class BasePaymentProvider implements PaymentProviderInterface {
    * Check if provider is available and properly configured
    */
   isAvailable(): boolean {
-    return this._config.enabled && this._initialized && this.validateCredentials();
+    return (
+      this._config.enabled && this._initialized && this.validateCredentials()
+    );
   }
 
   /**
    * Calculate processing fees for the provider
    */
   calculateFees(amount: number): number {
-    const { processingFee = 0, processingFeeType = 'fixed' } = this._config.settings;
-    
-    if (processingFeeType === 'percentage') {
+    const { processingFee = 0, processingFeeType = "fixed" } =
+      this._config.settings;
+
+    if (processingFeeType === "percentage") {
       return (amount * processingFee) / 100;
     }
-    
+
     return processingFee;
   }
 
@@ -68,11 +71,11 @@ export abstract class BasePaymentProvider implements PaymentProviderInterface {
    */
   protected validateAmount(amount: number): void {
     const { minimumAmount, maximumAmount } = this._config.settings;
-    
+
     if (minimumAmount && amount < minimumAmount) {
       throw new Error(`Amount ${amount} is below minimum ${minimumAmount}`);
     }
-    
+
     if (maximumAmount && amount > maximumAmount) {
       throw new Error(`Amount ${amount} exceeds maximum ${maximumAmount}`);
     }
@@ -82,22 +85,22 @@ export abstract class BasePaymentProvider implements PaymentProviderInterface {
    * Create standardized error response
    */
   protected createErrorResponse(
-    code: string, 
-    message: string, 
+    code: string,
+    message: string,
     retryable: boolean = false,
-    details?: Record<string, any>
+    details?: Record<string, any>,
   ): PaymentResponse {
     return {
       success: false,
-      paymentId: '',
-      status: 'FAILED',
-      reference: '',
+      paymentId: "",
+      status: "FAILED",
+      reference: "",
       error: {
         code,
         message,
         retryable,
-        details
-      }
+        details,
+      },
     };
   }
 
@@ -108,31 +111,35 @@ export abstract class BasePaymentProvider implements PaymentProviderInterface {
     paymentId: string,
     status: PaymentStatus,
     reference: string,
-    additionalData?: Partial<PaymentResponse>
+    additionalData?: Partial<PaymentResponse>,
   ): PaymentResponse {
     return {
       success: true,
       paymentId,
       status,
       reference,
-      ...additionalData
+      ...additionalData,
     };
   }
 
   /**
    * Log payment events for debugging and monitoring
    */
-  protected log(level: 'info' | 'warn' | 'error', message: string, data?: any): void {
+  protected log(
+    level: "info" | "warn" | "error",
+    message: string,
+    data?: any,
+  ): void {
     const logData = {
       provider: this.provider,
       timestamp: new Date().toISOString(),
       message,
-      data
+      data,
     };
 
-    if (level === 'error') {
+    if (level === "error") {
       console.error(`[${this.provider.toUpperCase()}]`, logData);
-    } else if (level === 'warn') {
+    } else if (level === "warn") {
       console.warn(`[${this.provider.toUpperCase()}]`, logData);
     } else {
       console.log(`[${this.provider.toUpperCase()}]`, logData);
@@ -143,9 +150,9 @@ export abstract class BasePaymentProvider implements PaymentProviderInterface {
    * Handle HTTP requests with proper error handling
    */
   protected async makeRequest(
-    url: string, 
+    url: string,
     options: RequestInit,
-    timeout: number = 30000
+    timeout: number = 30000,
   ): Promise<Response> {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
@@ -155,17 +162,17 @@ export abstract class BasePaymentProvider implements PaymentProviderInterface {
         ...options,
         signal: controller.signal,
         headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'MzansiFootwear/1.0',
-          ...options.headers
-        }
+          "Content-Type": "application/json",
+          "User-Agent": "MzansiFootwear/1.0",
+          ...options.headers,
+        },
       });
 
       clearTimeout(timeoutId);
       return response;
     } catch (error) {
       clearTimeout(timeoutId);
-      this.log('error', 'HTTP request failed', { url, error });
+      this.log("error", "HTTP request failed", { url, error });
       throw error;
     }
   }
@@ -190,7 +197,11 @@ export abstract class BasePaymentProvider implements PaymentProviderInterface {
    */
   abstract createPayment(request: PaymentRequest): Promise<PaymentResponse>;
   abstract getPaymentStatus(paymentId: string): Promise<PaymentStatus>;
-  abstract refundPayment(paymentId: string, amount?: number, reason?: string): Promise<PaymentRefund>;
+  abstract refundPayment(
+    paymentId: string,
+    amount?: number,
+    reason?: string,
+  ): Promise<PaymentRefund>;
   abstract verifyWebhook(payload: string, signature: string): boolean;
   abstract processWebhook(webhook: PaymentWebhook): Promise<void>;
 }
@@ -202,10 +213,10 @@ export class PaymentUtils {
   /**
    * Format amount for display
    */
-  static formatAmount(amount: number, currency: string = 'ZAR'): string {
-    return new Intl.NumberFormat('en-ZA', {
-      style: 'currency',
-      currency: currency
+  static formatAmount(amount: number, currency: string = "ZAR"): string {
+    return new Intl.NumberFormat("en-ZA", {
+      style: "currency",
+      currency: currency,
     }).format(amount);
   }
 
@@ -215,7 +226,7 @@ export class PaymentUtils {
   static validateSAIdNumber(idNumber: string): boolean {
     if (!/^\d{13}$/.test(idNumber)) return false;
 
-    const digits = idNumber.split('').map(Number);
+    const digits = idNumber.split("").map(Number);
     let sum = 0;
 
     for (let i = 0; i < 12; i++) {
@@ -235,31 +246,44 @@ export class PaymentUtils {
    * Validate South African phone number
    */
   static validateSAPhoneNumber(phone: string): boolean {
-    const cleaned = phone.replace(/\D/g, '');
+    const cleaned = phone.replace(/\D/g, "");
     return /^(27|0)[0-9]{9}$/.test(cleaned);
   }
 
   /**
    * Generate secure hash for webhook verification
    */
-  static generateHash(data: string, secret: string, algorithm: string = 'sha256'): string {
-    const crypto = require('crypto');
-    return crypto.createHmac(algorithm, secret).update(data).digest('hex');
+  static generateHash(
+    data: string,
+    secret: string,
+    algorithm: string = "sha256",
+  ): string {
+    const crypto = require("crypto");
+    return crypto.createHmac(algorithm, secret).update(data).digest("hex");
   }
 
   /**
    * Sanitize payment data for logging
    */
   static sanitizeForLogging(data: any): any {
-    const sensitiveFields = ['cardNumber', 'cvv', 'pin', 'password', 'secret', 'key'];
+    const sensitiveFields = [
+      "cardNumber",
+      "cvv",
+      "pin",
+      "password",
+      "secret",
+      "key",
+    ];
     const sanitized = JSON.parse(JSON.stringify(data));
 
     const sanitizeObject = (obj: any): any => {
       for (const key in obj) {
-        if (typeof obj[key] === 'object' && obj[key] !== null) {
+        if (typeof obj[key] === "object" && obj[key] !== null) {
           sanitizeObject(obj[key]);
-        } else if (sensitiveFields.some(field => key.toLowerCase().includes(field))) {
-          obj[key] = '***REDACTED***';
+        } else if (
+          sensitiveFields.some((field) => key.toLowerCase().includes(field))
+        ) {
+          obj[key] = "***REDACTED***";
         }
       }
       return obj;

@@ -1,14 +1,18 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Image from 'next/image'
-import { Button } from '@/components/ui/button'
-import { IconChevronLeft, IconChevronRight, IconMaximize } from '@tabler/icons-react'
-import type { ProductGalleryProps } from '../types'
+import { useState } from "react";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import {
+  IconChevronLeft,
+  IconChevronRight,
+  IconMaximize,
+} from "@tabler/icons-react";
+import type { ProductGalleryProps } from "../types";
 
 export function ProductGallery({ images, productName }: ProductGalleryProps) {
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0)
-  const [isZoomed, setIsZoomed] = useState(false)
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isZoomed, setIsZoomed] = useState(false);
 
   if (!images.length) {
     return (
@@ -20,30 +24,30 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           <p className="text-sm text-muted-foreground">No images available</p>
         </div>
       </div>
-    )
+    );
   }
 
-  const selectedImage = images[selectedImageIndex]
+  const selectedImage = images[selectedImageIndex];
 
   const handlePrevious = () => {
-    setSelectedImageIndex((prev) => 
-      prev === 0 ? images.length - 1 : prev - 1
-    )
-  }
+    setSelectedImageIndex((prev) =>
+      prev === 0 ? images.length - 1 : prev - 1,
+    );
+  };
 
   const handleNext = () => {
-    setSelectedImageIndex((prev) => 
-      prev === images.length - 1 ? 0 : prev + 1
-    )
-  }
+    setSelectedImageIndex((prev) =>
+      prev === images.length - 1 ? 0 : prev + 1,
+    );
+  };
 
   const handleThumbnailClick = (index: number) => {
-    setSelectedImageIndex(index)
-  }
+    setSelectedImageIndex(index);
+  };
 
   const handleZoomToggle = () => {
-    setIsZoomed(!isZoomed)
-  }
+    setIsZoomed(!isZoomed);
+  };
 
   return (
     <div className="space-y-4">
@@ -54,7 +58,7 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
           alt={selectedImage.altText || productName}
           fill
           className={`object-cover transition-transform duration-300 ${
-            isZoomed ? 'scale-150 cursor-zoom-out' : 'cursor-zoom-in'
+            isZoomed ? "scale-150 cursor-zoom-out" : "cursor-zoom-in"
           }`}
           priority
           sizes="(min-width: 1024px) 50vw, (min-width: 768px) 100vw, 100vw"
@@ -109,8 +113,8 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
               key={image.id}
               className={`relative flex-shrink-0 w-16 h-16 rounded-md overflow-hidden border-2 transition-colors ${
                 index === selectedImageIndex
-                  ? 'border-primary'
-                  : 'border-transparent hover:border-gray-300'
+                  ? "border-primary"
+                  : "border-transparent hover:border-gray-300"
               }`}
               onClick={() => handleThumbnailClick(index)}
             >
@@ -126,5 +130,5 @@ export function ProductGallery({ images, productName }: ProductGalleryProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

@@ -1,92 +1,92 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
-import { Progress } from '@/components/ui/progress'
-import { IconStar, IconThumbUp, IconThumbDown } from '@tabler/icons-react'
-import { formatDistanceToNow } from 'date-fns'
-import type { ProductReviewsProps } from '../types'
+import { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Progress } from "@/components/ui/progress";
+import { IconStar, IconThumbUp, IconThumbDown } from "@tabler/icons-react";
+import { formatDistanceToNow } from "date-fns";
+import type { ProductReviewsProps } from "../types";
 
 interface Review {
-  id: string
-  rating: number
-  title: string
-  content: string
-  customerName: string
-  customerAvatar?: string
-  createdAt: string
-  verified: boolean
-  helpful: number
-  notHelpful: number
+  id: string;
+  rating: number;
+  title: string;
+  content: string;
+  customerName: string;
+  customerAvatar?: string;
+  createdAt: string;
+  verified: boolean;
+  helpful: number;
+  notHelpful: number;
 }
 
 interface ReviewStats {
-  averageRating: number
-  totalReviews: number
-  ratingDistribution: { [key: number]: number }
+  averageRating: number;
+  totalReviews: number;
+  ratingDistribution: { [key: number]: number };
 }
 
-export function ProductReviews({ 
-  productId, 
-  averageRating = 0, 
-  totalReviews = 0 
+export function ProductReviews({
+  productId,
+  averageRating = 0,
+  totalReviews = 0,
 }: ProductReviewsProps) {
-  const [reviews, setReviews] = useState<Review[]>([])
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [stats, setStats] = useState<ReviewStats>({
     averageRating,
     totalReviews,
-    ratingDistribution: {}
-  })
-  const [isLoading, setIsLoading] = useState(true)
-  const [currentPage, setCurrentPage] = useState(1)
-  const [sortBy, setSortBy] = useState('newest')
+    ratingDistribution: {},
+  });
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [sortBy, setSortBy] = useState("newest");
 
   useEffect(() => {
-    fetchReviews()
-  }, [productId, currentPage, sortBy])
+    fetchReviews();
+  }, [productId, currentPage, sortBy]);
 
   const fetchReviews = async () => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
       const response = await fetch(
-        `/api/products/${productId}/reviews?page=${currentPage}&sort=${sortBy}`
-      )
+        `/api/products/${productId}/reviews?page=${currentPage}&sort=${sortBy}`,
+      );
       if (response.ok) {
-        const data = await response.json()
-        setReviews(data.reviews || [])
-        setStats(data.stats || stats)
+        const data = await response.json();
+        setReviews(data.reviews || []);
+        setStats(data.stats || stats);
       }
     } catch (error) {
-      console.error('Error fetching reviews:', error)
+      console.error("Error fetching reviews:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleHelpful = async (reviewId: string, helpful: boolean) => {
     try {
       await fetch(`/api/reviews/${reviewId}/helpful`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ helpful })
-      })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ helpful }),
+      });
       // Refresh reviews to get updated counts
-      fetchReviews()
+      fetchReviews();
     } catch (error) {
-      console.error('Error marking review as helpful:', error)
+      console.error("Error marking review as helpful:", error);
     }
-  }
+  };
 
-  const renderStars = (rating: number, size: 'sm' | 'md' | 'lg' = 'sm') => {
+  const renderStars = (rating: number, size: "sm" | "md" | "lg" = "sm") => {
     const sizeClass = {
-      sm: 'h-3 w-3',
-      md: 'h-4 w-4',
-      lg: 'h-5 w-5'
-    }[size]
+      sm: "h-3 w-3",
+      md: "h-4 w-4",
+      lg: "h-5 w-5",
+    }[size];
 
     return (
       <div className="flex items-center">
@@ -94,18 +94,18 @@ export function ProductReviews({
           <IconStar
             key={i}
             className={`${sizeClass} ${
-              i < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+              i < rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
             }`}
           />
         ))}
       </div>
-    )
-  }
+    );
+  };
 
   const getRatingPercentage = (rating: number) => {
-    if (stats.totalReviews === 0) return 0
-    return ((stats.ratingDistribution[rating] || 0) / stats.totalReviews) * 100
-  }
+    if (stats.totalReviews === 0) return 0;
+    return ((stats.ratingDistribution[rating] || 0) / stats.totalReviews) * 100;
+  };
 
   if (isLoading && reviews.length === 0) {
     return (
@@ -133,7 +133,7 @@ export function ProductReviews({
           </div>
         </CardContent>
       </Card>
-    )
+    );
   }
 
   return (
@@ -146,8 +146,10 @@ export function ProductReviews({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Overall Rating */}
           <div className="text-center space-y-2">
-            <div className="text-4xl font-bold">{stats.averageRating.toFixed(1)}</div>
-            {renderStars(Math.round(stats.averageRating), 'lg')}
+            <div className="text-4xl font-bold">
+              {stats.averageRating.toFixed(1)}
+            </div>
+            {renderStars(Math.round(stats.averageRating), "lg")}
             <p className="text-sm text-muted-foreground">
               Based on {stats.totalReviews} reviews
             </p>
@@ -159,9 +161,9 @@ export function ProductReviews({
               <div key={rating} className="flex items-center gap-2">
                 <span className="text-sm w-8">{rating}</span>
                 <IconStar className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                <Progress 
-                  value={getRatingPercentage(rating)} 
-                  className="flex-1 h-2" 
+                <Progress
+                  value={getRatingPercentage(rating)}
+                  className="flex-1 h-2"
                 />
                 <span className="text-sm text-muted-foreground w-12">
                   {stats.ratingDistribution[rating] || 0}
@@ -180,15 +182,15 @@ export function ProductReviews({
               <span className="text-sm font-medium">Sort by:</span>
               <div className="flex gap-2">
                 {[
-                  { value: 'newest', label: 'Newest' },
-                  { value: 'oldest', label: 'Oldest' },
-                  { value: 'highest', label: 'Highest Rated' },
-                  { value: 'lowest', label: 'Lowest Rated' },
-                  { value: 'helpful', label: 'Most Helpful' }
+                  { value: "newest", label: "Newest" },
+                  { value: "oldest", label: "Oldest" },
+                  { value: "highest", label: "Highest Rated" },
+                  { value: "lowest", label: "Lowest Rated" },
+                  { value: "helpful", label: "Most Helpful" },
                 ].map((option) => (
                   <Button
                     key={option.value}
-                    variant={sortBy === option.value ? 'default' : 'outline'}
+                    variant={sortBy === option.value ? "default" : "outline"}
                     size="sm"
                     onClick={() => setSortBy(option.value)}
                   >
@@ -209,32 +211,36 @@ export function ProductReviews({
                         {review.customerName.slice(0, 2).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    
+
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium">{review.customerName}</span>
+                        <span className="font-medium">
+                          {review.customerName}
+                        </span>
                         {review.verified && (
                           <Badge variant="secondary" className="text-xs">
                             Verified Purchase
                           </Badge>
                         )}
                       </div>
-                      
+
                       <div className="flex items-center gap-2">
                         {renderStars(review.rating)}
                         <span className="text-sm text-muted-foreground">
-                          {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
+                          {formatDistanceToNow(new Date(review.createdAt), {
+                            addSuffix: true,
+                          })}
                         </span>
                       </div>
-                      
+
                       {review.title && (
                         <h4 className="font-medium">{review.title}</h4>
                       )}
-                      
+
                       <p className="text-sm text-muted-foreground leading-relaxed">
                         {review.content}
                       </p>
-                      
+
                       <div className="flex items-center gap-4">
                         <Button
                           variant="ghost"
@@ -257,7 +263,7 @@ export function ProductReviews({
                       </div>
                     </div>
                   </div>
-                  
+
                   {review !== reviews[reviews.length - 1] && <Separator />}
                 </div>
               ))}
@@ -268,10 +274,10 @@ export function ProductReviews({
               <div className="text-center">
                 <Button
                   variant="outline"
-                  onClick={() => setCurrentPage(prev => prev + 1)}
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
                   disabled={isLoading}
                 >
-                  {isLoading ? 'Loading...' : 'Load More Reviews'}
+                  {isLoading ? "Loading..." : "Load More Reviews"}
                 </Button>
               </div>
             )}
@@ -288,5 +294,5 @@ export function ProductReviews({
         )}
       </CardContent>
     </Card>
-  )
+  );
 }

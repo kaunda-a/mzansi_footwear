@@ -1,14 +1,16 @@
-import React, { Suspense } from 'react';
-import { Api } from '@/lib/api';
-import { FeaturedProductsSkeleton, AnimatedProductDisplay } from './featured-products-client';
-
+import React, { Suspense } from "react";
+import { Api } from "@/lib/api";
+import {
+  FeaturedProductsSkeleton,
+  AnimatedProductDisplay,
+} from "./featured-products-client";
 
 async function FeaturedProductsContent(): Promise<React.ReactElement | null> {
   try {
     const { products } = await Api.getProducts({
       page: 1,
       limit: 12, // Increased limit for a better visual effect
-      featured: true
+      featured: true,
     });
 
     if (!products.length) {
@@ -28,13 +30,13 @@ async function FeaturedProductsContent(): Promise<React.ReactElement | null> {
               Discover our handpicked selection of premium footwear
             </p>
           </div>
-          
+
           <AnimatedProductDisplay products={clientSafeProducts} />
         </div>
       </section>
     );
   } catch (error) {
-    console.error('Error loading featured products:', error);
+    console.error("Error loading featured products:", error);
     return null;
   }
 }

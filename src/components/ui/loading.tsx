@@ -1,45 +1,42 @@
-'use client';
+"use client";
 
-import { cn } from '@/lib/utils';
-import { IconLoader2, IconRefresh } from '@tabler/icons-react';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from "@/lib/utils";
+import { IconLoader2, IconRefresh } from "@tabler/icons-react";
+import { cva, type VariantProps } from "class-variance-authority";
 
-const loadingVariants = cva(
-  'flex items-center justify-center',
-  {
-    variants: {
-      variant: {
-        default: 'text-primary',
-        secondary: 'text-muted-foreground',
-        destructive: 'text-destructive',
-        success: 'text-green-600',
-        warning: 'text-yellow-600',
-      },
-      size: {
-        sm: 'h-4 w-4',
-        default: 'h-6 w-6',
-        lg: 'h-8 w-8',
-        xl: 'h-12 w-12',
-      },
-      speed: {
-        slow: 'animate-spin [animation-duration:2s]',
-        default: 'animate-spin',
-        fast: 'animate-spin [animation-duration:0.5s]',
-      },
+const loadingVariants = cva("flex items-center justify-center", {
+  variants: {
+    variant: {
+      default: "text-primary",
+      secondary: "text-muted-foreground",
+      destructive: "text-destructive",
+      success: "text-green-600",
+      warning: "text-yellow-600",
     },
-    defaultVariants: {
-      variant: 'default',
-      size: 'default',
-      speed: 'default',
+    size: {
+      sm: "h-4 w-4",
+      default: "h-6 w-6",
+      lg: "h-8 w-8",
+      xl: "h-12 w-12",
     },
-  }
-);
+    speed: {
+      slow: "animate-spin [animation-duration:2s]",
+      default: "animate-spin",
+      fast: "animate-spin [animation-duration:0.5s]",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+    size: "default",
+    speed: "default",
+  },
+});
 
 export interface LoadingProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof loadingVariants> {
   text?: string;
-  icon?: 'spinner' | 'refresh';
+  icon?: "spinner" | "refresh";
   overlay?: boolean;
 }
 
@@ -49,18 +46,18 @@ export function Loading({
   size,
   speed,
   text,
-  icon = 'spinner',
+  icon = "spinner",
   overlay = false,
   ...props
 }: LoadingProps) {
-  const IconComponent = icon === 'refresh' ? IconRefresh : IconLoader2;
+  const IconComponent = icon === "refresh" ? IconRefresh : IconLoader2;
 
   const content = (
     <div
       className={cn(
-        'flex flex-col items-center justify-center gap-2',
-        overlay && 'absolute inset-0 bg-background/80 backdrop-blur-sm z-50',
-        className
+        "flex flex-col items-center justify-center gap-2",
+        overlay && "absolute inset-0 bg-background/80 backdrop-blur-sm z-50",
+        className,
       )}
       {...props}
     >
@@ -68,13 +65,15 @@ export function Loading({
         className={cn(loadingVariants({ variant, size, speed }))}
       />
       {text && (
-        <p className={cn(
-          'text-sm font-medium',
-          variant === 'secondary' && 'text-muted-foreground',
-          variant === 'destructive' && 'text-destructive',
-          variant === 'success' && 'text-green-600',
-          variant === 'warning' && 'text-yellow-600',
-        )}>
+        <p
+          className={cn(
+            "text-sm font-medium",
+            variant === "secondary" && "text-muted-foreground",
+            variant === "destructive" && "text-destructive",
+            variant === "success" && "text-green-600",
+            variant === "warning" && "text-yellow-600",
+          )}
+        >
           {text}
         </p>
       )}
@@ -85,19 +84,28 @@ export function Loading({
 }
 
 // Skeleton Loading Components
-export function LoadingSkeleton({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function LoadingSkeleton({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn('animate-pulse rounded-md bg-muted', className)}
+      className={cn("animate-pulse rounded-md bg-muted", className)}
       {...props}
     />
   );
 }
 
 // Card Loading Skeleton
-export function LoadingCard({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
+export function LoadingCard({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
   return (
-    <div className={cn('space-y-3 p-4 border rounded-lg', className)} {...props}>
+    <div
+      className={cn("space-y-3 p-4 border rounded-lg", className)}
+      {...props}
+    >
       <LoadingSkeleton className="h-4 w-3/4" />
       <LoadingSkeleton className="h-4 w-1/2" />
       <LoadingSkeleton className="h-20 w-full" />
@@ -110,14 +118,14 @@ export function LoadingCard({ className, ...props }: React.HTMLAttributes<HTMLDi
 }
 
 // Table Loading Skeleton
-export function LoadingTable({ 
-  rows = 5, 
-  columns = 4, 
-  className, 
-  ...props 
+export function LoadingTable({
+  rows = 5,
+  columns = 4,
+  className,
+  ...props
 }: React.HTMLAttributes<HTMLDivElement> & { rows?: number; columns?: number }) {
   return (
-    <div className={cn('space-y-3', className)} {...props}>
+    <div className={cn("space-y-3", className)} {...props}>
       {/* Header */}
       <div className="flex space-x-4">
         {Array.from({ length: columns }).map((_, i) => (
@@ -137,17 +145,23 @@ export function LoadingTable({
 }
 
 // Page Loading Component
-export function LoadingPage({ 
-  title = 'Loading...', 
+export function LoadingPage({
+  title = "Loading...",
   description,
   className,
-  ...props 
-}: React.HTMLAttributes<HTMLDivElement> & { 
-  title?: string; 
-  description?: string; 
+  ...props
+}: React.HTMLAttributes<HTMLDivElement> & {
+  title?: string;
+  description?: string;
 }) {
   return (
-    <div className={cn('flex flex-col items-center justify-center min-h-[400px] space-y-4', className)} {...props}>
+    <div
+      className={cn(
+        "flex flex-col items-center justify-center min-h-[400px] space-y-4",
+        className,
+      )}
+      {...props}
+    >
       <Loading size="xl" text={title} />
       {description && (
         <p className="text-sm text-muted-foreground text-center max-w-md">
@@ -159,18 +173,18 @@ export function LoadingPage({
 }
 
 // Button Loading State
-export function LoadingButton({ 
-  children, 
-  loading = false, 
+export function LoadingButton({
+  children,
+  loading = false,
   className,
-  ...props 
+  ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { loading?: boolean }) {
   return (
     <button
       className={cn(
-        'inline-flex items-center justify-center gap-2',
-        loading && 'cursor-not-allowed opacity-70',
-        className
+        "inline-flex items-center justify-center gap-2",
+        loading && "cursor-not-allowed opacity-70",
+        className,
       )}
       disabled={loading}
       {...props}

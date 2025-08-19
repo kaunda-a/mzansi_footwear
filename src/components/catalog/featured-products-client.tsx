@@ -1,9 +1,9 @@
-'use client'
+"use client";
 
-import React from 'react';
-import { motion } from 'motion/react';
-import { ProductWithDetails } from '@/lib/services/products';
-import { ProductCard } from '@/features/product/components/product-card';
+import React from "react";
+import { motion } from "motion/react";
+import { ProductWithDetails } from "@/lib/services/products";
+import { ProductCard } from "@/features/product/components/product-card";
 
 export function FeaturedProductsSkeleton() {
   return (
@@ -16,12 +16,18 @@ export function FeaturedProductsSkeleton() {
         <div className="relative w-full overflow-hidden">
           <div className="flex gap-6 py-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-80 w-64 bg-muted animate-pulse rounded flex-shrink-0" />
+              <div
+                key={i}
+                className="h-80 w-64 bg-muted animate-pulse rounded flex-shrink-0"
+              />
             ))}
           </div>
           <div className="flex gap-6 py-6">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="h-80 w-64 bg-muted animate-pulse rounded flex-shrink-0" />
+              <div
+                key={i}
+                className="h-80 w-64 bg-muted animate-pulse rounded flex-shrink-0"
+              />
             ))}
           </div>
         </div>
@@ -30,14 +36,18 @@ export function FeaturedProductsSkeleton() {
   );
 }
 
-export function AnimatedProductDisplay({ products }: { products: ProductWithDetails[] }) {
+export function AnimatedProductDisplay({
+  products,
+}: {
+  products: ProductWithDetails[];
+}) {
   const half = Math.ceil(products.length / 2);
   const firstRow = products.slice(0, half);
   const secondRow = products.slice(half);
 
   const marqueeVariants = {
     animate: {
-      x: ['0%', '-50%'],
+      x: ["0%", "-50%"],
       transition: {
         x: {
           repeat: Infinity,
@@ -51,7 +61,7 @@ export function AnimatedProductDisplay({ products }: { products: ProductWithDeta
 
   const marqueeVariantsReverse = {
     animate: {
-      x: ['-50%', '0%'],
+      x: ["-50%", "0%"],
       transition: {
         x: {
           repeat: Infinity,
@@ -65,18 +75,34 @@ export function AnimatedProductDisplay({ products }: { products: ProductWithDeta
 
   return (
     <div className="relative w-full overflow-x-hidden">
-        <div className="absolute top-0 left-0 z-10 h-full w-24 bg-gradient-to-r from-background to-transparent" />
-        <div className="absolute top-0 right-0 z-10 h-full w-24 bg-gradient-to-l from-background to-transparent" />
-      <motion.div className="flex gap-6 py-4" variants={marqueeVariants} animate="animate">
+      <div className="absolute top-0 left-0 z-10 h-full w-24 bg-gradient-to-r from-background to-transparent" />
+      <div className="absolute top-0 right-0 z-10 h-full w-24 bg-gradient-to-l from-background to-transparent" />
+      <motion.div
+        className="flex gap-6 py-4"
+        variants={marqueeVariants}
+        animate="animate"
+      >
         {[...firstRow, ...firstRow].map((product, i) => (
-          <div key={`first-${product.id}-${i}`} className="flex-shrink-0" style={{ width: '220px' }}>
+          <div
+            key={`first-${product.id}-${i}`}
+            className="flex-shrink-0"
+            style={{ width: "220px" }}
+          >
             <ProductCard product={product} />
           </div>
         ))}
       </motion.div>
-      <motion.div className="flex gap-6 py-4" variants={marqueeVariantsReverse} animate="animate">
+      <motion.div
+        className="flex gap-6 py-4"
+        variants={marqueeVariantsReverse}
+        animate="animate"
+      >
         {[...secondRow, ...secondRow].map((product, i) => (
-          <div key={`second-${product.id}-${i}`} className="flex-shrink-0" style={{ width: '220px' }}>
+          <div
+            key={`second-${product.id}-${i}`}
+            className="flex-shrink-0"
+            style={{ width: "220px" }}
+          >
             <ProductCard product={product} />
           </div>
         ))}

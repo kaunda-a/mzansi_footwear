@@ -1,13 +1,13 @@
-'use client';
+"use client";
 
-import React from 'react';
-import { ActiveThemeProvider } from '../active-theme';
-import { AuthProvider } from '@/components/providers/session-provider';
-import { ConfettiProvider } from '@/components/ui/confetti';
+import React from "react";
+import { ActiveThemeProvider } from "../active-theme";
+import { AuthProvider } from "@/components/providers/session-provider";
+import { ConfettiProvider } from "@/components/ui/confetti";
 
 export default function Providers({
   activeThemeValue,
-  children
+  children,
 }: {
   activeThemeValue: string;
   children: React.ReactNode;
@@ -16,9 +16,7 @@ export default function Providers({
     <>
       <ActiveThemeProvider initialTheme={activeThemeValue}>
         <AuthProvider>
-          <ConfettiProvider>
-            {children}
-          </ConfettiProvider>
+          <ConfettiProvider>{children}</ConfettiProvider>
         </AuthProvider>
       </ActiveThemeProvider>
     </>

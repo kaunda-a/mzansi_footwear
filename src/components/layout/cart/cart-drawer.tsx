@@ -1,34 +1,34 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
+import Image from "next/image";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import {
   Sheet,
   SheetContent,
   SheetHeader,
   SheetTitle,
-} from '@/components/ui/sheet';
+} from "@/components/ui/sheet";
 import {
   IconMinus,
   IconPlus,
   IconTrash,
-  IconShoppingBag
-} from '@tabler/icons-react';
-import { useCartStore } from '@/lib/cart-store';
-import { formatPrice } from '@/lib/format';
+  IconShoppingBag,
+} from "@tabler/icons-react";
+import { useCartStore } from "@/lib/cart-store";
+import { formatPrice } from "@/lib/format";
 
 export function CartDrawer() {
-  const { 
-    items, 
-    isOpen, 
-    closeCart, 
-    updateQuantity, 
-    removeItem, 
+  const {
+    items,
+    isOpen,
+    closeCart,
+    updateQuantity,
+    removeItem,
     totalPrice,
-    totalItems 
+    totalItems,
   } = useCartStore();
 
   const handleQuantityChange = (id: string, newQuantity: number) => {
@@ -55,13 +55,9 @@ export function CartDrawer() {
             <h3 className="text-lg font-medium text-gray-900 mb-2">
               Your cart is empty
             </h3>
-            <p className="text-gray-500 mb-6">
-              Add some shoes to get started!
-            </p>
+            <p className="text-gray-500 mb-6">Add some shoes to get started!</p>
             <Button asChild onClick={closeCart}>
-              <Link href="/products">
-                Continue Shopping
-              </Link>
+              <Link href="/products">Continue Shopping</Link>
             </Button>
           </div>
         ) : (
@@ -79,25 +75,25 @@ export function CartDrawer() {
                         className="object-cover"
                       />
                     </div>
-                    
+
                     <div className="flex-1 space-y-2">
                       <div>
                         <h3 className="font-medium text-sm">{item.name}</h3>
                         <p className="text-sm text-gray-500">
                           {item.color} • {item.size}
                         </p>
-                        <p className="text-sm text-gray-500">
-                          SKU: {item.sku}
-                        </p>
+                        <p className="text-sm text-gray-500">SKU: {item.sku}</p>
                       </div>
-                      
+
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-2">
                           <Button
                             variant="outline"
                             size="sm"
                             className="h-8 w-8 p-0"
-                            onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                            onClick={() =>
+                              handleQuantityChange(item.id, item.quantity - 1)
+                            }
                           >
                             <IconMinus className="h-3 w-3" />
                           </Button>
@@ -108,12 +104,14 @@ export function CartDrawer() {
                             variant="outline"
                             size="sm"
                             className="h-8 w-8 p-0"
-                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                            onClick={() =>
+                              handleQuantityChange(item.id, item.quantity + 1)
+                            }
                           >
                             <IconPlus className="h-3 w-3" />
                           </Button>
                         </div>
-                        
+
                         <div className="flex items-center space-x-2">
                           <span className="font-medium text-sm">
                             {formatPrice(item.price * item.quantity)}
@@ -140,25 +138,26 @@ export function CartDrawer() {
                 <span>Subtotal</span>
                 <span>{formatPrice(totalPrice)}</span>
               </div>
-              
+
               <p className="text-sm text-gray-500">
                 Shipping and taxes calculated at checkout.
               </p>
-              
+
               <div className="space-y-2">
                 <Button className="w-full" asChild onClick={closeCart}>
-                  <Link href="/checkout">
-                    Proceed to Checkout
-                  </Link>
+                  <Link href="/checkout">Proceed to Checkout</Link>
                 </Button>
-                
-                <Button variant="outline" className="w-full" asChild onClick={closeCart}>
-                  <Link href="/cart">
-                    View Cart
-                  </Link>
+
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  asChild
+                  onClick={closeCart}
+                >
+                  <Link href="/cart">View Cart</Link>
                 </Button>
               </div>
-              
+
               <div className="text-center">
                 <Button variant="ghost" onClick={closeCart}>
                   Continue Shopping

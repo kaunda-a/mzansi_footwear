@@ -1,25 +1,37 @@
-'use client'
+"use client";
 
-import { Header } from '@/components/layout/header'
-import { StoreFooter } from '@/components/layout/footer'
-import { AccountSidebar } from './account-sidebar'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import { Header } from "@/components/layout/header";
+import { StoreFooter } from "@/components/layout/footer";
+import { AccountSidebar } from "./account-sidebar";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 interface AccountLayoutProps {
-  children: React.ReactNode
-  title: string
-  description?: string
+  children: React.ReactNode;
+  title: string;
+  description?: string;
   breadcrumbs?: Array<{
-    label: string
-    href?: string
-  }>
+    label: string;
+    href?: string;
+  }>;
 }
 
-export function AccountLayout({ children, title, description, breadcrumbs }: AccountLayoutProps) {
+export function AccountLayout({
+  children,
+  title,
+  description,
+  breadcrumbs,
+}: AccountLayoutProps) {
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <Header />
-      
+
       <div className="flex-1">
         <div className="container mx-auto px-4 py-6 md:py-8">
           {/* Breadcrumbs */}
@@ -63,16 +75,16 @@ export function AccountLayout({ children, title, description, breadcrumbs }: Acc
               <div className="space-y-6">
                 {/* Page Header */}
                 <div className="space-y-2">
-                  <h1 className="text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
+                  <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
+                    {title}
+                  </h1>
                   {description && (
                     <p className="text-muted-foreground">{description}</p>
                   )}
                 </div>
 
                 {/* Page Content */}
-                <div className="space-y-6">
-                  {children}
-                </div>
+                <div className="space-y-6">{children}</div>
               </div>
             </main>
           </div>
@@ -81,5 +93,5 @@ export function AccountLayout({ children, title, description, breadcrumbs }: Acc
 
       <StoreFooter />
     </div>
-  )
+  );
 }

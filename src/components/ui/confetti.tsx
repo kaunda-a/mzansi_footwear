@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 interface ConfettiProps {
   active?: boolean;
@@ -45,10 +45,19 @@ export function Confetti({ active = false, config = {} }: ConfettiProps) {
     dragFriction: 0.1,
     duration: 3000,
     stagger: 3,
-    width: '10px',
-    height: '10px',
-    perspective: '500px',
-    colors: ['#f43f5e', '#ec4899', '#8b5cf6', '#3b82f6', '#06b6d4', '#10b981', '#f59e0b', '#ef4444']
+    width: "10px",
+    height: "10px",
+    perspective: "500px",
+    colors: [
+      "#f43f5e",
+      "#ec4899",
+      "#8b5cf6",
+      "#3b82f6",
+      "#06b6d4",
+      "#10b981",
+      "#f59e0b",
+      "#ef4444",
+    ],
   };
 
   const finalConfig = { ...defaultConfig, ...config };
@@ -60,19 +69,22 @@ export function Confetti({ active = false, config = {} }: ConfettiProps) {
     const elements: ConfettiElement[] = [];
 
     // Clear any existing elements
-    container.innerHTML = '';
+    container.innerHTML = "";
     elementsRef.current = [];
 
     // Create confetti elements
     for (let i = 0; i < finalConfig.elementCount; i++) {
-      const element = document.createElement('div');
-      element.style.position = 'absolute';
+      const element = document.createElement("div");
+      element.style.position = "absolute";
       element.style.width = finalConfig.width;
       element.style.height = finalConfig.height;
-      element.style.backgroundColor = finalConfig.colors[Math.floor(Math.random() * finalConfig.colors.length)];
-      element.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-      element.style.pointerEvents = 'none';
-      element.style.zIndex = '9999';
+      element.style.backgroundColor =
+        finalConfig.colors[
+          Math.floor(Math.random() * finalConfig.colors.length)
+        ];
+      element.style.borderRadius = Math.random() > 0.5 ? "50%" : "0";
+      element.style.pointerEvents = "none";
+      element.style.zIndex = "9999";
 
       // Random starting position at the top
       const x = Math.random() * window.innerWidth;
@@ -84,8 +96,14 @@ export function Confetti({ active = false, config = {} }: ConfettiProps) {
       const spreadRad = (finalConfig.spread * Math.PI) / 180;
       const randomAngle = angleRad + (Math.random() - 0.5) * spreadRad;
 
-      const vx = Math.cos(randomAngle) * finalConfig.startVelocity * (0.5 + Math.random() * 0.5);
-      const vy = Math.sin(randomAngle) * finalConfig.startVelocity * (0.5 + Math.random() * 0.5);
+      const vx =
+        Math.cos(randomAngle) *
+        finalConfig.startVelocity *
+        (0.5 + Math.random() * 0.5);
+      const vy =
+        Math.sin(randomAngle) *
+        finalConfig.startVelocity *
+        (0.5 + Math.random() * 0.5);
       const vz = (Math.random() - 0.5) * 20;
 
       const confettiElement: ConfettiElement = {
@@ -98,7 +116,7 @@ export function Confetti({ active = false, config = {} }: ConfettiProps) {
         vz,
         rotation: Math.random() * 360,
         rotationSpeed: (Math.random() - 0.5) * 10,
-        color: element.style.backgroundColor
+        color: element.style.backgroundColor,
       };
 
       elements.push(confettiElement);
@@ -119,7 +137,7 @@ export function Confetti({ active = false, config = {} }: ConfettiProps) {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
-      container.innerHTML = '';
+      container.innerHTML = "";
       elementsRef.current = [];
     }, finalConfig.duration);
 
@@ -128,7 +146,7 @@ export function Confetti({ active = false, config = {} }: ConfettiProps) {
       if (animationRef.current) {
         cancelAnimationFrame(animationRef.current);
       }
-      container.innerHTML = '';
+      container.innerHTML = "";
       elementsRef.current = [];
     };
   }, [active, finalConfig]);
@@ -137,9 +155,9 @@ export function Confetti({ active = false, config = {} }: ConfettiProps) {
     const animate = () => {
       // Update physics
       confettiElement.vy += 0.5; // Gravity
-      confettiElement.vx *= (1 - finalConfig.dragFriction);
-      confettiElement.vy *= (1 - finalConfig.dragFriction);
-      confettiElement.vz *= (1 - finalConfig.dragFriction);
+      confettiElement.vx *= 1 - finalConfig.dragFriction;
+      confettiElement.vy *= 1 - finalConfig.dragFriction;
+      confettiElement.vz *= 1 - finalConfig.dragFriction;
 
       confettiElement.x += confettiElement.vx;
       confettiElement.y += confettiElement.vy;
@@ -151,10 +169,16 @@ export function Confetti({ active = false, config = {} }: ConfettiProps) {
       confettiElement.element.style.left = `${confettiElement.x}px`;
       confettiElement.element.style.top = `${confettiElement.y}px`;
       confettiElement.element.style.transform = `rotate(${confettiElement.rotation}deg) scale(${scale})`;
-      confettiElement.element.style.opacity = Math.max(0, 1 - confettiElement.y / window.innerHeight).toString();
+      confettiElement.element.style.opacity = Math.max(
+        0,
+        1 - confettiElement.y / window.innerHeight,
+      ).toString();
 
       // Continue animation if element is still visible
-      if (confettiElement.y < window.innerHeight + 100 && elementsRef.current.includes(confettiElement)) {
+      if (
+        confettiElement.y < window.innerHeight + 100 &&
+        elementsRef.current.includes(confettiElement)
+      ) {
         animationRef.current = requestAnimationFrame(animate);
       }
     };
@@ -175,8 +199,8 @@ export function Confetti({ active = false, config = {} }: ConfettiProps) {
 
 // Hook for easy confetti triggering
 export function useConfetti() {
-  const trigger = (config?: ConfettiProps['config']) => {
-    const event = new CustomEvent('triggerConfetti', { detail: config });
+  const trigger = (config?: ConfettiProps["config"]) => {
+    const event = new CustomEvent("triggerConfetti", { detail: config });
     window.dispatchEvent(event);
   };
 
@@ -192,13 +216,17 @@ export function ConfettiProvider({ children }: { children: React.ReactNode }) {
     const handleTrigger = (event: CustomEvent) => {
       setConfig(event.detail || {});
       setActive(true);
-      
+
       // Auto-disable after animation
       setTimeout(() => setActive(false), 3000);
     };
 
-    window.addEventListener('triggerConfetti', handleTrigger as EventListener);
-    return () => window.removeEventListener('triggerConfetti', handleTrigger as EventListener);
+    window.addEventListener("triggerConfetti", handleTrigger as EventListener);
+    return () =>
+      window.removeEventListener(
+        "triggerConfetti",
+        handleTrigger as EventListener,
+      );
   }, []);
 
   return (

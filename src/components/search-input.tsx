@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
-import { useDebounce } from '@/hooks/use-debounce';
-import { IconSearch, IconLoader2, IconX } from '@tabler/icons-react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Card, CardContent } from './ui/card';
-import { Badge } from './ui/badge';
-import Image from 'next/image';
-import Link from 'next/link';
+import { useState, useEffect, useRef } from "react";
+import { useRouter } from "next/navigation";
+import { useDebounce } from "@/hooks/use-debounce";
+import { IconSearch, IconLoader2, IconX } from "@tabler/icons-react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Card, CardContent } from "./ui/card";
+import { Badge } from "./ui/badge";
+import Image from "next/image";
+import Link from "next/link";
 
 interface SearchProduct {
   id: string;
@@ -43,7 +43,7 @@ interface SearchResponse {
 
 export default function SearchInput() {
   const [isOpen, setIsOpen] = useState(false);
-  const [query, setQuery] = useState('');
+  const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchProduct[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState(0);
@@ -55,13 +55,16 @@ export default function SearchInput() {
   // Close search when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+      if (
+        searchRef.current &&
+        !searchRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   // Search products when debounced query changes
@@ -75,13 +78,15 @@ export default function SearchInput() {
 
       setIsLoading(true);
       try {
-        const response = await fetch(`/api/search?q=${encodeURIComponent(debouncedQuery)}&limit=8`);
+        const response = await fetch(
+          `/api/search?q=${encodeURIComponent(debouncedQuery)}&limit=8`,
+        );
         const data: SearchResponse = await response.json();
 
         setResults(data.products);
         setTotal(data.total);
       } catch (error) {
-        console.error('Search error:', error);
+        console.error("Search error:", error);
         setResults([]);
         setTotal(0);
       } finally {
@@ -99,7 +104,7 @@ export default function SearchInput() {
   };
 
   const handleClear = () => {
-    setQuery('');
+    setQuery("");
     setResults([]);
     setTotal(0);
     setIsOpen(false);
@@ -114,9 +119,9 @@ export default function SearchInput() {
   };
 
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('en-ZA', {
-      style: 'currency',
-      currency: 'ZAR'
+    return new Intl.NumberFormat("en-ZA", {
+      style: "currency",
+      currency: "ZAR",
     }).format(price);
   };
 
@@ -151,7 +156,9 @@ export default function SearchInput() {
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
                 <IconLoader2 className="h-6 w-6 animate-spin" />
-                <span className="ml-2 text-sm text-muted-foreground">Searching...</span>
+                <span className="ml-2 text-sm text-muted-foreground">
+                  Searching...
+                </span>
               </div>
             ) : results.length > 0 ? (
               <>
@@ -180,7 +187,9 @@ export default function SearchInput() {
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-sm truncate">{product.name}</h4>
+                        <h4 className="font-medium text-sm truncate">
+                          {product.name}
+                        </h4>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="font-semibold text-sm">
                             {formatPrice(product.price)}
@@ -224,7 +233,9 @@ export default function SearchInput() {
             ) : query.length >= 2 ? (
               <div className="p-8 text-center">
                 <IconSearch className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-sm text-muted-foreground">No products found for "{query}"</p>
+                <p className="text-sm text-muted-foreground">
+                  No products found for "{query}"
+                </p>
                 <Button
                   variant="link"
                   size="sm"

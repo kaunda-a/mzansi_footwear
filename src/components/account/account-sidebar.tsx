@@ -1,16 +1,16 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import { useSession, signOut } from 'next-auth/react'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Separator } from '@/components/ui/separator'
-import { 
+import { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Separator } from "@/components/ui/separator";
+import {
   IconUser,
-  IconPackage, 
+  IconPackage,
   IconMapPin,
   IconCreditCard,
   IconHeart,
@@ -18,80 +18,85 @@ import {
   IconSettings,
   IconLogout,
   IconChevronRight,
-  IconLoader2
-} from '@tabler/icons-react'
-import { cn } from '@/lib/utils'
+  IconLoader2,
+} from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 
 interface MenuItem {
-  id: string
-  label: string
-  href: string
-  icon: React.ElementType
-  description?: string
+  id: string;
+  label: string;
+  href: string;
+  icon: React.ElementType;
+  description?: string;
 }
 
 const menuItems: MenuItem[] = [
   {
-    id: 'overview',
-    label: 'Account Overview',
-    href: '/account',
+    id: "overview",
+    label: "Account Overview",
+    href: "/account",
     icon: IconUser,
-    description: 'Your account summary and activity'
+    description: "Your account summary and activity",
   },
   {
-    id: 'orders',
-    label: 'Orders',
-    href: '/account/orders',
+    id: "orders",
+    label: "Orders",
+    href: "/account/orders",
     icon: IconPackage,
-    description: 'Track orders and view history'
+    description: "Track orders and view history",
   },
   {
-    id: 'addresses',
-    label: 'Addresses',
-    href: '/account/addresses',
+    id: "addresses",
+    label: "Addresses",
+    href: "/account/addresses",
     icon: IconMapPin,
-    description: 'Manage shipping addresses'
+    description: "Manage shipping addresses",
   },
   {
-    id: 'payment-methods',
-    label: 'Payment Methods',
-    href: '/account/payment-methods',
+    id: "payment-methods",
+    label: "Payment Methods",
+    href: "/account/payment-methods",
     icon: IconCreditCard,
-    description: 'Manage cards and payment options'
+    description: "Manage cards and payment options",
   },
   {
-    id: 'profile',
-    label: 'Profile',
-    href: '/account/profile',
+    id: "profile",
+    label: "Profile",
+    href: "/account/profile",
     icon: IconSettings,
-    description: 'Personal information and preferences'
-  }
-]
+    description: "Personal information and preferences",
+  },
+];
 
 export function AccountSidebar() {
-  const pathname = usePathname()
-  const { data: session } = useSession()
-  const [isSigningOut, setIsSigningOut] = useState(false)
+  const pathname = usePathname();
+  const { data: session } = useSession();
+  const [isSigningOut, setIsSigningOut] = useState(false);
 
   const handleSignOut = async () => {
-    setIsSigningOut(true)
-    await signOut({ 
-      callbackUrl: '/',
-      redirect: true 
-    })
-  }
+    setIsSigningOut(true);
+    await signOut({
+      callbackUrl: "/",
+      redirect: true,
+    });
+  };
 
   const getInitials = (name?: string | null) => {
-    if (!name) return '?'
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-  }
+    if (!name) return "?";
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
 
   const isActive = (href: string) => {
-    if (href === '/account') {
-      return pathname === '/account'
+    if (href === "/account") {
+      return pathname === "/account";
     }
-    return pathname.startsWith(href)
-  }
+    return pathname.startsWith(href);
+  };
 
   return (
     <div className="w-full md:w-80 space-y-4">
@@ -100,14 +105,17 @@ export function AccountSidebar() {
         <CardContent className="p-6">
           <div className="flex items-center space-x-4">
             <Avatar className="h-16 w-16">
-              <AvatarImage src={session?.user?.image || ''} alt={session?.user?.name || ''} />
+              <AvatarImage
+                src={session?.user?.image || ""}
+                alt={session?.user?.name || ""}
+              />
               <AvatarFallback className="text-lg font-semibold bg-primary/10 text-primary">
                 {getInitials(session?.user?.name)}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
               <h3 className="text-lg font-semibold text-foreground truncate">
-                {session?.user?.name || 'User'}
+                {session?.user?.name || "User"}
               </h3>
               <p className="text-sm text-muted-foreground truncate">
                 {session?.user?.email}
@@ -126,26 +134,32 @@ export function AccountSidebar() {
         <CardContent className="p-0">
           <nav className="space-y-1">
             {menuItems.map((item, index) => {
-              const Icon = item.icon
-              const active = isActive(item.href)
-              
+              const Icon = item.icon;
+              const active = isActive(item.href);
+
               return (
                 <div key={item.id}>
                   <Link href={item.href}>
-                    <div className={cn(
-                      "flex items-center justify-between p-4 hover:bg-muted/50 transition-colors",
-                      active && "bg-primary/5 border-r-2 border-primary"
-                    )}>
+                    <div
+                      className={cn(
+                        "flex items-center justify-between p-4 hover:bg-muted/50 transition-colors",
+                        active && "bg-primary/5 border-r-2 border-primary",
+                      )}
+                    >
                       <div className="flex items-center space-x-3">
-                        <Icon className={cn(
-                          "h-5 w-5",
-                          active ? "text-primary" : "text-muted-foreground"
-                        )} />
+                        <Icon
+                          className={cn(
+                            "h-5 w-5",
+                            active ? "text-primary" : "text-muted-foreground",
+                          )}
+                        />
                         <div className="flex-1 min-w-0">
-                          <div className={cn(
-                            "text-sm font-medium",
-                            active ? "text-primary" : "text-foreground"
-                          )}>
+                          <div
+                            className={cn(
+                              "text-sm font-medium",
+                              active ? "text-primary" : "text-foreground",
+                            )}
+                          >
                             {item.label}
                           </div>
                           {item.description && (
@@ -155,15 +169,17 @@ export function AccountSidebar() {
                           )}
                         </div>
                       </div>
-                      <IconChevronRight className={cn(
-                        "h-4 w-4 transition-colors",
-                        active ? "text-primary" : "text-muted-foreground/50"
-                      )} />
+                      <IconChevronRight
+                        className={cn(
+                          "h-4 w-4 transition-colors",
+                          active ? "text-primary" : "text-muted-foreground/50",
+                        )}
+                      />
                     </div>
                   </Link>
                   {index < menuItems.length - 1 && <Separator />}
                 </div>
-              )
+              );
             })}
           </nav>
         </CardContent>
@@ -208,5 +224,5 @@ export function AccountSidebar() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

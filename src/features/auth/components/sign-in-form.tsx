@@ -1,49 +1,55 @@
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { signIn, getSession } from 'next-auth/react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { IconLoader2, IconBrandGoogle } from '@tabler/icons-react'
-import Link from 'next/link'
+import { useState } from "react";
+import { signIn, getSession } from "next-auth/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { IconLoader2, IconBrandGoogle } from "@tabler/icons-react";
+import Link from "next/link";
 
 export function SignInForm() {
-  const [error, setError] = useState('')
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const callbackUrl = searchParams.get('callbackUrl') || '/account'
+  const [error, setError] = useState("");
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get("callbackUrl") || "/account";
 
   const handleGoogleSignIn = async () => {
-    setIsGoogleLoading(true)
-    setError('')
+    setIsGoogleLoading(true);
+    setError("");
 
     try {
-      const result = await signIn('google', {
+      const result = await signIn("google", {
         callbackUrl,
-        redirect: false
-      })
+        redirect: false,
+      });
 
       if (result?.error) {
-        setError('Failed to sign in with Google. Please try again.')
+        setError("Failed to sign in with Google. Please try again.");
       } else if (result?.url) {
-        router.push(result.url)
+        router.push(result.url);
       } else {
         // Check if sign in was successful
-        const session = await getSession()
+        const session = await getSession();
         if (session) {
-          router.push(callbackUrl)
-          router.refresh()
+          router.push(callbackUrl);
+          router.refresh();
         }
       }
     } catch (error) {
-      setError('An error occurred with Google sign in. Please try again.')
+      setError("An error occurred with Google sign in. Please try again.");
     } finally {
-      setIsGoogleLoading(false)
+      setIsGoogleLoading(false);
     }
-  }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -86,5 +92,5 @@ export function SignInForm() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }

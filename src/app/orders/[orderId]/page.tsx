@@ -1,19 +1,28 @@
-import { Suspense } from 'react'
-import { notFound } from 'next/navigation'
-import type { Metadata } from 'next'
-import Header from '@/components/layout/header'
-import { StoreFooter } from '@/components/layout/footer'
-import FormCardSkeleton from '@/components/form-card-skeleton'
-import { OrderViewPage } from '@/features/orders'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
-import { db } from '@/lib/prisma'
+import { Suspense } from "react";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import Header from "@/components/layout/header";
+import { StoreFooter } from "@/components/layout/footer";
+import FormCardSkeleton from "@/components/form-card-skeleton";
+import { OrderViewPage } from "@/features/orders";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { db } from "@/lib/prisma";
 
 interface OrderPageProps {
-  params: Promise<{ orderId: string }>
+  params: Promise<{ orderId: string }>;
 }
 
-export async function generateMetadata(props: OrderPageProps): Promise<Metadata> {
-  const params = await props.params
+export async function generateMetadata(
+  props: OrderPageProps,
+): Promise<Metadata> {
+  const params = await props.params;
 
   try {
     const order = await db.order.findUnique({
@@ -22,11 +31,11 @@ export async function generateMetadata(props: OrderPageProps): Promise<Metadata>
         orderNumber: true,
         status: true,
         totalAmount: true,
-        createdAt: true
-      }
-    })
+        createdAt: true,
+      },
+    });
 
-    if (!order) return notFound()
+    if (!order) return notFound();
 
     return {
       title: `Order #${order.orderNumber} - Mzansi Footwear`,
@@ -35,20 +44,20 @@ export async function generateMetadata(props: OrderPageProps): Promise<Metadata>
       openGraph: {
         title: `Order #${order.orderNumber} - Mzansi Footwear`,
         description: `Order details and tracking information for order #${order.orderNumber}`,
-        type: 'website',
+        type: "website",
       },
       robots: {
         index: false, // Private customer data
         follow: true,
       },
-    }
+    };
   } catch (error) {
-    return notFound()
+    return notFound();
   }
 }
 
 export default async function Page(props: OrderPageProps) {
-  const params = await props.params
+  const params = await props.params;
 
   // Verify order exists before rendering
   try {
@@ -56,12 +65,12 @@ export default async function Page(props: OrderPageProps) {
       where: { id: params.orderId },
       select: {
         id: true,
-        orderNumber: true
-      }
-    })
+        orderNumber: true,
+      },
+    });
 
     if (!order) {
-      return notFound()
+      return notFound();
     }
 
     return (
@@ -102,9 +111,9 @@ export default async function Page(props: OrderPageProps) {
         </main>
         <StoreFooter />
       </div>
-    )
+    );
   } catch (error) {
-    console.error('Error loading order:', error)
-    return notFound()
+    console.error("Error loading order:", error);
+    return notFound();
   }
 }

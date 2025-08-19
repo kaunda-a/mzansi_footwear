@@ -1,9 +1,10 @@
-import { Metadata } from 'next';
-import { SignInForm } from '@/features/auth/components/sign-in-form';
+import { Metadata } from "next";
+import { SignInForm } from "@/features/auth/components/sign-in-form";
 
 export const metadata: Metadata = {
-  title: 'Sign In | Mzansi Footwear',
-  description: 'Sign in to your Mzansi Footwear account or create a new account.'
+  title: "Sign In | Mzansi Footwear",
+  description:
+    "Sign in to your Mzansi Footwear account or create a new account.",
 };
 
 export default function SignInPage() {

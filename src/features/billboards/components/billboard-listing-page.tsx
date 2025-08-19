@@ -1,16 +1,21 @@
-'use client'
+"use client";
 
-import { Api } from '@/lib/api'
-import { useState, useEffect } from 'react'
-import { Billboard, CompactBillboard } from '@/components/catalog/billboard'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
-import { IconPhoto, IconExternalLink, IconCalendar, IconMapPin } from '@tabler/icons-react'
-import { formatDate } from '@/lib/format'
-import Link from 'next/link'
-import type { BillboardListingProps } from '../types'
+import { Api } from "@/lib/api";
+import { useState, useEffect } from "react";
+import { Billboard, CompactBillboard } from "@/components/catalog/billboard";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  IconPhoto,
+  IconExternalLink,
+  IconCalendar,
+  IconMapPin,
+} from "@tabler/icons-react";
+import { formatDate } from "@/lib/format";
+import Link from "next/link";
+import type { BillboardListingProps } from "../types";
 
 function BillboardListingSkeleton() {
   return (
@@ -42,7 +47,7 @@ function BillboardListingSkeleton() {
         </Card>
       ))}
     </div>
-  )
+  );
 }
 
 function EmptyState() {
@@ -56,171 +61,175 @@ function EmptyState() {
         There are currently no active billboards to display.
       </p>
     </div>
-  )
+  );
 }
 
 function BillboardListingContent({ searchParams }: BillboardListingProps) {
-  const [billboards, setBillboards] = useState<any[]>([])
-  const [pagination, setPagination] = useState({ page: 1, limit: 10, total: 0, pages: 0 })
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [billboards, setBillboards] = useState<any[]>([]);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    pages: 0,
+  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const page = parseInt(searchParams?.page || '1')
-  const type = searchParams?.type
-  const position = searchParams?.position
-  const search = searchParams?.search
+  const page = parseInt(searchParams?.page || "1");
+  const type = searchParams?.type;
+  const position = searchParams?.position;
+  const search = searchParams?.search;
 
   useEffect(() => {
     async function fetchBillboards() {
       try {
-        setLoading(true)
-        setError(null)
+        setLoading(true);
+        setError(null);
         const result = await Api.getBillboards({
           page,
           limit: 10,
           search,
           position,
-        })
-        setBillboards(result.billboards)
-        setPagination(result.pagination)
+        });
+        setBillboards(result.billboards);
+        setPagination(result.pagination);
       } catch (err) {
-        setError('Failed to load billboards')
-        console.error('Error loading billboards:', err)
+        setError("Failed to load billboards");
+        console.error("Error loading billboards:", err);
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
 
-    fetchBillboards()
-  }, [page, type, position, search])
+    fetchBillboards();
+  }, [page, type, position, search]);
 
-  if (loading) return <BillboardListingSkeleton />
+  if (loading) return <BillboardListingSkeleton />;
   if (error) {
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-semibold mb-2">Something went wrong</h3>
         <p className="text-muted-foreground">{error}</p>
       </div>
-    )
+    );
   }
 
-  const filteredBillboards = billboards
+  const filteredBillboards = billboards;
 
   if (!filteredBillboards.length) {
-    return <EmptyState />
+    return <EmptyState />;
   }
 
   return (
-      <div className="space-y-6">
-        {/* Results Summary */}
-        <div className="text-sm text-muted-foreground">
-          Showing {filteredBillboards.length} of {pagination.total} billboards
-          {search && <span> for "{search}"</span>}
-        </div>
+    <div className="space-y-6">
+      {/* Results Summary */}
+      <div className="text-sm text-muted-foreground">
+        Showing {filteredBillboards.length} of {pagination.total} billboards
+        {search && <span> for "{search}"</span>}
+      </div>
 
-        {/* Billboard List */}
-        <div className="space-y-6">
-          {filteredBillboards.map((billboard) => (
-            <Card key={billboard.id} className="overflow-hidden">
-              <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-xl font-semibold">{billboard.title}</h3>
-                      <Badge variant="outline" className="capitalize">
-                        {billboard.type.replace('_', ' ').toLowerCase()}
-                      </Badge>
-                      <Badge 
-                        variant={billboard.isActive ? "default" : "secondary"}
-                        className="text-xs"
-                      >
-                        {billboard.isActive ? 'Active' : 'Inactive'}
-                      </Badge>
+      {/* Billboard List */}
+      <div className="space-y-6">
+        {filteredBillboards.map((billboard) => (
+          <Card key={billboard.id} className="overflow-hidden">
+            <CardHeader>
+              <div className="flex items-start justify-between">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-xl font-semibold">{billboard.title}</h3>
+                    <Badge variant="outline" className="capitalize">
+                      {billboard.type.replace("_", " ").toLowerCase()}
+                    </Badge>
+                    <Badge
+                      variant={billboard.isActive ? "default" : "secondary"}
+                      className="text-xs"
+                    >
+                      {billboard.isActive ? "Active" : "Inactive"}
+                    </Badge>
+                  </div>
+
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <IconMapPin className="h-4 w-4" />
+                      <span className="capitalize">
+                        {billboard.position.replace("_", " ").toLowerCase()}
+                      </span>
                     </div>
-                    
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <IconMapPin className="h-4 w-4" />
-                        <span className="capitalize">
-                          {billboard.position.replace('_', ' ').toLowerCase()}
-                        </span>
-                      </div>
-                      
+
+                    <div className="flex items-center gap-1">
+                      <IconCalendar className="h-4 w-4" />
+                      <span>Created {formatDate(billboard.createdAt)}</span>
+                    </div>
+
+                    {billboard.endDate && (
                       <div className="flex items-center gap-1">
                         <IconCalendar className="h-4 w-4" />
-                        <span>Created {formatDate(billboard.createdAt)}</span>
+                        <span>Expires {formatDate(billboard.endDate)}</span>
                       </div>
-                      
-                      {billboard.endDate && (
-                        <div className="flex items-center gap-1">
-                          <IconCalendar className="h-4 w-4" />
-                          <span>Expires {formatDate(billboard.endDate)}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href={`/billboards/${billboard.id}`}>
-                      View Details
-                    </Link>
-                  </Button>
-                </div>
-              </CardHeader>
-              
-              <CardContent>
-                <div className="space-y-4">
-                  {billboard.description && (
-                    <p className="text-muted-foreground line-clamp-3">
-                      {billboard.description}
-                    </p>
-                  )}
-                  
-                  {billboard.imageUrl && (
-                    <div className="relative h-48 rounded-lg overflow-hidden bg-muted">
-                      <img
-                        src={billboard.imageUrl}
-                        alt={billboard.title}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center justify-between">
-                    <div className="text-sm text-muted-foreground">
-                      Created by {billboard.creator.firstName} {billboard.creator.lastName}
-                    </div>
-                    
-                    {billboard.linkUrl && (
-                      <Button
-                        variant="link"
-                        size="sm"
-                        onClick={() => window.open(billboard.linkUrl!, '_blank')}
-                        className="h-auto p-0"
-                      >
-                        {billboard.linkText || 'Learn More'}
-                        <IconExternalLink className="ml-1 h-3 w-3" />
-                      </Button>
                     )}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
 
-        {/* Pagination would go here if needed */}
-        {pagination.pages > 1 && (
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground">
-              Page {page} of {pagination.pages}
-            </p>
-          </div>
-        )}
+                <Button variant="outline" size="sm" asChild>
+                  <Link href={`/billboards/${billboard.id}`}>View Details</Link>
+                </Button>
+              </div>
+            </CardHeader>
+
+            <CardContent>
+              <div className="space-y-4">
+                {billboard.description && (
+                  <p className="text-muted-foreground line-clamp-3">
+                    {billboard.description}
+                  </p>
+                )}
+
+                {billboard.imageUrl && (
+                  <div className="relative h-48 rounded-lg overflow-hidden bg-muted">
+                    <img
+                      src={billboard.imageUrl}
+                      alt={billboard.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-muted-foreground">
+                    Created by {billboard.creator.firstName}{" "}
+                    {billboard.creator.lastName}
+                  </div>
+
+                  {billboard.linkUrl && (
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={() => window.open(billboard.linkUrl!, "_blank")}
+                      className="h-auto p-0"
+                    >
+                      {billboard.linkText || "Learn More"}
+                      <IconExternalLink className="ml-1 h-3 w-3" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
-    )
+
+      {/* Pagination would go here if needed */}
+      {pagination.pages > 1 && (
+        <div className="text-center">
+          <p className="text-sm text-muted-foreground">
+            Page {page} of {pagination.pages}
+          </p>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export function BillboardListingPage(props: BillboardListingProps) {
-  return <BillboardListingContent {...props} />
+  return <BillboardListingContent {...props} />;
 }

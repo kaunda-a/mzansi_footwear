@@ -1,24 +1,35 @@
-import { Suspense } from 'react'
-import type { Metadata } from 'next'
-import { SearchParams } from 'nuqs/server'
-import { Header } from '@/components/layout/header'
-import { StoreFooter } from '@/components/layout/footer'
-import { Heading } from '@/components/ui/heading'
-import { DataTableSkeleton } from '@/components/ui/table/data-table-skeleton'
-import { AccountPaymentMethods } from '@/components/account/account-payment-methods'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
+import { Suspense } from "react";
+import type { Metadata } from "next";
+import { SearchParams } from "nuqs/server";
+import { Header } from "@/components/layout/header";
+import { StoreFooter } from "@/components/layout/footer";
+import { Heading } from "@/components/ui/heading";
+import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
+import { AccountPaymentMethods } from "@/components/account/account-payment-methods";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 
 export const metadata: Metadata = {
-  title: 'Payment Methods | Mzansi Footwear',
-  description: 'Manage your saved payment methods for faster and secure checkout at Mzansi Footwear.',
-  keywords: 'payment methods, credit cards, banking, secure payment, checkout, Mzansi Footwear',
-}
+  title: "Payment Methods | Mzansi Footwear",
+  description:
+    "Manage your saved payment methods for faster and secure checkout at Mzansi Footwear.",
+  keywords:
+    "payment methods, credit cards, banking, secure payment, checkout, Mzansi Footwear",
+};
 
 interface PaymentMethodsPageProps {
-  searchParams: Promise<SearchParams>
+  searchParams: Promise<SearchParams>;
 }
 
-export default async function PaymentMethodsPage({ searchParams }: PaymentMethodsPageProps) {
+export default async function PaymentMethodsPage({
+  searchParams,
+}: PaymentMethodsPageProps) {
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
       <Header />
@@ -46,7 +57,15 @@ export default async function PaymentMethodsPage({ searchParams }: PaymentMethod
             />
           </div>
           <div className="mx-auto grid w-full max-w-6xl items-start gap-6">
-            <Suspense fallback={<DataTableSkeleton columnCount={3} rowCount={8} filterCount={0} />}>
+            <Suspense
+              fallback={
+                <DataTableSkeleton
+                  columnCount={3}
+                  rowCount={8}
+                  filterCount={0}
+                />
+              }
+            >
               <AccountPaymentMethods />
             </Suspense>
           </div>
@@ -54,5 +73,5 @@ export default async function PaymentMethodsPage({ searchParams }: PaymentMethod
       </div>
       <StoreFooter />
     </div>
-  )
+  );
 }

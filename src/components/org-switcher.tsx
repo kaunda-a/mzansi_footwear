@@ -1,20 +1,20 @@
-'use client';
+"use client";
 
-import { Check, ChevronsUpDown, GalleryVerticalEnd } from 'lucide-react';
-import * as React from 'react';
-import Image from 'next/image';
+import { Check, ChevronsUpDown, GalleryVerticalEnd } from "lucide-react";
+import * as React from "react";
+import Image from "next/image";
 
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem
-} from '@/components/ui/sidebar';
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 
 interface Tenant {
   id: string;
@@ -24,7 +24,7 @@ interface Tenant {
 export function OrgSwitcher({
   tenants,
   defaultTenant,
-  onTenantSwitch
+  onTenantSwitch,
 }: {
   tenants: Tenant[];
   defaultTenant: Tenant;
@@ -49,19 +49,21 @@ export function OrgSwitcher({
     return (
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton size='lg' className='cursor-default'>
-            <div className='bg-white flex aspect-square size-8 items-center justify-center rounded-lg p-1'>
+          <SidebarMenuButton size="lg" className="cursor-default">
+            <div className="bg-white flex aspect-square size-8 items-center justify-center rounded-lg p-1">
               <Image
-                src='/logo.svg'
-                alt='Mzansi Footwear'
+                src="/logo.svg"
+                alt="Mzansi Footwear"
                 width={24}
                 height={24}
-                className='size-6'
+                className="size-6"
               />
             </div>
-            <div className='flex flex-col gap-0.5 leading-none'>
-              <span className='font-semibold'>Mzansi Footwear</span>
-              <span className='text-xs text-muted-foreground'>Admin Dashboard</span>
+            <div className="flex flex-col gap-0.5 leading-none">
+              <span className="font-semibold">Mzansi Footwear</span>
+              <span className="text-xs text-muted-foreground">
+                Admin Dashboard
+              </span>
             </div>
           </SidebarMenuButton>
         </SidebarMenuItem>
@@ -75,37 +77,39 @@ export function OrgSwitcher({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
-              size='lg'
-              className='data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground'
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className='bg-white flex aspect-square size-8 items-center justify-center rounded-lg p-1'>
+              <div className="bg-white flex aspect-square size-8 items-center justify-center rounded-lg p-1">
                 <Image
-                  src='/logo.svg'
-                  alt='Mzansi Footwear'
+                  src="/logo.svg"
+                  alt="Mzansi Footwear"
                   width={24}
                   height={24}
-                  className='size-6'
+                  className="size-6"
                 />
               </div>
-              <div className='flex flex-col gap-0.5 leading-none'>
-                <span className='font-semibold'>Mzansi Footwear</span>
-                <span className='text-xs text-muted-foreground'>Admin Dashboard</span>
+              <div className="flex flex-col gap-0.5 leading-none">
+                <span className="font-semibold">Mzansi Footwear</span>
+                <span className="text-xs text-muted-foreground">
+                  Admin Dashboard
+                </span>
               </div>
-              <ChevronsUpDown className='ml-auto' />
+              <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className='w-[--radix-dropdown-menu-trigger-width]'
-            align='start'
+            className="w-[--radix-dropdown-menu-trigger-width]"
+            align="start"
           >
             {tenants.map((tenant) => (
               <DropdownMenuItem
                 key={tenant.id}
                 onSelect={() => handleTenantSwitch(tenant)}
               >
-                {tenant.name}{' '}
+                {tenant.name}{" "}
                 {tenant.id === selectedTenant.id && (
-                  <Check className='ml-auto' />
+                  <Check className="ml-auto" />
                 )}
               </DropdownMenuItem>
             ))}

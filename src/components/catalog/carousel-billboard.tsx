@@ -1,12 +1,12 @@
-'use client';
+"use client";
 
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { ChevronLeft, ChevronRight, ExternalLink } from 'lucide-react';
-import Link from 'next/link';
-import Image from 'next/image';
-import { BillboardWithCreator } from '@/lib/services';
+import React, { useState, useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { BillboardWithCreator } from "@/lib/services";
 
 export interface BillboardSlide {
   id: string;
@@ -36,8 +36,8 @@ export function CarouselBillboard({
   autoPlayInterval = 5000,
   showDots = true,
   showArrows = true,
-  height = 'h-64 md:h-80 lg:h-96',
-  className
+  height = "h-64 md:h-80 lg:h-96",
+  className,
 }: CarouselBillboardProps) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
@@ -58,7 +58,9 @@ export function CarouselBillboard({
   };
 
   const goToPrevious = () => {
-    setCurrentSlide((prev) => (prev - 1 + billboards.length) % billboards.length);
+    setCurrentSlide(
+      (prev) => (prev - 1 + billboards.length) % billboards.length,
+    );
   };
 
   const goToNext = () => {
@@ -69,7 +71,7 @@ export function CarouselBillboard({
 
   return (
     <div
-      className={`relative w-full ${height} overflow-hidden rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 ${className || ''}`}
+      className={`relative w-full ${height} overflow-hidden rounded-lg bg-gradient-to-r from-primary/10 to-secondary/10 ${className || ""}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -80,10 +82,10 @@ export function CarouselBillboard({
             key={billboard.id}
             className={`absolute inset-0 transition-all duration-500 ease-in-out ${
               index === currentSlide
-                ? 'opacity-100 translate-x-0'
+                ? "opacity-100 translate-x-0"
                 : index < currentSlide
-                  ? 'opacity-0 -translate-x-full'
-                  : 'opacity-0 translate-x-full'
+                  ? "opacity-0 -translate-x-full"
+                  : "opacity-0 translate-x-full"
             }`}
           >
             {/* Background Image */}
@@ -106,11 +108,15 @@ export function CarouselBillboard({
                 <div className="max-w-2xl text-white">
                   <div className="flex items-center space-x-2 mb-2">
                     <Badge variant="secondary" className="capitalize text-xs">
-                      {billboard.type.replace('_', ' ').toLowerCase()}
+                      {billboard.type.replace("_", " ").toLowerCase()}
                     </Badge>
                     {billboard.endDate && (
-                      <Badge variant="outline" className="text-xs text-white border-white/50">
-                        Expires {new Date(billboard.endDate).toLocaleDateString()}
+                      <Badge
+                        variant="outline"
+                        className="text-xs text-white border-white/50"
+                      >
+                        Expires{" "}
+                        {new Date(billboard.endDate).toLocaleDateString()}
                       </Badge>
                     )}
                   </div>
@@ -132,8 +138,12 @@ export function CarouselBillboard({
                         size="lg"
                         className="font-semibold bg-white text-black hover:bg-white/90"
                       >
-                        <a href={billboard.linkUrl} target="_blank" rel="noopener noreferrer">
-                          {billboard.linkText || 'Learn More'}
+                        <a
+                          href={billboard.linkUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          {billboard.linkText || "Learn More"}
                           <ExternalLink className="ml-2 h-4 w-4" />
                         </a>
                       </Button>
@@ -178,8 +188,8 @@ export function CarouselBillboard({
               onClick={() => goToSlide(index)}
               className={`w-2 h-2 rounded-full transition-all duration-200 ${
                 index === currentSlide
-                  ? 'bg-white w-6'
-                  : 'bg-white/50 hover:bg-white/70'
+                  ? "bg-white w-6"
+                  : "bg-white/50 hover:bg-white/70"
               }`}
             />
           ))}
@@ -192,7 +202,7 @@ export function CarouselBillboard({
           <div
             className="h-full bg-white transition-all duration-100 ease-linear"
             style={{
-              width: `${((currentSlide + 1) / billboards.length) * 100}%`
+              width: `${((currentSlide + 1) / billboards.length) * 100}%`,
             }}
           />
         </div>
@@ -204,38 +214,41 @@ export function CarouselBillboard({
 // Default slides for demo
 export const defaultSlides: BillboardSlide[] = [
   {
-    id: '1',
-    title: 'Step Into Style',
-    subtitle: 'New Collection',
-    description: 'Discover our latest footwear collection with premium quality and unmatched comfort.',
-    imageUrl: '/images/hero-1.jpg',
-    ctaText: 'Shop Now',
-    ctaLink: '/products',
-    backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    textColor: 'white'
+    id: "1",
+    title: "Step Into Style",
+    subtitle: "New Collection",
+    description:
+      "Discover our latest footwear collection with premium quality and unmatched comfort.",
+    imageUrl: "/images/hero-1.jpg",
+    ctaText: "Shop Now",
+    ctaLink: "/products",
+    backgroundColor: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+    textColor: "white",
   },
   {
-    id: '2',
-    title: 'Summer Sale',
-    subtitle: 'Up to 50% Off',
-    description: 'Get amazing deals on your favorite brands. Limited time offer!',
-    imageUrl: '/images/hero-2.jpg',
-    ctaText: 'View Sale',
-    ctaLink: '/products?sale=true',
-    backgroundColor: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-    textColor: 'white'
+    id: "2",
+    title: "Summer Sale",
+    subtitle: "Up to 50% Off",
+    description:
+      "Get amazing deals on your favorite brands. Limited time offer!",
+    imageUrl: "/images/hero-2.jpg",
+    ctaText: "View Sale",
+    ctaLink: "/products?sale=true",
+    backgroundColor: "linear-gradient(135deg, #f093fb 0%, #f5576c 100%)",
+    textColor: "white",
   },
   {
-    id: '3',
-    title: 'Premium Sneakers',
-    subtitle: 'Athletic Performance',
-    description: 'Professional-grade sneakers for athletes and fitness enthusiasts.',
-    imageUrl: '/images/hero-3.jpg',
-    ctaText: 'Explore',
-    ctaLink: '/products?category=sneakers',
-    backgroundColor: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-    textColor: 'white'
-  }
+    id: "3",
+    title: "Premium Sneakers",
+    subtitle: "Athletic Performance",
+    description:
+      "Professional-grade sneakers for athletes and fitness enthusiasts.",
+    imageUrl: "/images/hero-3.jpg",
+    ctaText: "Explore",
+    ctaLink: "/products?category=sneakers",
+    backgroundColor: "linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)",
+    textColor: "white",
+  },
 ];
 
 // CSS for animations (add to your global CSS)

@@ -1,15 +1,15 @@
-import type { MarqueeMessageWithCreator } from '@/lib/services/marquee'
+import type { MarqueeMessageWithCreator } from "@/lib/services/marquee";
 
 export interface MarqueeListingProps {
   searchParams?: {
-    page?: string
-    type?: string
-    search?: string
-  }
+    page?: string;
+    type?: string;
+    search?: string;
+  };
 }
 
 export interface MarqueeViewProps {
-  marqueeId: string
+  marqueeId: string;
 }
 
-export type { MarqueeMessageWithCreator }
+export type { MarqueeMessageWithCreator };

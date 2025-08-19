@@ -1,35 +1,35 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 // Security headers for admin dashboard
 const securityHeaders = [
   {
-    key: 'X-DNS-Prefetch-Control',
-    value: 'on'
+    key: "X-DNS-Prefetch-Control",
+    value: "on",
   },
   {
-    key: 'Strict-Transport-Security',
-    value: 'max-age=63072000; includeSubDomains; preload'
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
   },
   {
-    key: 'X-XSS-Protection',
-    value: '1; mode=block'
+    key: "X-XSS-Protection",
+    value: "1; mode=block",
   },
   {
-    key: 'X-Frame-Options',
-    value: 'DENY'
+    key: "X-Frame-Options",
+    value: "DENY",
   },
   {
-    key: 'X-Content-Type-Options',
-    value: 'nosniff'
+    key: "X-Content-Type-Options",
+    value: "nosniff",
   },
   {
-    key: 'Referrer-Policy',
-    value: 'origin-when-cross-origin'
+    key: "Referrer-Policy",
+    value: "origin-when-cross-origin",
   },
   {
-    key: 'Permissions-Policy',
-    value: 'camera=(), microphone=(), geolocation=()'
-  }
+    key: "Permissions-Policy",
+    value: "camera=(), microphone=(), geolocation=()",
+  },
 ];
 
 // Define the base Next.js configuration
@@ -38,21 +38,21 @@ const baseConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'api.slingacademy.com',
-        port: ''
+        protocol: "https",
+        hostname: "api.slingacademy.com",
+        port: "",
       },
       {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-      }
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
     ],
-    formats: ['image/webp', 'image/avif'],
+    formats: ["image/webp", "image/avif"],
     minimumCacheTTL: 60,
   },
 
   // Performance optimizations
-  transpilePackages: ['geist'],
+  transpilePackages: ["geist"],
   poweredByHeader: false,
   compress: true,
 
@@ -60,7 +60,7 @@ const baseConfig: NextConfig = {
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: securityHeaders,
       },
     ];
@@ -68,7 +68,7 @@ const baseConfig: NextConfig = {
 
   // Experimental features for better performance
   experimental: {
-    optimizePackageImports: ['@tabler/icons-react'],
+    optimizePackageImports: ["@tabler/icons-react"],
   },
 };
 

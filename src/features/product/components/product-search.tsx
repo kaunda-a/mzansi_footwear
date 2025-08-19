@@ -1,166 +1,178 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useRef } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
-import { Input } from '@/components/ui/input'
-import { Button } from '@/components/ui/button'
-import { Card, CardContent } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import { IconSearch, IconX, IconClock, IconTrendingUp } from '@tabler/icons-react'
-import { useDebounce } from '@/hooks/use-debounce'
-import type { ProductSearchProps } from '../types'
+import { useState, useEffect, useRef } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import {
+  IconSearch,
+  IconX,
+  IconClock,
+  IconTrendingUp,
+} from "@tabler/icons-react";
+import { useDebounce } from "@/hooks/use-debounce";
+import type { ProductSearchProps } from "../types";
 
 interface SearchSuggestion {
-  type: 'product' | 'category' | 'brand' | 'recent' | 'trending'
-  id: string
-  name: string
-  category?: string
-  brand?: string
+  type: "product" | "category" | "brand" | "recent" | "trending";
+  id: string;
+  name: string;
+  category?: string;
+  brand?: string;
 }
 
-export function ProductSearch({ 
-  placeholder = "Search products...", 
+export function ProductSearch({
+  placeholder = "Search products...",
   onSearch,
-  initialValue = ""
+  initialValue = "",
 }: ProductSearchProps) {
-  const router = useRouter()
-  const searchParams = useSearchParams()
-  const [query, setQuery] = useState(initialValue || searchParams.get('search') || '')
-  const [isOpen, setIsOpen] = useState(false)
-  const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([])
-  const [isLoading, setIsLoading] = useState(false)
-  const [recentSearches, setRecentSearches] = useState<string[]>([])
-  const inputRef = useRef<HTMLInputElement>(null)
-  const containerRef = useRef<HTMLDivElement>(null)
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [query, setQuery] = useState(
+    initialValue || searchParams.get("search") || "",
+  );
+  const [isOpen, setIsOpen] = useState(false);
+  const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const debouncedQuery = useDebounce(query, 300)
+  const debouncedQuery = useDebounce(query, 300);
 
   // Load recent searches from localStorage
   useEffect(() => {
-    const saved = localStorage.getItem('recent-searches')
+    const saved = localStorage.getItem("recent-searches");
     if (saved) {
       try {
-        setRecentSearches(JSON.parse(saved))
+        setRecentSearches(JSON.parse(saved));
       } catch (error) {
-        console.error('Error loading recent searches:', error)
+        console.error("Error loading recent searches:", error);
       }
     }
-  }, [])
+  }, []);
 
   // Fetch suggestions when query changes
   useEffect(() => {
     if (debouncedQuery.length >= 2) {
-      fetchSuggestions(debouncedQuery)
+      fetchSuggestions(debouncedQuery);
     } else {
-      setSuggestions([])
+      setSuggestions([]);
     }
-  }, [debouncedQuery])
+  }, [debouncedQuery]);
 
   // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        setIsOpen(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const fetchSuggestions = async (searchQuery: string) => {
-    setIsLoading(true)
+    setIsLoading(true);
     try {
-      const response = await fetch(`/api/search-suggestions?q=${encodeURIComponent(searchQuery)}`)
+      const response = await fetch(
+        `/api/search-suggestions?q=${encodeURIComponent(searchQuery)}`,
+      );
       if (response.ok) {
-        const data = await response.json()
-        setSuggestions(data.suggestions || [])
+        const data = await response.json();
+        setSuggestions(data.suggestions || []);
       }
     } catch (error) {
-      console.error('Error fetching suggestions:', error)
+      console.error("Error fetching suggestions:", error);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleSearch = (searchQuery: string = query) => {
-    if (!searchQuery.trim()) return
+    if (!searchQuery.trim()) return;
 
     // Save to recent searches
     const newRecentSearches = [
       searchQuery,
-      ...recentSearches.filter(s => s !== searchQuery)
-    ].slice(0, 5)
-    
-    setRecentSearches(newRecentSearches)
-    localStorage.setItem('recent-searches', JSON.stringify(newRecentSearches))
+      ...recentSearches.filter((s) => s !== searchQuery),
+    ].slice(0, 5);
+
+    setRecentSearches(newRecentSearches);
+    localStorage.setItem("recent-searches", JSON.stringify(newRecentSearches));
 
     // Update URL
-    const params = new URLSearchParams(searchParams.toString())
-    params.set('search', searchQuery)
-    params.delete('page') // Reset to first page
-    
-    router.push(`/products?${params.toString()}`)
-    setIsOpen(false)
-    onSearch?.(searchQuery)
-  }
+    const params = new URLSearchParams(searchParams.toString());
+    params.set("search", searchQuery);
+    params.delete("page"); // Reset to first page
+
+    router.push(`/products?${params.toString()}`);
+    setIsOpen(false);
+    onSearch?.(searchQuery);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value
-    setQuery(value)
-    setIsOpen(value.length > 0)
-  }
+    const value = e.target.value;
+    setQuery(value);
+    setIsOpen(value.length > 0);
+  };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      handleSearch()
-    } else if (e.key === 'Escape') {
-      setIsOpen(false)
-      inputRef.current?.blur()
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSearch();
+    } else if (e.key === "Escape") {
+      setIsOpen(false);
+      inputRef.current?.blur();
     }
-  }
+  };
 
   const handleSuggestionClick = (suggestion: SearchSuggestion) => {
-    if (suggestion.type === 'product') {
-      router.push(`/products/${suggestion.id}`)
-    } else if (suggestion.type === 'category') {
-      const params = new URLSearchParams()
-      params.set('category', suggestion.id)
-      router.push(`/products?${params.toString()}`)
-    } else if (suggestion.type === 'brand') {
-      const params = new URLSearchParams()
-      params.set('brand', suggestion.id)
-      router.push(`/products?${params.toString()}`)
+    if (suggestion.type === "product") {
+      router.push(`/products/${suggestion.id}`);
+    } else if (suggestion.type === "category") {
+      const params = new URLSearchParams();
+      params.set("category", suggestion.id);
+      router.push(`/products?${params.toString()}`);
+    } else if (suggestion.type === "brand") {
+      const params = new URLSearchParams();
+      params.set("brand", suggestion.id);
+      router.push(`/products?${params.toString()}`);
     } else {
-      handleSearch(suggestion.name)
+      handleSearch(suggestion.name);
     }
-    setIsOpen(false)
-  }
+    setIsOpen(false);
+  };
 
   const clearSearch = () => {
-    setQuery('')
-    setIsOpen(false)
-    const params = new URLSearchParams(searchParams.toString())
-    params.delete('search')
-    router.push(`/products?${params.toString()}`)
-  }
+    setQuery("");
+    setIsOpen(false);
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("search");
+    router.push(`/products?${params.toString()}`);
+  };
 
   const clearRecentSearches = () => {
-    setRecentSearches([])
-    localStorage.removeItem('recent-searches')
-  }
+    setRecentSearches([]);
+    localStorage.removeItem("recent-searches");
+  };
 
   const getSuggestionIcon = (type: string) => {
     switch (type) {
-      case 'recent':
-        return <IconClock className="h-4 w-4 text-muted-foreground" />
-      case 'trending':
-        return <IconTrendingUp className="h-4 w-4 text-muted-foreground" />
+      case "recent":
+        return <IconClock className="h-4 w-4 text-muted-foreground" />;
+      case "trending":
+        return <IconTrendingUp className="h-4 w-4 text-muted-foreground" />;
       default:
-        return <IconSearch className="h-4 w-4 text-muted-foreground" />
+        return <IconSearch className="h-4 w-4 text-muted-foreground" />;
     }
-  }
+  };
 
   return (
     <div ref={containerRef} className="relative w-full max-w-md">
@@ -173,7 +185,9 @@ export function ProductSearch({
           value={query}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
-          onFocus={() => setIsOpen(query.length > 0 || recentSearches.length > 0)}
+          onFocus={() =>
+            setIsOpen(query.length > 0 || recentSearches.length > 0)
+          }
           className="pl-10 pr-10"
         />
         {query && (
@@ -196,7 +210,9 @@ export function ProductSearch({
             {query.length === 0 && recentSearches.length > 0 && (
               <div className="p-3 border-b">
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-muted-foreground">Recent Searches</span>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    Recent Searches
+                  </span>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -243,12 +259,13 @@ export function ProductSearch({
                           </div>
                           {(suggestion.category || suggestion.brand) && (
                             <div className="text-xs text-muted-foreground">
-                              {suggestion.category && `in ${suggestion.category}`}
+                              {suggestion.category &&
+                                `in ${suggestion.category}`}
                               {suggestion.brand && ` by ${suggestion.brand}`}
                             </div>
                           )}
                         </div>
-                        {suggestion.type !== 'recent' && (
+                        {suggestion.type !== "recent" && (
                           <Badge variant="outline" className="text-xs">
                             {suggestion.type}
                           </Badge>
@@ -280,5 +297,5 @@ export function ProductSearch({
         </Card>
       )}
     </div>
-  )
+  );
 }

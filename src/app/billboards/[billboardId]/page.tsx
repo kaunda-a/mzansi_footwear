@@ -1,61 +1,80 @@
-import { Suspense } from 'react'
-import { notFound } from 'next/navigation'
-import type { Metadata } from 'next'
-import Header from '@/components/layout/header'
-import { StoreFooter } from '@/components/layout/footer'
-import FormCardSkeleton from '@/components/form-card-skeleton'
-import { BillboardViewPage } from '@/features/billboards'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
-import { BillboardService } from '@/lib/services/billboard'
+import { Suspense } from "react";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+import Header from "@/components/layout/header";
+import { StoreFooter } from "@/components/layout/footer";
+import FormCardSkeleton from "@/components/form-card-skeleton";
+import { BillboardViewPage } from "@/features/billboards";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { BillboardService } from "@/lib/services/billboard";
 
 interface BillboardPageProps {
-  params: Promise<{ billboardId: string }>
+  params: Promise<{ billboardId: string }>;
 }
 
-export async function generateMetadata(props: BillboardPageProps): Promise<Metadata> {
-  const params = await props.params
+export async function generateMetadata(
+  props: BillboardPageProps,
+): Promise<Metadata> {
+  const params = await props.params;
 
   try {
-    const billboard = await BillboardService.getBillboardById(params.billboardId)
+    const billboard = await BillboardService.getBillboardById(
+      params.billboardId,
+    );
 
-    if (!billboard) return notFound()
+    if (!billboard) return notFound();
 
     return {
       title: `${billboard.title} - Mzansi Footwear`,
-      description: billboard.description || `View details for ${billboard.title} billboard at Mzansi Footwear.`,
+      description:
+        billboard.description ||
+        `View details for ${billboard.title} billboard at Mzansi Footwear.`,
       keywords: `${billboard.title}, ${billboard.type.toLowerCase()}, billboard, promotion, Mzansi Footwear`,
       openGraph: {
         title: `${billboard.title} - Mzansi Footwear`,
-        description: billboard.description || `View details for ${billboard.title} billboard.`,
-        type: 'website',
-        images: billboard.imageUrl ? [
-          {
-            url: billboard.imageUrl,
-            width: 1200,
-            height: 630,
-            alt: billboard.title,
-          }
-        ] : undefined,
+        description:
+          billboard.description ||
+          `View details for ${billboard.title} billboard.`,
+        type: "website",
+        images: billboard.imageUrl
+          ? [
+              {
+                url: billboard.imageUrl,
+                width: 1200,
+                height: 630,
+                alt: billboard.title,
+              },
+            ]
+          : undefined,
       },
       robots: {
         index: true,
         follow: true,
       },
-    }
+    };
   } catch (error) {
-    return notFound()
+    return notFound();
   }
 }
 
 export default async function Page(props: BillboardPageProps) {
-  const params = await props.params
+  const params = await props.params;
 
   // Verify billboard exists before rendering
   try {
-    const billboard = await BillboardService.getBillboardById(params.billboardId)
+    const billboard = await BillboardService.getBillboardById(
+      params.billboardId,
+    );
 
     if (!billboard) {
-      return notFound()
+      return notFound();
     }
 
     return (
@@ -72,7 +91,9 @@ export default async function Page(props: BillboardPageProps) {
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
-                    <BreadcrumbLink href="/billboards">Billboards</BreadcrumbLink>
+                    <BreadcrumbLink href="/billboards">
+                      Billboards
+                    </BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator />
                   <BreadcrumbItem>
@@ -92,9 +113,9 @@ export default async function Page(props: BillboardPageProps) {
         </main>
         <StoreFooter />
       </div>
-    )
+    );
   } catch (error) {
-    console.error('Error loading billboard:', error)
-    return notFound()
+    console.error("Error loading billboard:", error);
+    return notFound();
   }
 }
