@@ -56,6 +56,49 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    // Validate items array
+    if (!Array.isArray(body.items) || body.items.length === 0) {
+      return NextResponse.json(
+        { error: "Items must be a non-empty array" },
+        { status: 400 },
+      );
+    }
+
+    // Validate each item
+    for (const item of body.items) {
+      const itemRequiredFields = ["productId", "variantId", "quantity", "unitPrice"];
+      for (const field of itemRequiredFields) {
+        if (!item[field]) {
+          return NextResponse.json(
+            { error: `Missing required field in item: ${field}` },
+            { status: 400 },
+          );
+        }
+      }
+    }
+
+    // Validate customer data
+    const customerRequiredFields = ["firstName", "lastName", "email", "phone"];
+    for (const field of customerRequiredFields) {
+      if (!body.customer[field]) {
+        return NextResponse.json(
+          { error: `Missing required customer field: ${field}` },
+          { status: 400 },
+        );
+      }
+    }
+
+    // Validate shipping address
+    const shippingRequiredFields = ["street", "city", "province", "postalCode"];
+    for (const field of shippingRequiredFields) {
+      if (!body.shippingAddress[field]) {
+        return NextResponse.json(
+          { error: `Missing required shipping address field: ${field}` },
+          { status: 400 },
+        );
+      }
+    }
+
     // Generate a unique order number
     const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 5).toUpperCase()}`;
 
@@ -130,7 +173,7 @@ export async function POST(request: NextRequest) {
         items: {
           create: body.items.map((item: any) => ({
             productId: item.productId,
-            productVariantId: item.productVariantId,
+            productVariantId: item.variantId,
             quantity: item.quantity,
             unitPrice: parseFloat(item.unitPrice),
             totalPrice: parseFloat(item.unitPrice) * item.quantity,

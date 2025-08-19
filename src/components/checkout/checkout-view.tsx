@@ -114,7 +114,7 @@ export function CheckoutView({ user }: { user?: any }) {
       const orderData = {
         items: items.map(item => ({
           productId: item.productId,
-          productVariantId: item.variantId,
+          variantId: item.variantId,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
         })),
@@ -130,6 +130,7 @@ export function CheckoutView({ user }: { user?: any }) {
           city: formData.city,
           province: formData.province,
           postalCode: formData.postalCode,
+          country: "South Africa",
         },
         billingAddress: formData.billingDifferent ? {
           firstName: formData.billingFirstName,
@@ -138,6 +139,7 @@ export function CheckoutView({ user }: { user?: any }) {
           city: formData.billingCity,
           province: formData.billingProvince,
           postalCode: formData.billingPostalCode,
+          country: "South Africa",
         } : undefined,
         notes: formData.orderNotes,
       };
