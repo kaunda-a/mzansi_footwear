@@ -1,6 +1,488 @@
-VM129 page-5a16735345fbd16b.js:1 
- POST https://mzansi-footwear.vercel.app/api/orders 500 (Internal Server Error)
-2562-319306b3dd62ee80.js:1 Error creating order: Error: Failed to create order
-    at _ (VM129 page-5a16735345fbd16b.js:1:18693)
-﻿
+
+          orderNumber: "ORD-1755617610588-WGLYJ",
+          customerId: "a17bd625-cde1-4916-9270-897c56b75a12",
+          totalAmount: 7819.976999999999,
+          subtotal: 7819.976999999999,
+          taxAmount: 0,
+          shippingAmount: 0,
+          status: "PENDING",
+          paymentStatus: "PENDING",
+          shippingStatus: "PENDING",
+          shippingAddressId: "cmeipee2a0000udtse6bndcoo",
+          billingAddressId: "cmeipeg7z0001udtszgtn26t8",
+          items: {
+            create: [
+              {
+                productId: "cmeanboo70013udzou2tejg52",
+                productVariantId: "cmeandob40049udzovbb7cxwq",
+                quantity: 1,
+                unitPrice: 3499.99,
+                totalPrice: 3499.99
+              },
+              {
+                productId: "cmeanbkqb000xudzowu9xwndp",
+                productVariantId: "cmeand9br003ludzoo44440eb",
+                quantity: 1,
+                unitPrice: 3299.99,
+                totalPrice: 3299.99
+              }
+            ]
+          },
+          customerNotes: ""
+        },
+        include: {
+          customer: true,
+          shippingAddress: true,
+          billingAddress: true,
+          items: {
+            include: {
+              product: {
+                select: {
+                  name: true,
+                  slug: true,
+                  images: {
+                    where: {
+                      isPrimary: true
+                    },
+                    select: {
+                      url: true
+                    },
+                    take: 1
+                  }
+                }
+              },
+              productVariant: {
+                select: {
+                  size: true,
+                  color: true,
+                  sku: true
+                }
+              }
+            }
+          }
+        }
+      })
+
+Argument `productName` is missing.
+    at <unknown> (src\app\api\orders\route.ts:160:33)
+    at async POST (src\app\api\orders\route.ts:160:18)
+  158 |
+  159 |     // Then create the order with the address IDs
+> 160 |     const order = await db.order.create({
+      |                                 ^
+  161 |       data: {
+  162 |         orderNumber,
+  163 |         customerId: session.user.id, {
+  clientVersion: '6.13.0'
+}
+ POST /api/orders 500 in 38392ms
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -157,6 +157,44 @@ export async function POST(request: NextRequest) {
     ]);
 
     // Then create the order with the address IDs
+    // First, fetch product and variant details for each item
+    const itemsWithDetails = await Promise.all(body.items.map(async (item: any) => {
+      // Fetch product and variant details
+      const [product, variant] = await Promise.all([
+        db.product.findUnique({
+          where: { id: item.productId },
+          select: {
+            name: true,
+            sku: true,
+          }
+        }),
+        db.productVariant.findUnique({
+          where: { id: item.variantId },
+          select: {
+            size: true,
+            color: true,
+            sku: true,
+          }
+        })
+      ]);
+
+      if (!product || !variant) {
+        throw new Error(`Product or variant not found for item ${item.productId}`);
+      }
+
+      return {
+        productId: item.productId,
+        productVariantId: item.variantId,
+        quantity: item.quantity,
+        unitPrice: parseFloat(item.unitPrice),
+        totalPrice: parseFloat(item.unitPrice) * item.quantity,
+        productName: product.name,
+        productSku: product.sku || "",
+        variantSize: variant.size || "",
+        variantColor: variant.color || "",
+      };
+    }));
+
     const order = await db.order.create({
       data: {
         orderNumber,
@@ -171,13 +209,7 @@ export async function POST(request: NextRequest) {
         shippingAddressId: shippingAddress.id,
         billingAddressId: billingAddress.id,
         items: {
-          create: body.items.map((item: any) => ({
-            productId: item.productId,
-            productVariantId: item.variantId,
-            quantity: item.quantity,
-            unitPrice: parseFloat(item.unitPrice),
-            totalPrice: parseFloat(item.unitPrice) * item.quantity,
-          }))
+          create: itemsWithDetails
         },
         customerNotes: body.notes || "",
       },
