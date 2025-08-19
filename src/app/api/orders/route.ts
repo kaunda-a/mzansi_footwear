@@ -91,6 +91,9 @@ export async function POST(request: NextRequest) {
             postalCode: body.shippingAddress.postalCode,
             country: body.shippingAddress.country || "South Africa",
             type: "SHIPPING" as AddressType,
+            customer: {
+              connect: { id: session.user.id }
+            }
           }
         },
         billingAddress: body.billingAddress ? {
@@ -104,6 +107,9 @@ export async function POST(request: NextRequest) {
             postalCode: body.billingAddress.postalCode,
             country: body.billingAddress.country || "South Africa",
             type: "BILLING" as AddressType,
+            customer: {
+              connect: { id: session.user.id }
+            }
           }
         } : {
           // Use shipping address as billing address if no separate billing address is provided
@@ -117,6 +123,9 @@ export async function POST(request: NextRequest) {
             postalCode: body.shippingAddress.postalCode,
             country: body.shippingAddress.country || "South Africa",
             type: "BOTH" as AddressType,
+            customer: {
+              connect: { id: session.user.id }
+            }
           }
         },
         notes: body.notes || "",
