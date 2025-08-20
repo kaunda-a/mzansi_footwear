@@ -29,7 +29,7 @@ export class YocoProvider extends BasePaymentProvider {
     
     // Log test mode status
     if (config.testMode) {
-      this.log("warn", "Yoco provider initialized in TEST mode");
+      this.log("warn", "Yoco provider initialized in TEST mode - ensure test credentials are used");
     } else {
       this.log("info", "Yoco provider initialized in PRODUCTION mode");
     }
@@ -38,21 +38,59 @@ export class YocoProvider extends BasePaymentProvider {
   protected async validateConfig(): Promise<void> {
     const { publicKey, secretKey } = this._config.credentials;
     
+    // Clean the credentials of any potential hidden characters
+    const cleanSecretKey = secretKey ? secretKey.trim() : "";
+    const cleanPublicKey = publicKey ? publicKey.trim() : "";
+    
+    // Update the credentials if they were cleaned
+    if (cleanSecretKey !== secretKey || cleanPublicKey !== publicKey) {
+      this._config.credentials.secretKey = cleanSecretKey;
+      this._config.credentials.publicKey = cleanPublicKey;
+      this.log("warn", "Yoco credentials contained whitespace and were trimmed");
+    }
+    
     // Log configuration details for debugging (without exposing secrets)
     this.log("info", "Validating Yoco config", {
-      hasPublicKey: !!publicKey,
-      hasSecretKey: !!secretKey,
-      secretKeyLength: secretKey ? secretKey.length : 0,
-      publicKeyLength: publicKey ? publicKey.length : 0,
+      hasPublicKey: !!cleanPublicKey,
+      hasSecretKey: !!cleanSecretKey,
+      secretKeyLength: cleanSecretKey ? cleanSecretKey.length : 0,
+      publicKeyLength: cleanPublicKey ? cleanPublicKey.length : 0,
       testMode: this._config.testMode,
+      // Check for common formatting issues
+      secretKeyFormat: cleanSecretKey ? {
+        startsWithSk: cleanSecretKey.startsWith('sk_'),
+        endsWithAlphanumeric: /[a-zA-Z0-9]$/.test(cleanSecretKey),
+        hasSpaces: /\s/.test(cleanSecretKey),
+        hasSpecialChars: /[^a-zA-Z0-9_]/.test(cleanSecretKey.replace(/^sk_/, ''))
+      } : null
     });
 
-    if (!publicKey || !secretKey) {
+    if (!cleanPublicKey || !cleanSecretKey) {
       throw new Error("Yoco requires publicKey and secretKey");
     }
 
+    // Validate secret key format
+    if (!cleanSecretKey.startsWith('sk_')) {
+      this.log("warn", "Yoco secret key should start with 'sk_'");
+    }
+
+    if (cleanSecretKey.length < 40) {
+      this.log("warn", `Yoco secret key length (${cleanSecretKey.length}) seems short - typical keys are 40+ characters`);
+    }
+
+    if (/\s/.test(cleanSecretKey)) {
+      this.log("warn", "Yoco secret key contains whitespace characters");
+    }
+
     if (this._config.testMode) {
-      this.log("warn", "Yoco running in test mode");
+      this.log("warn", "Yoco running in test mode - ensure test credentials are used");
+      if (!cleanSecretKey.includes('_test_')) {
+        this.log("warn", "Yoco test mode enabled but secret key doesn't contain '_test_' - verify credentials");
+      }
+    } else {
+      if (cleanSecretKey.includes('_test_')) {
+        this.log("warn", "Yoco production mode enabled but secret key contains '_test_' - verify credentials");
+      }
     }
   }
 
@@ -78,7 +116,9 @@ export class YocoProvider extends BasePaymentProvider {
         url: `${this.baseUrl}/online/v1/checkouts`,
         hasSecretKey: !!this._config.credentials.secretKey,
         secretKeyPrefix: this._config.credentials.secretKey ? this._config.credentials.secretKey.substring(0, 10) : "NONE",
-        idempotencyKey: idempotencyKey
+        secretKeyLength: this._config.credentials.secretKey ? this._config.credentials.secretKey.length : 0,
+        idempotencyKey: idempotencyKey,
+        isTestMode: this._config.testMode,
       });
       
       const headers = {
@@ -87,7 +127,14 @@ export class YocoProvider extends BasePaymentProvider {
         "Idempotency-Key": idempotencyKey,
       };
       
-      this.log("info", "Request headers", { headers: { ...headers, Authorization: "Bearer [REDACTED]" } });
+      this.log("info", "Request headers", { 
+        headers: { 
+          ...headers, 
+          Authorization: `Bearer ${this._config.credentials.secretKey ? `[REDACTED_${this._config.credentials.secretKey.length}_CHARS]` : "NONE"}` 
+        },
+        hasProperBearerFormat: authHeader.startsWith("Bearer "),
+        authHeaderLength: authHeader.length,
+      });
       
       const response = await this.makeRequest(
         `${this.baseUrl}/online/v1/checkouts`,

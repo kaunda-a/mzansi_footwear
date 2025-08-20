@@ -45,8 +45,8 @@ export const paymentConfigs: PaymentConfig[] = [
     enabled: !!(process.env.NEXT_PUBLIC_YOCO_PUBLIC_KEY && process.env.YOCO_SECRET_KEY),
     testMode: isTestMode,
     credentials: {
-      publicKey: process.env.NEXT_PUBLIC_YOCO_PUBLIC_KEY || "",
-      secretKey: process.env.YOCO_SECRET_KEY || "",
+      publicKey: process.env.NEXT_PUBLIC_YOCO_PUBLIC_KEY ? process.env.NEXT_PUBLIC_YOCO_PUBLIC_KEY.trim() : "",
+      secretKey: process.env.YOCO_SECRET_KEY ? process.env.YOCO_SECRET_KEY.trim() : "",
     },
     settings: {
       supportedMethods: ["card"],

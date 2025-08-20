@@ -27,14 +27,6 @@ import { useCartStore } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/format";
 import { PaymentForm } from "@/components/payments/payment-form";
 
-const PAYMENT_METHODS = [
-  { id: "card", name: "Credit/Debit Card", icon: IconCreditCard },
-  { id: "payfast", name: "PayFast", icon: IconShield },
-  { id: "yoco", name: "Yoco", icon: IconCreditCard }, // Added Yoco
-  { id: "ozow", name: "Ozow", icon: IconTruck },
-  { id: "snapscan", name: "SnapScan", icon: IconCheck },
-];
-
 const SA_PROVINCES = [
   "Eastern Cape",
   "Free State",
@@ -81,7 +73,7 @@ export function CheckoutView({ user }: { user?: any }) {
     billingPostalCode: "",
 
     // Payment
-    paymentMethod: "",
+    paymentMethod: "yoco", // Auto-select yoco
 
     // Order Notes
     orderNotes: "",
@@ -101,7 +93,11 @@ export function CheckoutView({ user }: { user?: any }) {
   };
 
   const handleNextStep = () => {
-    if (step < 3) setStep(step + 1);
+    if (step === 2) {
+      handleSubmitOrder();
+    } else if (step < 2) {
+      setStep(step + 1);
+    }
   };
 
   const handlePrevStep = () => {
@@ -207,7 +203,6 @@ export function CheckoutView({ user }: { user?: any }) {
         {[
           { number: 1, title: "Information" },
           { number: 2, title: "Shipping" },
-          { number: 3, title: "Payment" },
         ].map((stepItem) => (
           <div key={stepItem.number} className="flex items-center">
             <div

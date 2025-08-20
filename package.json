@@ -35,6 +35,7 @@
     "shop:deploy": "npm run shop:build && npm run start",
     "shop:test": "npm run type-check && npm run lint:strict",
     "shop:preview": "npm run build && npm run start",
+    "test:yoco": "tsx test-yoco-credentials.ts",
     "postinstall": "prisma generate"
   },
   "lint-staged": {
