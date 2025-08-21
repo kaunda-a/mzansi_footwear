@@ -20,18 +20,24 @@ async function ensurePaymentManagerInitialized() {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log("Payment creation request received");
+    
     // Ensure payment manager is initialized
     await ensurePaymentManagerInitialized();
+    console.log("Payment manager initialized");
 
     const session = await auth();
     if (!session?.user) {
+      console.log("Authentication failed");
       return NextResponse.json(
         { error: "Authentication required" },
         { status: 401 },
       );
     }
+    console.log("User authenticated:", session.user.id);
 
     const body = await request.json();
+    console.log("Request body:", body);
 
     // Validate required fields
     const requiredFields = [
@@ -43,6 +49,7 @@ export async function POST(request: NextRequest) {
     ];
     for (const field of requiredFields) {
       if (!body[field]) {
+        console.log("Missing required field:", field);
         return NextResponse.json(
           { error: `Missing required field: ${field}` },
           { status: 400 },
@@ -111,14 +118,20 @@ export async function POST(request: NextRequest) {
       paymentMethods: body.paymentMethods,
     };
 
+    console.log("Payment request built:", paymentRequest);
+
     // Get payment manager and create payment
     const paymentManager = getPaymentManager();
     const preferredProvider = body.provider as PaymentProvider;
+    
+    console.log("Creating payment with provider:", preferredProvider);
 
     const response = await paymentManager.createPayment(
       paymentRequest,
       preferredProvider,
     );
+    
+    console.log("Payment creation response:", response);
 
     // Log the payment creation
     console.log("Payment created:", {

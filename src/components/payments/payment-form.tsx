@@ -191,6 +191,7 @@ export function PaymentForm({
       return;
     }
 
+    console.log("Starting payment submission for provider:", selectedProvider);
     setLoading(true);
     setError(null);
     setStep("processing");
@@ -224,7 +225,7 @@ export function PaymentForm({
         },
       };
 
-      console.log("Sending payment request:", paymentRequest);
+      console.log("Sending payment request to API:", paymentRequest);
 
       const response = await fetch("/api/payments/create", {
         method: "POST",
@@ -234,15 +235,17 @@ export function PaymentForm({
         body: JSON.stringify(paymentRequest),
       });
 
+      console.log("Received response from API:", response.status, response.statusText);
+      
       const data = await response.json();
-
-      console.log("Payment response:", data);
+      console.log("Response data:", data);
 
       if (!response.ok) {
         throw new Error(data.error || "Payment creation failed");
       }
 
       if (data.success) {
+        console.log("Payment initiated successfully");
         toast.success("Payment initiated successfully");
 
         if (data.metadata?.formHtml) {
@@ -269,6 +272,7 @@ export function PaymentForm({
           onSuccess?.(data.paymentId, selectedProvider);
         }
       } else {
+        console.log("Payment creation failed:", data.error?.message || "Payment creation failed");
         throw new Error(data.error?.message || "Payment creation failed");
       }
     } catch (err) {
@@ -280,6 +284,7 @@ export function PaymentForm({
       onError?.(errorMessage);
       setStep("provider");
     } finally {
+      console.log("Payment submission completed");
       setLoading(false);
     }
   };
