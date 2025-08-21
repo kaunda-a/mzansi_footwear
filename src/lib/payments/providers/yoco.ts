@@ -86,9 +86,15 @@ export class YocoProvider extends BasePaymentProvider {
       // Generate idempotency key
       const idempotencyKey = this.generateReference("yoco-checkout");
       
+      // Ensure secretKey is defined
+      const secretKey = this._config.credentials.secretKey;
+      if (!secretKey) {
+        throw new Error("Yoco secret key is required but was not provided");
+      }
+      
       this.log("info", "Making Yoco API request", {
         url: `${this.baseUrl}/api/checkouts`,
-        hasSecretKey: !!this._config.credentials.secretKey,
+        hasSecretKey: !!secretKey,
         idempotencyKey: idempotencyKey,
         isTestMode: this._config.testMode,
       });
@@ -115,7 +121,6 @@ export class YocoProvider extends BasePaymentProvider {
             cancelUrl: request.cancelUrl,
           }),
         },
-        this._config.credentials.secretKey,
       );
 
       if (!response.ok) {
@@ -160,7 +165,6 @@ export class YocoProvider extends BasePaymentProvider {
             "Content-Type": "application/json",
           },
         },
-        this._config.credentials.secretKey,
       );
 
       if (!response.ok) {
@@ -202,7 +206,6 @@ export class YocoProvider extends BasePaymentProvider {
             reason: reason,
           }),
         },
-        this._config.credentials.secretKey,
       );
 
       if (!response.ok) {
@@ -337,9 +340,14 @@ export class YocoProvider extends BasePaymentProvider {
   protected async makeRequest(
     url: string,
     options: RequestInit,
-    secretKey: string,
     timeout: number = 30000,
   ): Promise<Response> {
+    // Ensure secretKey is defined
+    const secretKey = this._config.credentials.secretKey;
+    if (!secretKey) {
+      throw new Error("Yoco secret key is required but was not provided");
+    }
+
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), timeout);
 
