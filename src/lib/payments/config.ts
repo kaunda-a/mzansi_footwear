@@ -6,12 +6,8 @@ import { PaymentConfig } from "./types";
  * Environment variables required:
  * - PAYFAST_MERCHANT_ID
  * - PAYFAST_MERCHANT_KEY  
- 
  * - NEXT_PUBLIC_YOCO_PUBLIC_KEY
  * - YOCO_SECRET_KEY
- * - OZOW_SITE_CODE
- * - OZOW_PRIVATE_KEY
- * - OZOW_API_KEY
  * - PAYMENT_TEST_MODE (true/false)
  */
 
@@ -42,11 +38,17 @@ export const paymentConfigs: PaymentConfig[] = [
   // Yoco - Popular for in-person and online payments
   {
     provider: "yoco",
-    enabled: !!(process.env.NEXT_PUBLIC_YOCO_PUBLIC_KEY && process.env.YOCO_SECRET_KEY),
+    enabled: !!(
+      process.env.NEXT_PUBLIC_YOCO_PUBLIC_KEY && process.env.YOCO_SECRET_KEY
+    ),
     testMode: isTestMode,
     credentials: {
-      publicKey: process.env.NEXT_PUBLIC_YOCO_PUBLIC_KEY ? process.env.NEXT_PUBLIC_YOCO_PUBLIC_KEY.trim() : "",
-      secretKey: process.env.YOCO_SECRET_KEY ? process.env.YOCO_SECRET_KEY.trim() : "",
+      publicKey: process.env.NEXT_PUBLIC_YOCO_PUBLIC_KEY
+        ? process.env.NEXT_PUBLIC_YOCO_PUBLIC_KEY.trim()
+        : "",
+      secretKey: process.env.YOCO_SECRET_KEY
+        ? process.env.YOCO_SECRET_KEY.trim()
+        : "",
     },
     settings: {
       supportedMethods: ["card"],

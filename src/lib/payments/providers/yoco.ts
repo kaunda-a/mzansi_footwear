@@ -1,4 +1,4 @@
-import { BasePaymentProvider, PaymentUtils } from "../base-provider";
+import { BasePaymentProvider } from "../base-provider";
 import {
   PaymentProvider,
   PaymentRequest,
@@ -9,7 +9,6 @@ import {
   PaymentConfig,
 } from "../types";
 import { db } from "@/lib/prisma";
-import type { PaymentStatus as PrismaPaymentStatus } from "@prisma/client";
 
 interface YocoConfig {
   publicKey: string;
@@ -23,9 +22,8 @@ export class YocoProvider extends BasePaymentProvider {
 
   constructor(config: PaymentConfig) {
     super(config);
-    // Use the correct Yoco API base URL
-    // Note: Yoco uses the same endpoint for test and production, but with different credentials
-    this.baseUrl = "https://api.yoco.com";
+    // Use the correct Yoco API base URL according to official documentation
+    this.baseUrl = "https://payments.yoco.com";
     
     // Log test mode status
     if (config.testMode) {
@@ -56,13 +54,6 @@ export class YocoProvider extends BasePaymentProvider {
       secretKeyLength: cleanSecretKey ? cleanSecretKey.length : 0,
       publicKeyLength: cleanPublicKey ? cleanPublicKey.length : 0,
       testMode: this._config.testMode,
-      // Check for common formatting issues
-      secretKeyFormat: cleanSecretKey ? {
-        startsWithSk: cleanSecretKey.startsWith('sk_'),
-        endsWithAlphanumeric: /[a-zA-Z0-9]$/.test(cleanSecretKey),
-        hasSpaces: /\s/.test(cleanSecretKey),
-        hasSpecialChars: /[^a-zA-Z0-9_]/.test(cleanSecretKey.replace(/^sk_/, ''))
-      } : null
     });
 
     if (!cleanPublicKey || !cleanSecretKey) {
@@ -74,23 +65,8 @@ export class YocoProvider extends BasePaymentProvider {
       this.log("warn", "Yoco secret key should start with 'sk_'");
     }
 
-    if (cleanSecretKey.length < 40) {
-      this.log("warn", `Yoco secret key length (${cleanSecretKey.length}) seems short - typical keys are 40+ characters`);
-    }
-
-    if (/\s/.test(cleanSecretKey)) {
-      this.log("warn", "Yoco secret key contains whitespace characters");
-    }
-
     if (this._config.testMode) {
       this.log("warn", "Yoco running in test mode - ensure test credentials are used");
-      if (!cleanSecretKey.includes('_test_')) {
-        this.log("warn", "Yoco test mode enabled but secret key doesn't contain '_test_' - verify credentials");
-      }
-    } else {
-      if (cleanSecretKey.includes('_test_')) {
-        this.log("warn", "Yoco production mode enabled but secret key contains '_test_' - verify credentials");
-      }
     }
   }
 
@@ -107,40 +83,24 @@ export class YocoProvider extends BasePaymentProvider {
     try {
       this.validateAmount(request.amount.amount);
 
-      // Use the correct endpoint for creating online checkouts
-      // Log the authorization header for debugging
-      const authHeader = `Bearer ${this._config.credentials.secretKey}`;
+      // Generate idempotency key
       const idempotencyKey = this.generateReference("yoco-checkout");
       
       this.log("info", "Making Yoco API request", {
-        url: `${this.baseUrl}/online/v1/checkouts`,
+        url: `${this.baseUrl}/api/checkouts`,
         hasSecretKey: !!this._config.credentials.secretKey,
-        secretKeyPrefix: this._config.credentials.secretKey ? this._config.credentials.secretKey.substring(0, 10) : "NONE",
-        secretKeyLength: this._config.credentials.secretKey ? this._config.credentials.secretKey.length : 0,
         idempotencyKey: idempotencyKey,
         isTestMode: this._config.testMode,
       });
       
-      const headers = {
-        Authorization: authHeader,
-        "Content-Type": "application/json",
-        "Idempotency-Key": idempotencyKey,
-      };
-      
-      this.log("info", "Request headers", { 
-        headers: { 
-          ...headers, 
-          Authorization: `Bearer ${this._config.credentials.secretKey ? `[REDACTED_${this._config.credentials.secretKey.length}_CHARS]` : "NONE"}` 
-        },
-        hasProperBearerFormat: authHeader.startsWith("Bearer "),
-        authHeaderLength: authHeader.length,
-      });
-      
       const response = await this.makeRequest(
-        `${this.baseUrl}/online/v1/checkouts`,
+        `${this.baseUrl}/api/checkouts`,
         {
           method: "POST",
-          headers: headers,
+          headers: {
+            "Idempotency-Key": idempotencyKey,
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({
             amount: Math.round(request.amount.amount * 100), // Yoco expects amount in cents, rounded to avoid floating point issues
             currency: request.amount.currency,
@@ -155,6 +115,7 @@ export class YocoProvider extends BasePaymentProvider {
             cancelUrl: request.cancelUrl,
           }),
         },
+        this._config.credentials.secretKey,
       );
 
       if (!response.ok) {
@@ -163,10 +124,8 @@ export class YocoProvider extends BasePaymentProvider {
           status: response.status,
           statusText: response.statusText,
           text: errorText,
-          url: `${this.baseUrl}/online/v1/checkouts`,
+          url: `${this.baseUrl}/api/checkouts`,
           method: "POST",
-          hasSecretKey: !!this._config.credentials.secretKey,
-          secretKeyLength: this._config.credentials.secretKey ? this._config.credentials.secretKey.length : 0,
         });
         throw new Error(`Yoco API Error: ${response.status} ${response.statusText} - ${errorText}`);
       }
@@ -193,15 +152,15 @@ export class YocoProvider extends BasePaymentProvider {
 
   async getPaymentStatus(paymentId: string): Promise<PaymentStatus> {
     try {
-      // Use the correct endpoint for retrieving checkout details
       const response = await this.makeRequest(
-        `${this.baseUrl}/online/v1/checkouts/${paymentId}`,
+        `${this.baseUrl}/api/checkouts/${paymentId}`,
         {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${this._config.credentials.secretKey}`,
+            "Content-Type": "application/json",
           },
         },
+        this._config.credentials.secretKey,
       );
 
       if (!response.ok) {
@@ -210,10 +169,8 @@ export class YocoProvider extends BasePaymentProvider {
           status: response.status,
           statusText: response.statusText,
           text: errorText,
-          url: `${this.baseUrl}/online/v1/checkouts/${paymentId}`,
+          url: `${this.baseUrl}/api/checkouts/${paymentId}`,
           method: "GET",
-          hasSecretKey: !!this._config.credentials.secretKey,
-          secretKeyLength: this._config.credentials.secretKey ? this._config.credentials.secretKey.length : 0,
         });
         throw new Error(`Yoco Get Payment Status Error: ${response.status} ${response.statusText} - ${errorText}`);
       }
@@ -233,11 +190,10 @@ export class YocoProvider extends BasePaymentProvider {
   ): Promise<PaymentRefund> {
     try {
       const response = await this.makeRequest(
-        `${this.baseUrl}/online/v1/refunds`,
+        `${this.baseUrl}/api/refunds`,
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${this._config.credentials.secretKey}`,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
@@ -246,6 +202,7 @@ export class YocoProvider extends BasePaymentProvider {
             reason: reason,
           }),
         },
+        this._config.credentials.secretKey,
       );
 
       if (!response.ok) {
@@ -254,10 +211,8 @@ export class YocoProvider extends BasePaymentProvider {
           status: response.status,
           statusText: response.statusText,
           text: errorText,
-          url: `${this.baseUrl}/online/v1/refunds`,
+          url: `${this.baseUrl}/api/refunds`,
           method: "POST",
-          hasSecretKey: !!this._config.credentials.secretKey,
-          secretKeyLength: this._config.credentials.secretKey ? this._config.credentials.secretKey.length : 0,
         });
         throw new Error(`Yoco Refund API Error: ${response.status} ${response.statusText} - ${errorText}`);
       }
@@ -294,7 +249,6 @@ export class YocoProvider extends BasePaymentProvider {
   }
 
   verifyWebhook(payload: string, signature: string): boolean {
-    // Yoco webhook verification requires headers which aren't passed in the current interface
     // For now, we're returning true but logging a warning
     // In a production environment, you should implement proper signature verification
     this.log(
@@ -365,7 +319,7 @@ export class YocoProvider extends BasePaymentProvider {
         where: { id: orderId },
         data: {
           status: orderStatus,
-          paymentStatus: status as PrismaPaymentStatus,
+          paymentStatus: status,
         },
       });
       this.log("info", `Order ${orderId} payment status updated to: ${status}`);
@@ -375,6 +329,38 @@ export class YocoProvider extends BasePaymentProvider {
         `Failed to update order ${orderId} payment status to ${status}:`,
         error,
       );
+      throw error;
+    }
+  }
+
+  // Override makeRequest to handle Yoco's bearer auth
+  protected async makeRequest(
+    url: string,
+    options: RequestInit,
+    secretKey: string,
+    timeout: number = 30000,
+  ): Promise<Response> {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeout);
+
+    try {
+      // Use bearer token auth with secret key
+      const response = await fetch(url, {
+        ...options,
+        signal: controller.signal,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${secretKey}`,
+          "User-Agent": "MzansiFootwear/1.0",
+          ...options.headers,
+        },
+      });
+
+      clearTimeout(timeoutId);
+      return response;
+    } catch (error) {
+      clearTimeout(timeoutId);
+      this.log("error", "HTTP request failed", { url, error });
       throw error;
     }
   }

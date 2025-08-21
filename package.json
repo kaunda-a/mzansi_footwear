@@ -35,7 +35,7 @@
     "shop:deploy": "npm run shop:build && npm run start",
     "shop:test": "npm run type-check && npm run lint:strict",
     "shop:preview": "npm run build && npm run start",
-    "test:yoco": "tsx test-yoco-credentials.ts",
+    "test:yoco": "echo \"Yoco test script removed\"",
     "postinstall": "prisma generate"
   },
   "lint-staged": {
@@ -82,11 +82,13 @@
     "@tabler/icons-react": "^3.31.0",
     "@tailwindcss/postcss": "^4.0.0",
     "@tanstack/react-table": "^8.21.2",
+    "canvas-confetti": "^1.9.2",
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.7.0",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.1",
     "eslint": "8.48.0",
     "eslint-config-next": "15.1.0",
     "input-otp": "^1.4.2",
@@ -119,8 +121,7 @@
     "uuid": "^11.0.3",
     "vaul": "^1.1.2",
     "zod": "^3.24.1",
-    "zustand": "^5.0.2",
-    "canvas-confetti": "^1.9.2"
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "@faker-js/faker": "^9.3.0",
