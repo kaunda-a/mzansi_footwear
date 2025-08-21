@@ -224,6 +224,8 @@ export function PaymentForm({
         },
       };
 
+      console.log("Sending payment request:", paymentRequest);
+
       const response = await fetch("/api/payments/create", {
         method: "POST",
         headers: {
@@ -234,6 +236,8 @@ export function PaymentForm({
 
       const data = await response.json();
 
+      console.log("Payment response:", data);
+
       if (!response.ok) {
         throw new Error(data.error || "Payment creation failed");
       }
@@ -242,18 +246,26 @@ export function PaymentForm({
         toast.success("Payment initiated successfully");
 
         if (data.metadata?.formHtml) {
+          console.log("Creating form from HTML");
           const formContainer = document.createElement("div");
           formContainer.innerHTML = data.metadata.formHtml;
           document.body.appendChild(formContainer);
           const form = formContainer.querySelector("form");
           if (form) {
+            console.log("Submitting form");
             form.submit();
+          } else {
+            console.error("Form not found in formHtml");
+            throw new Error("Payment form not found");
           }
         } else if (data.redirectUrl) {
+          console.log("Redirecting to:", data.redirectUrl);
           window.location.href = data.redirectUrl;
         } else if (data.paymentUrl) {
+          console.log("Redirecting to payment URL:", data.paymentUrl);
           window.location.href = data.paymentUrl;
         } else {
+          console.log("Calling onSuccess callback");
           onSuccess?.(data.paymentId, selectedProvider);
         }
       } else {
@@ -262,6 +274,7 @@ export function PaymentForm({
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Payment failed";
+      console.error("Payment error:", errorMessage);
       setError(errorMessage);
       toast.error(errorMessage);
       onError?.(errorMessage);

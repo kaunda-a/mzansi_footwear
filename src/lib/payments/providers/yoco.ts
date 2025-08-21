@@ -136,6 +136,11 @@ export class YocoProvider extends BasePaymentProvider {
       }
 
       const paymentData = await response.json();
+      
+      this.log("info", "Yoco API response", {
+        paymentId: paymentData.id,
+        checkoutUrl: paymentData.checkoutUrl,
+      });
 
       return this.createSuccessResponse(
         paymentData.id,
