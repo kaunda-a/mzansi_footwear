@@ -84,7 +84,7 @@ export default async function ShippingPage({
                         <p className="text-muted-foreground">
                           3-5 business days | Free
                         </p>
-                        <p className="text-sm">On orders over R1000</p>
+                        <p className="text-sm">Free shipping on all orders</p>
                       </div>
                     </div>
                   </div>

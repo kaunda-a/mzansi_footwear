@@ -284,7 +284,7 @@ export function ProductDetailView({ product }: ProductDetailViewProps) {
                 <div>
                   <p className="font-medium">Free Shipping</p>
                   <p className="text-sm text-muted-foreground">
-                    On orders over R500
+                    Free shipping
                   </p>
                 </div>
               </div>

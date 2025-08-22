@@ -273,7 +273,7 @@ export function CartView() {
 
               <div className="flex items-center text-sm text-green-600">
                 <IconShield className="mr-1 h-4 w-4" />
-                Free shipping on all orders
+                Free shipping
               </div>
 
               <Button size="lg" className="w-full" asChild>
@@ -299,7 +299,7 @@ export function CartView() {
                 </div>
                 <div className="flex items-center">
                   <IconTruck className="mr-2 h-4 w-4 text-blue-600" />
-                  Free delivery on orders over R500
+                  Free shipping
                 </div>
                 <div className="flex items-center">
                   <IconHeart className="mr-2 h-4 w-4 text-red-600" />
