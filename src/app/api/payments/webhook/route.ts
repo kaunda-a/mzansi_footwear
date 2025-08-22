@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
       headers["x-signature"] ||
       headers["x-payfast-signature"] ||
       headers["x-yoco-signature"] ||
+      headers["X-Yoco-Signature"] || // Yoco uses capitalized header name
       headers["x-ozow-signature"] ||
       headers["signature"] ||
       "";

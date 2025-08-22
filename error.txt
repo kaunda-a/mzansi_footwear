@@ -1,3 +1,3 @@
-C:\Users\27766\Desktop\mzansi-footwear\shoppnpm run dev
- ERROR  Expected ',' or '}' after property value in JSON at position 1480 (line 39 column 5) while parsing '{  "name": "mzansi-footwear-shop",  "v' in C:\Users\27766\Desktop\mzansi-footwear\shop\package.json
-For help, run: pnpm help run
+A searchParam property was accessed directly with `searchParams.orderId`. `searchParams` should be unwrapped with `React.use()` before accessing its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+
+Call Stack

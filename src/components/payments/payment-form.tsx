@@ -268,8 +268,8 @@ export function PaymentForm({
           console.log("Redirecting to payment URL:", data.paymentUrl);
           window.location.href = data.paymentUrl;
         } else {
-          console.log("Calling onSuccess callback");
-          onSuccess?.(data.paymentId, selectedProvider);
+          console.log("No redirect URL provided, showing error");
+          throw new Error("Payment provider did not return a redirect URL. Please try again or select a different payment method.");
         }
       } else {
         console.log("Payment creation failed:", data.error?.message || "Payment creation failed");

@@ -116,10 +116,10 @@ export function CartView() {
                   </div>
 
                   {/* Product Details */}
-                  <div className="flex-1 space-y-2">
-                    <div className="flex justify-between">
-                      <div>
-                        <h3 className="font-semibold text-lg">
+                  <div className="flex-1 space-y-2 min-w-0">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+                      <div className="min-w-0">
+                        <h3 className="font-semibold text-lg truncate">
                           <Link
                             href={`/products/${item.productId}`}
                             className="hover:text-primary transition-colors"
@@ -132,7 +132,7 @@ export function CartView() {
                         </p>
                         <p className="text-sm text-gray-500">SKU: {item.sku}</p>
                       </div>
-                      <div className="text-right">
+                      <div className="text-right sm:text-right whitespace-nowrap">
                         <p className="font-semibold text-lg">
                           {formatPrice(item.price * item.quantity)}
                         </p>
@@ -143,7 +143,7 @@ export function CartView() {
                     </div>
 
                     {/* Quantity and Actions */}
-                    <div className="flex items-center justify-between pt-2">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pt-2 gap-3">
                       <div className="flex items-center space-x-2">
                         <Button
                           variant="outline"
@@ -175,18 +175,21 @@ export function CartView() {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleMoveToWishlist(item.id)}
+                          className="text-sm"
                         >
                           <IconHeart className="mr-1 h-4 w-4" />
-                          Save for Later
+                          <span className="hidden sm:inline">Save for Later</span>
+                          <span className="sm:hidden">Save</span>
                         </Button>
                         <Button
                           variant="ghost"
                           size="sm"
                           onClick={() => removeItem(item.id)}
-                          className="text-red-600 hover:text-red-700"
+                          className="text-red-600 hover:text-red-700 text-sm"
                         >
                           <IconTrash className="mr-1 h-4 w-4" />
-                          Remove
+                          <span className="hidden sm:inline">Remove</span>
+                          <span className="sm:hidden">Remove</span>
                         </Button>
                       </div>
                     </div>

@@ -140,14 +140,25 @@ export class YocoProvider extends BasePaymentProvider {
       this.log("info", "Yoco API response", {
         paymentId: paymentData.id,
         checkoutUrl: paymentData.checkoutUrl,
+        redirectUrl: paymentData.redirectUrl,
       });
+
+      // Handle case where checkoutUrl might be missing - try redirectUrl as fallback
+      const checkoutUrl = paymentData.checkoutUrl || paymentData.redirectUrl;
+      if (!checkoutUrl) {
+        this.log("error", "Yoco API response missing both checkoutUrl and redirectUrl", {
+          paymentData,
+          responseKeys: Object.keys(paymentData),
+        });
+        throw new Error("Yoco API did not return a checkout or redirect URL");
+      }
 
       return this.createSuccessResponse(
         paymentData.id,
         "PENDING",
-        paymentData.checkoutUrl,
+        checkoutUrl,
         {
-          redirectUrl: paymentData.checkoutUrl,
+          redirectUrl: checkoutUrl,
         },
       );
     } catch (error) {
@@ -257,13 +268,42 @@ export class YocoProvider extends BasePaymentProvider {
   }
 
   verifyWebhook(payload: string, signature: string): boolean {
-    // For now, we're returning true but logging a warning
-    // In a production environment, you should implement proper signature verification
-    this.log(
-      "warn",
-      "Yoco webhook verification is bypassed due to interface limitations. Implement proper verification in production.",
-    );
-    return true;
+    try {
+      // Ensure secretKey is defined
+      const secretKey = this._config.credentials.secretKey;
+      if (!secretKey) {
+        this.log("error", "Yoco secret key is required for webhook verification but was not provided");
+        return false;
+      }
+
+      // Import crypto module
+      const crypto = require("crypto");
+      
+      // Create expected signature using HMAC SHA-256
+      const expectedSignature = crypto
+        .createHmac("sha256", secretKey)
+        .update(payload)
+        .digest("hex");
+      
+      // Compare signatures securely
+      const signaturesMatch = crypto.timingSafeEqual(
+        Buffer.from(signature, "hex"),
+        Buffer.from(expectedSignature, "hex")
+      );
+      
+      if (!signaturesMatch) {
+        this.log("error", "Yoco webhook signature verification failed", {
+          receivedSignature: signature,
+          expectedSignature: expectedSignature,
+          payloadLength: payload.length,
+        });
+      }
+      
+      return signaturesMatch;
+    } catch (error) {
+      this.log("error", "Yoco webhook verification error", error);
+      return false;
+    }
   }
 
   async processWebhook(webhook: PaymentWebhook): Promise<void> {

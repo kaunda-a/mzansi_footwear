@@ -165,7 +165,7 @@ export function usePayment(options: UsePaymentOptions = {}) {
     } else if (paymentResponse.paymentUrl) {
       window.location.href = paymentResponse.paymentUrl;
     } else {
-      toast.error("No payment URL provided");
+      toast.error("Payment provider did not return a redirect URL. Please try again or select a different payment method.");
     }
   }, []);
 
