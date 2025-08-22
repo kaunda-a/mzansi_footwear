@@ -13,14 +13,17 @@ import { formatPrice } from "@/lib/format";
 import type { ProductFiltersProps } from "../types";
 
 export function ProductFilters({
-  categories = [],
-  brands = [],
   priceRange = { min: 0, max: 5000 },
   onFiltersChange,
 }: ProductFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const [categories, setCategories] = useState<Array<{id: string, name: string, count: number}>>([]);
+  const [brands, setBrands] = useState<Array<{id: string, name: string, count: number}>>([]);
+  const [availableSizes, setAvailableSizes] = useState<Array<{value: string, label: string, count: number}>>([]);
+  const [availableColors, setAvailableColors] = useState<Array<{value: string, label: string, hex: string, count: number}>>([]);
+  
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [selectedPriceRange, setSelectedPriceRange] = useState([
@@ -29,33 +32,30 @@ export function ProductFilters({
   ]);
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Common sizes and colors (these could come from API)
-  const availableSizes = [
-    "XS",
-    "S",
-    "M",
-    "L",
-    "XL",
-    "XXL",
-    "6",
-    "7",
-    "8",
-    "9",
-    "10",
-    "11",
-    "12",
-  ];
-  const availableColors = [
-    "Black",
-    "White",
-    "Brown",
-    "Tan",
-    "Navy",
-    "Red",
-    "Blue",
-    "Green",
-  ];
+  // Fetch filter options from API
+  useEffect(() => {
+    const fetchFilterOptions = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/filters");
+        if (response.ok) {
+          const data = await response.json();
+          setCategories(data.categories || []);
+          setBrands(data.brands || []);
+          setAvailableSizes(data.sizes || []);
+          setAvailableColors(data.colors || []);
+        }
+      } catch (error) {
+        console.error("Error fetching filter options:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFilterOptions();
+  }, []);
 
   // Initialize filters from URL params
   useEffect(() => {
@@ -71,10 +71,14 @@ export function ProductFilters({
     if (sizeParam) setSelectedSizes([sizeParam]);
     if (colorParam) setSelectedColors([colorParam]);
 
-    if (minPriceParam || maxPriceParam) {
+    // Handle price range parameters more safely
+    const minPrice = minPriceParam ? parseInt(minPriceParam, 10) : null;
+    const maxPrice = maxPriceParam ? parseInt(maxPriceParam, 10) : null;
+    
+    if (!isNaN(minPrice as number) || !isNaN(maxPrice as number)) {
       setSelectedPriceRange([
-        minPriceParam ? parseInt(minPriceParam) : priceRange.min,
-        maxPriceParam ? parseInt(maxPriceParam) : priceRange.max,
+        !isNaN(minPrice as number) ? (minPrice as number) : priceRange.min,
+        !isNaN(maxPrice as number) ? (maxPrice as number) : priceRange.max,
       ]);
     }
   }, [searchParams, priceRange]);
@@ -221,6 +225,24 @@ export function ProductFilters({
     selectedPriceRange[0] > priceRange.min ||
     selectedPriceRange[1] < priceRange.max;
 
+  if (loading) {
+    return (
+      <Card>
+        <CardHeader className="pb-4">
+          <CardTitle className="flex items-center gap-2">
+            <IconFilter className="h-5 w-5" />
+            Filters
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="h-4 bg-muted animate-pulse rounded" />
+          <div className="h-4 bg-muted animate-pulse rounded" />
+          <div className="h-4 bg-muted animate-pulse rounded" />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card>
       <CardHeader className="pb-4">
@@ -256,7 +278,8 @@ export function ProductFilters({
                     htmlFor={`category-${category.id}`}
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
                   >
-                    {category.name}
+                    {category.name}{" "}
+                    <span className="text-muted-foreground">({category.count})</span>
                   </label>
                 </div>
               ))}
@@ -284,7 +307,8 @@ export function ProductFilters({
                     htmlFor={`brand-${brand.id}`}
                     className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
                   >
-                    {brand.name}
+                    {brand.name}{" "}
+                    <span className="text-muted-foreground">({brand.count})</span>
                   </label>
                 </div>
               ))}
@@ -322,14 +346,15 @@ export function ProductFilters({
           <div className="flex flex-wrap gap-2">
             {availableSizes.map((size) => (
               <Button
-                key={size}
-                variant={selectedSizes.includes(size) ? "default" : "outline"}
+                key={size.value}
+                variant={selectedSizes.includes(size.value) ? "default" : "outline"}
                 size="sm"
                 onClick={() =>
-                  handleSizeChange(size, !selectedSizes.includes(size))
+                  handleSizeChange(size.value, !selectedSizes.includes(size.value))
                 }
               >
-                {size}
+                {size.label}{" "}
+                <span className="text-xs opacity-70 ml-1">({size.count})</span>
               </Button>
             ))}
           </div>
@@ -343,14 +368,21 @@ export function ProductFilters({
           <div className="flex flex-wrap gap-2">
             {availableColors.map((color) => (
               <Button
-                key={color}
-                variant={selectedColors.includes(color) ? "default" : "outline"}
+                key={color.value}
+                variant={selectedColors.includes(color.value) ? "default" : "outline"}
                 size="sm"
+                style={{ 
+                  backgroundColor: selectedColors.includes(color.value) ? color.hex : 'transparent',
+                  color: selectedColors.includes(color.value) ? 
+                    (parseInt(color.hex.replace('#', ''), 16) > 0xffffff/2 ? '#000' : '#fff') : 
+                    '#000'
+                }}
                 onClick={() =>
-                  handleColorChange(color, !selectedColors.includes(color))
+                  handleColorChange(color.value, !selectedColors.includes(color.value))
                 }
               >
-                {color}
+                {color.label}{" "}
+                <span className="text-xs opacity-70 ml-1">({color.count})</span>
               </Button>
             ))}
           </div>

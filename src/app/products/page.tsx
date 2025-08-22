@@ -83,13 +83,7 @@ export default async function ProductsPage({
             {/* Filters Sidebar */}
             <div className="hidden lg:block">
               <div className="sticky top-24">
-                <Suspense
-                  fallback={
-                    <div className="h-96 bg-muted rounded animate-pulse" />
-                  }
-                >
-                  <ProductFilters />
-                </Suspense>
+                <ProductFilters />
               </div>
             </div>
 
