@@ -37,8 +37,8 @@ export function CartView() {
   const [promoDiscount, setPromoDiscount] = useState(0);
 
   const subtotal = totalPrice;
-  const shipping = subtotal > 500 ? 0 : 50; // Free shipping over R500
-  const tax = subtotal * 0.15; // 15% VAT
+  const shipping = 0; // Free shipping
+  const tax = 0; // No VAT
   const discount = promoApplied ? promoDiscount : 0;
   const finalTotal = subtotal + shipping + tax - discount;
 
@@ -252,17 +252,8 @@ export function CartView() {
                     Shipping
                   </span>
                   <span>
-                    {shipping === 0 ? (
-                      <Badge variant="secondary">FREE</Badge>
-                    ) : (
-                      formatPrice(shipping)
-                    )}
+                    <Badge variant="secondary">FREE</Badge>
                   </span>
-                </div>
-
-                <div className="flex justify-between">
-                  <span>VAT (15%)</span>
-                  <span>{formatPrice(tax)}</span>
                 </div>
 
                 {promoApplied && (
@@ -280,12 +271,10 @@ export function CartView() {
                 <span>{formatPrice(finalTotal)}</span>
               </div>
 
-              {shipping === 0 && (
-                <div className="flex items-center text-sm text-green-600">
-                  <IconShield className="mr-1 h-4 w-4" />
-                  Free shipping applied
-                </div>
-              )}
+              <div className="flex items-center text-sm text-green-600">
+                <IconShield className="mr-1 h-4 w-4" />
+                Free shipping on all orders
+              </div>
 
               <Button size="lg" className="w-full" asChild>
                 <Link href="/checkout">

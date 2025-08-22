@@ -84,8 +84,8 @@ export function CheckoutView({ user }: { user?: any }) {
   });
 
   const subtotal = totalPrice;
-  const shipping = subtotal > 500 ? 0 : 50;
-  const tax = subtotal * 0.15;
+  const shipping = 0; // Free shipping
+  const tax = 0; // No VAT
   const total = subtotal + shipping + tax;
 
   const handleInputChange = (field: string, value: string | boolean) => {
@@ -461,11 +461,7 @@ export function CheckoutView({ user }: { user?: any }) {
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? "FREE" : formatPrice(shipping)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>VAT (15%)</span>
-                  <span>{formatPrice(tax)}</span>
+                  <span>FREE</span>
                 </div>
               </div>
 
@@ -483,7 +479,7 @@ export function CheckoutView({ user }: { user?: any }) {
                 </div>
                 <div className="flex items-center">
                   <IconTruck className="mr-1 h-3 w-3" />
-                  Free delivery on orders over R500
+                  Free delivery on all orders
                 </div>
               </div>
             </CardContent>
