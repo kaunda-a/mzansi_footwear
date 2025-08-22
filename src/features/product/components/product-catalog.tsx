@@ -94,8 +94,13 @@ async function ProductCatalogContent({
     filters.isFeatured = true;
   }
 
-  // Note: size and color filtering would need to be handled at the variant level
-  // These are not part of the ProductFilters type
+  if (searchParams.size) {
+    filters.size = searchParams.size;
+  }
+
+  if (searchParams.color) {
+    filters.color = searchParams.color;
+  }
 
   // Build sort
   const sort: ProductSort = (() => {
@@ -135,6 +140,8 @@ async function ProductCatalogContent({
         ? parseFloat(searchParams.maxPrice)
         : undefined,
       featured,
+      size: searchParams.size,
+      color: searchParams.color,
     });
 
     return (

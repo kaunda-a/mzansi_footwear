@@ -43,6 +43,8 @@ export type ProductFilters = {
   isFeatured?: boolean;
   minPrice?: number;
   maxPrice?: number;
+  size?: string;
+  color?: string;
 };
 
 export type ProductSort = {
@@ -81,10 +83,22 @@ export class ProductService {
     if (filters.isActive !== undefined) where.isActive = filters.isActive;
     if (filters.isFeatured !== undefined) where.isFeatured = filters.isFeatured;
 
-    // Price filtering (based on variants)
-    if (filters.minPrice || filters.maxPrice) {
+    // Size and color filtering (based on variants)
+    if (filters.size || filters.color) {
       where.variants = {
         some: {
+          ...(filters.size && { size: filters.size }),
+          ...(filters.color && { color: filters.color }),
+        },
+      };
+    }
+
+    // Price filtering (based on variants)
+    if (filters.minPrice || filters.maxPrice) {
+      const existingVariantsFilter = where.variants?.some || {};
+      where.variants = {
+        some: {
+          ...existingVariantsFilter,
           price: {
             ...(filters.minPrice && { gte: filters.minPrice }),
             ...(filters.maxPrice && { lte: filters.maxPrice }),

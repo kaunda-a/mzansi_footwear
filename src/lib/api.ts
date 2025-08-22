@@ -70,6 +70,8 @@ export class Api {
       minPrice?: number;
       maxPrice?: number;
       featured?: boolean;
+      size?: string;
+      color?: string;
     } = {},
   ): Promise<{
     products: ProductWithDetails[];
@@ -88,6 +90,8 @@ export class Api {
           minPrice: params.minPrice,
           maxPrice: params.maxPrice,
           isFeatured: params.featured ? true : undefined,
+          size: params.size,
+          color: params.color,
         };
 
         const sortConfig = (() => {
@@ -132,6 +136,8 @@ export class Api {
         if (params.maxPrice)
           searchParams.append("maxPrice", params.maxPrice.toString());
         if (params.featured) searchParams.append("featured", "true");
+        if (params.size) searchParams.append("size", params.size);
+        if (params.color) searchParams.append("color", params.color);
 
         const response = await fetch(
           `/api/products?${searchParams.toString()}`,
