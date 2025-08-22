@@ -42,39 +42,29 @@ export function VariantSelector({
   const selectedColor = selectedVariantData?.color;
   const selectedSize = selectedVariantData?.size;
 
-  // Get available sizes for selected color
-  const availableSizesForColor = selectedColor
-    ? variants.filter((v) => v.color === selectedColor).map((v) => v.size)
-    : [];
-
-  // Get available colors for selected size
-  const availableColorsForSize = selectedSize
-    ? variants.filter((v) => v.size === selectedSize).map((v) => v.color)
-    : [];
-
   const handleColorChange = (color: string) => {
-    // Find a variant with this color, preferring the current size if available
-    const variantWithColor =
-      variants.find(
-        (v) =>
-          v.color === color && (selectedSize ? v.size === selectedSize : true),
-      ) || variants.find((v) => v.color === color);
-
-    if (variantWithColor) {
-      handleVariantChange(variantWithColor.id);
+    // Find the best variant when color is changed:
+    // 1. Try to find a variant with both the selected color and current size
+    // 2. If not found, find any variant with the selected color
+    const bestVariant = (selectedSize 
+      ? variants.find((v) => v.color === color && v.size === selectedSize)
+      : null) || variants.find((v) => v.color === color);
+      
+    if (bestVariant) {
+      handleVariantChange(bestVariant.id);
     }
   };
 
   const handleSizeChange = (size: string) => {
-    // Find a variant with this size, preferring the current color if available
-    const variantWithSize =
-      variants.find(
-        (v) =>
-          v.size === size && (selectedColor ? v.color === selectedColor : true),
-      ) || variants.find((v) => v.size === size);
-
-    if (variantWithSize) {
-      handleVariantChange(variantWithSize.id);
+    // Find the best variant when size is changed:
+    // 1. Try to find a variant with both the selected size and current color
+    // 2. If not found, find any variant with the selected size
+    const bestVariant = (selectedColor 
+      ? variants.find((v) => v.size === size && v.color === selectedColor)
+      : null) || variants.find((v) => v.size === size);
+      
+    if (bestVariant) {
+      handleVariantChange(bestVariant.id);
     }
   };
 
@@ -114,8 +104,8 @@ export function VariantSelector({
           <div className="flex flex-wrap gap-2">
             {colors.map((color) => {
               const isSelected = color === selectedColor;
-              const isAvailable =
-                !selectedSize || availableColorsForSize.includes(color);
+              // A color is available if there's at least one variant with this color
+              const isAvailable = variants.some((v) => v.color === color);
               const variantForColor = variants.find((v) => v.color === color);
 
               return (
@@ -148,11 +138,9 @@ export function VariantSelector({
           <div className="flex flex-wrap gap-2">
             {sizes.map((size) => {
               const isSelected = size === selectedSize;
-              const isAvailable =
-                !selectedColor || availableSizesForColor.includes(size);
-              const variantForSize = variants.find(
-                (v) => v.size === size && v.color === selectedColor,
-              );
+              // A size is available if there's at least one variant with this size
+              const isAvailable = variants.some((v) => v.size === size);
+              const variantForSize = variants.find((v) => v.size === size);
 
               return (
                 <Button
