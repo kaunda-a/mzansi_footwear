@@ -15,10 +15,10 @@ export type ProductWithDetails = Omit<Product, "averageRating"> & {
   brand: Brand;
   variants: Array<
     Omit<ProductVariant, "price" | "comparePrice" | "costPrice" | "weight"> & {
-      price: Decimal;
-      comparePrice: Decimal | null;
-      costPrice: Decimal | null;
-      weight: Decimal | null;
+      price: number;
+      comparePrice: number | null;
+      costPrice: number | null;
+      weight: number | null;
     }
   >;
   images: {
@@ -228,9 +228,16 @@ export class ProductService {
 
     return {
       ...product,
+      variants: product.variants.map((variant) => ({
+        ...variant,
+        price: Number(variant.price),
+        comparePrice: variant.comparePrice ? Number(variant.comparePrice) : null,
+        costPrice: variant.costPrice ? Number(variant.costPrice) : null,
+        weight: variant.weight ? Number(variant.weight) : null,
+      })),
       averageRating,
       reviewCount: product._count.reviews,
-    } as ProductWithDetails;
+    };
   }
 
   static async getProductById(id: string): Promise<ProductWithDetails | null> {
@@ -319,6 +326,13 @@ export class ProductService {
 
       return {
         ...product,
+        variants: product.variants.map((variant) => ({
+          ...variant,
+          price: Number(variant.price),
+          comparePrice: variant.comparePrice ? Number(variant.comparePrice) : null,
+          costPrice: variant.costPrice ? Number(variant.costPrice) : null,
+          weight: variant.weight ? Number(variant.weight) : null,
+        })),
         averageRating,
         reviewCount: product._count.reviews,
       };

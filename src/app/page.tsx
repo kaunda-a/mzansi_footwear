@@ -5,19 +5,10 @@ import { BillboardContainer } from "@/components/catalog/billboard-container";
 import { CarouselBillboardContainer } from "@/components/catalog/carousel-billboard-container";
 import { FeaturedProducts } from "@/components/catalog/featured-products";
 import { ProductCatalog } from "@/features/product/components/product-catalog";
-import { TrendingProductCatalog } from "@/features/product/components/trending-product-catalog";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
+import { TrendingContainer } from "@/components/catalog/trending/trending-container";
 import { Suspense } from "react";
-import { TrendingSection } from "@/components/home/trending-section";
 
-export default function HomePage() {
+export default function HomePage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -35,49 +26,9 @@ export default function HomePage() {
           />
         </div>
 
-        {/* Breadcrumbs */}
-        <div className="bg-muted/30 border-b">
-          <div className="container mx-auto px-4 py-4">
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem>
-                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Trending</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </div>
-
-        {/* Trending Page Billboard */}
-        <div className="container mx-auto px-4 py-4">
-          <BillboardContainer
-            position="HEADER"
-            compact={true}
-            className="h-32 md:h-40 rounded-lg"
-          />
-        </div>
-
-        {/* Page Header */}
-        <div className="bg-background border-b">
-          <div className="container mx-auto px-4 py-6">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between">
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold">Trending Products</h1>
-                <p className="mt-2 text-muted-foreground">
-                  Discover the most popular and sought-after footwear
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Main Content */}
         <div className="container mx-auto px-4 py-8">
-          <TrendingSection />
+          <TrendingContainer searchParams={searchParams} />
         </div>
 
         {/* Popular Products */}

@@ -1,21 +1,119 @@
+
+Error: ./src/components/catalog/trending/trending-container.tsx:21:8
+Ecmascript file had an error
+  19 | }
+  20 |
+> 21 | export function TrendingContainer({ searchParams }: TrendingContainerProps) {
+     |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 22 |   return (
+     | ^^^^^^^^^^
+> 23 |     <TrendingSection>
+     | ^^^^^^^^^^
+> 24 |       <Suspense
+     | ^^^^^^^^^^
+> 25 |         fallback={
+     | ^^^^^^^^^^
+> 26 |           <div className="space-y-6">
+     | ^^^^^^^^^^
+> 27 |             <div className="flex justify-between items-center">
+     | ^^^^^^^^^^
+> 28 |               <div className="h-4 w-32 bg-muted rounded animate-pulse" />
+     | ^^^^^^^^^^
+> 29 |               <div className="h-10 w-48 bg-muted rounded animate-pulse" />
+     | ^^^^^^^^^^
+> 30 |             </div>
+     | ^^^^^^^^^^
+> 31 |             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+     | ^^^^^^^^^^
+> 32 |               {Array.from({ length: 12 }).map((_, i) => (
+     | ^^^^^^^^^^
+> 33 |                 <div key={i} className="space-y-4">
+     | ^^^^^^^^^^
+> 34 |                   <div className="aspect-square bg-muted rounded animate-pulse" />
+     | ^^^^^^^^^^
+> 35 |                   <div className="space-y-2">
+     | ^^^^^^^^^^
+> 36 |                     <div className="h-3 w-1/2 bg-muted rounded animate-pulse" />
+     | ^^^^^^^^^^
+> 37 |                     <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
+     | ^^^^^^^^^^
+> 38 |                     <div className="h-3 w-1/3 bg-muted rounded animate-pulse" />
+     | ^^^^^^^^^^
+> 39 |                     <div className="h-6 w-1/2 bg-muted rounded animate-pulse" />
+     | ^^^^^^^^^^
+> 40 |                   </div>
+     | ^^^^^^^^^^
+> 41 |                 </div>
+     | ^^^^^^^^^^
+> 42 |               ))}
+     | ^^^^^^^^^^
+> 43 |             </div>
+     | ^^^^^^^^^^
+> 44 |           </div>
+     | ^^^^^^^^^^
+> 45 |         }
+     | ^^^^^^^^^^
+> 46 |       >
+     | ^^^^^^^^^^
+> 47 |         <TrendingProductCatalog
+     | ^^^^^^^^^^
+> 48 |           searchParams={searchParams}
+     | ^^^^^^^^^^
+> 49 |           showSort={true}
+     | ^^^^^^^^^^
+> 50 |           showPagination={true}
+     | ^^^^^^^^^^
+> 51 |           limit={12}
+     | ^^^^^^^^^^
+> 52 |         />
+     | ^^^^^^^^^^
+> 53 |       </Suspense>
+     | ^^^^^^^^^^
+> 54 |     </TrendingSection>
+     | ^^^^^^^^^^
+> 55 |   );
+     | ^^^^^^^^^^
+> 56 | }
+     | ^^
+  57 |
+
+Server Actions must be async functions.
+
+
+
+    at <unknown> (Error: ./src/components/catalog/trending/trending-container.tsx:21:8)
+    at Object.getCompilationErrors (file://C:\Users\27766\Desktop\mzansi-footwear\shop\node_modules\.pnpm\next@15.3.2_react-dom@19.0.0_react@19.0.0__react@19.0.0\node_modules\next\dist\server\dev\hot-reloader-turbopack.js:725:59)
+    at DevBundlerService.getCompilationError (file://C:\Users\27766\Desktop\mzansi-footwear\shop\node_modules\.pnpm\next@15.3.2_react-dom@19.0.0_react@19.0.0__react@19.0.0\node_modules\next\dist\server\lib\dev-bundler-service.js:39:55)
+    at DevServer.getCompilationError (file://C:\Users\27766\Desktop\mzansi-footwear\shop\node_modules\.pnpm\next@15.3.2_react-dom@19.0.0_react@19.0.0__react@19.0.0\node_modules\next\dist\server\dev\next-dev-server.js:643:42)
+    at DevServer.findPageComponents (file://C:\Users\27766\Desktop\mzansi-footwear\shop\node_modules\.pnpm\next@15.3.2_react-dom@19.0.0_react@19.0.0__react@19.0.0\node_modules\next\dist\server\dev\next-dev-server.js:613:43)
+    at async DevServer.renderErrorToResponseImpl (file://C:\Users\27766\Desktop\mzansi-footwear\shop\node_modules\.pnpm\next@15.3.2_react-dom@19.0.0_react@19.0.0__react@19.0.0\node_modules\next\dist\server\base-server.js:2614:26)
+
 Application error: a client-side exception has occurred (see the browser console for more information).
 
-Console Error
-Server
+I've identified a server-client component conflict on the products page: the server-side ProductsPage directly renders the client-side ProductFilters.
 
 
-Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
-  {id: ..., productId: ..., size: "8", color: ..., material: ..., sku: ..., price: Decimal, comparePrice: ..., costPrice: ..., stock: ..., lowStockThreshold: ..., weight: ..., isActive: ..., createdAt: ..., updatedAt: ...}
-                                                                                   ^^^^^^^
-
-src\features\product\components\product-catalog.tsx (172:9) @ ProductCatalogContent
 
 
-  170 |
-  171 |         {/* Products Grid */}
-> 172 |         <ProductGrid products={clientSafeProducts} />
-      |         ^
-  173 |
-  174 |         {/* Pagination */}
-  175 |         {showPagination && pagination.pages > 1 && (
-Call Stack
+Okay, here's the plan to fix the server/client component issue on your products page, incorporating your feedback on naming and structure.
+
+The Problem:
+
+Your products/page.tsx is a Server Component that's incorrectly trying to render <ProductFilters />, a Client Component. This won't work in Next.js.
+
+The Plan: Component-Based Separation
+
+I'll create a new component structure to properly separate server and client responsibilities:
+
+New ProductCatalogContainer Component:
+
+File: product-catalog-container.tsx
+Location: src/components/catalog/
+Type: Client Component ('use client').
+Purpose: It will manage the product catalog's layout, including the filter sidebar and the main product grid area. It will render <ProductFilters /> and provide a slot for the server-rendered products.
+Modify products/page.tsx:
+
+Type: Server Component.
+Purpose: It will handle data fetching (via ProductCatalog) and page assembly.
+Changes: I will update it to use the new ProductCatalogContainer, passing the server-rendered <ProductCatalog /> component as a child.
+This structure ensures data fetching and the initial product list render on the server for performance, while the interactive filter sidebar renders on the client. It's a clean, maintainable, and standard Next.js approach.
