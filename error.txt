@@ -1,17 +1,21 @@
-The filter component issue has been resolved by implementing proper client-server architecture:
+Application error: a client-side exception has occurred (see the browser console for more information).
 
-1. Updated ProductFilters component to fetch filter options (categories, brands, sizes, colors) from the existing API endpoint (/api/filters)
-2. Removed hardcoded filter options and replaced with dynamic data from the database
-3. Added loading states for better user experience
-4. Improved error handling for price range parameters
-5. Added product counts to filter options for better UX
-6. Enhanced color display with actual color swatches
-7. Removed unnecessary Suspense wrapper in ProductsPage
+Console Error
+Server
 
 
-The component now properly follows the client-server pattern used throughout the application, where:
-- Server-side API routes provide data through /api/filters
-- Client-side components fetch and display this data
-- URL parameters are properly handled for all filter types (size, color, price range, categories, brands)
+Only plain objects can be passed to Client Components from Server Components. Decimal objects are not supported.
+  {id: ..., productId: ..., size: "8", color: ..., material: ..., sku: ..., price: Decimal, comparePrice: ..., costPrice: ..., stock: ..., lowStockThreshold: ..., weight: ..., isActive: ..., createdAt: ..., updatedAt: ...}
+                                                                                   ^^^^^^^
 
-This resolves the client-side exception that was occurring when navigating to URLs like /products?size=9
+src\features\product\components\product-catalog.tsx (172:9) @ ProductCatalogContent
+
+
+  170 |
+  171 |         {/* Products Grid */}
+> 172 |         <ProductGrid products={clientSafeProducts} />
+      |         ^
+  173 |
+  174 |         {/* Pagination */}
+  175 |         {showPagination && pagination.pages > 1 && (
+Call Stack
