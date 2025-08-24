@@ -12,22 +12,14 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { BillboardContainer } from "@/components/catalog/billboard-container";
+import type { SearchParams } from "nuqs/server";
 
-interface ProductsPageProps {
-  searchParams: {
-    page?: string;
-    sort?: string;
-    category?: string;
-    brand?: string;
-    minPrice?: string;
-    maxPrice?: string;
-    search?: string;
-    size?: string;
-    color?: string;
-  };
-}
+type ProductsPageProps = {
+  searchParams: Promise<SearchParams>;
+};
 
-export default function ProductsPage({ searchParams }: ProductsPageProps) {
+export default async function ProductsPage({ searchParams }: ProductsPageProps) {
+  const resolvedSearchParams = await searchParams;
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -100,7 +92,7 @@ export default function ProductsPage({ searchParams }: ProductsPageProps) {
               }
             >
               <ProductCatalog
-                searchParams={searchParams}
+                searchParams={resolvedSearchParams}
                 showSort={true}
                 showPagination={true}
                 limit={12}
