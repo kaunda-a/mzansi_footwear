@@ -7,8 +7,14 @@ import { FeaturedProducts } from "@/components/catalog/featured-products";
 import { ProductCatalog } from "@/features/product/components/product-catalog";
 import { TrendingContainer } from "@/components/catalog/trending/trending-container";
 import { Suspense } from "react";
+import type { SearchParams } from "nuqs/server";
 
-export default function HomePage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+type PageProps = {
+  searchParams: Promise<SearchParams>;
+};
+
+export default async function HomePage({ searchParams }: PageProps) {
+  const resolvedSearchParams = await searchParams;
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
@@ -28,7 +34,7 @@ export default function HomePage({ searchParams }: { searchParams: { [key: strin
 
         {/* Main Content */}
         <div className="container mx-auto px-4 py-8">
-          <TrendingContainer searchParams={searchParams} />
+          <TrendingContainer searchParams={resolvedSearchParams} />
         </div>
 
         {/* Popular Products */}

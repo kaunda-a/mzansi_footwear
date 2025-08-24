@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import { TrendingContentClient } from "./trending-content-client";
+import { TrendingProductCatalog } from "@/features/product/components/trending-product-catalog";
 
 interface TrendingContainerProps {
   searchParams: {
@@ -15,5 +17,16 @@ interface TrendingContainerProps {
 }
 
 export function TrendingContainer({ searchParams }: TrendingContainerProps) {
-  return <TrendingContentClient searchParams={searchParams} />;
+  return (
+    <TrendingContentClient>
+      <Suspense fallback={<div>Loading...</div>}>
+        <TrendingProductCatalog
+          searchParams={searchParams}
+          showSort={true}
+          showPagination={true}
+          limit={12}
+        />
+      </Suspense>
+    </TrendingContentClient>
+  );
 }

@@ -5,6 +5,14 @@ import { ProductSort as ProductSortComponent } from "./product-sort";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Api } from "@/lib/api";
 
+interface ProductData {
+  products: any[];
+  pagination: {
+    total: number;
+    pages: number;
+  };
+}
+
 interface TrendingProductCatalogProps {
   searchParams: {
     page?: string;
@@ -20,6 +28,10 @@ interface TrendingProductCatalogProps {
   showSort?: boolean;
   showPagination?: boolean;
   limit?: number;
+}
+
+interface TrendingProductCatalogContentProps extends TrendingProductCatalogProps {
+  productData: ProductData;
 }
 
 function ProductCatalogSkeleton() {
@@ -48,134 +60,91 @@ function ProductCatalogSkeleton() {
   );
 }
 
-async function TrendingProductCatalogContent({
+function TrendingProductCatalogContent({
   searchParams,
   showSort = true,
   showPagination = true,
   limit = 12,
-}: TrendingProductCatalogProps): Promise<React.ReactElement> {
+  productData,
+}: TrendingProductCatalogContentProps) {
+  const page = parseInt(searchParams.page || "1");
+  const { products: clientSafeProducts, pagination } = productData;
+
+  return (
+    <div className="space-y-6">
+      {/* Results Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="text-sm text-muted-foreground">
+          {pagination.total === 0 ? (
+            "No products found"
+          ) : (
+            <>
+              Showing {(page - 1) * limit + 1}-
+              {Math.min(page * limit, pagination.total)} of {pagination.total}{" "}
+              trending products
+            </>
+          )}
+        </div>
+
+        {showSort && clientSafeProducts.length > 0 && (
+          <ProductSortComponent currentSort="trending" />
+        )}
+      </div>
+
+      {/* Products Grid */}
+      <ProductGrid products={clientSafeProducts} />
+
+      {/* Pagination */}
+      {showPagination && pagination.pages > 1 && (
+        <ProductPagination
+          currentPage={page}
+          totalPages={pagination.pages}
+          totalItems={pagination.total}
+        />
+      )}
+    </div>
+  );
+}
+
+export async function TrendingProductCatalog(props: TrendingProductCatalogProps) {
+  const { searchParams, limit = 12 } = props;
   const page = parseInt(searchParams.page || "1");
 
   try {
-    // Use direct service call on server-side
-    if (typeof window === "undefined") {
-      // Server-side - call our custom trending API
-      const baseUrl = process.env.NEXTAUTH_URL || process.env.VERCEL_URL || "http://localhost:3000";
-      const searchParamsObj = new URLSearchParams();
-      
-      if (searchParams.page) searchParamsObj.append("page", searchParams.page);
-      if (limit) searchParamsObj.append("limit", limit.toString());
-      if (searchParams.category) searchParamsObj.append("category", searchParams.category);
-      if (searchParams.brand) searchParamsObj.append("brand", searchParams.brand);
-      if (searchParams.minPrice) searchParamsObj.append("minPrice", searchParams.minPrice);
-      if (searchParams.maxPrice) searchParamsObj.append("maxPrice", searchParams.maxPrice);
-      if (searchParams.size) searchParamsObj.append("size", searchParams.size);
-      if (searchParams.color) searchParamsObj.append("color", searchParams.color);
+    // Server-side - call our custom trending API
+    const baseUrl = process.env.NEXTAUTH_URL || process.env.VERCEL_URL || "http://localhost:3000";
+    const searchParamsObj = new URLSearchParams();
+    
+    if (searchParams.page) searchParamsObj.append("page", searchParams.page);
+    if (limit) searchParamsObj.append("limit", limit.toString());
+    if (searchParams.category) searchParamsObj.append("category", searchParams.category);
+    if (searchParams.brand) searchParamsObj.append("brand", searchParams.brand);
+    if (searchParams.minPrice) searchParamsObj.append("minPrice", searchParams.minPrice);
+    if (searchParams.maxPrice) searchParamsObj.append("maxPrice", searchParams.maxPrice);
+    if (searchParams.size) searchParamsObj.append("size", searchParams.size);
+    if (searchParams.color) searchParamsObj.append("color", searchParams.color);
 
-      const response = await fetch(
-        `${baseUrl}/api/trending?${searchParamsObj.toString()}`,
-        {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+    const response = await fetch(
+      `${baseUrl}/api/trending?${searchParamsObj.toString()}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
       }
+    );
 
-      const { products: clientSafeProducts, pagination } = await response.json();
-
-      return (
-        <div className="space-y-6">
-          {/* Results Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="text-sm text-muted-foreground">
-              {pagination.total === 0 ? (
-                "No products found"
-              ) : (
-                <>
-                  Showing {(page - 1) * limit + 1}-
-                  {Math.min(page * limit, pagination.total)} of {pagination.total}{" "}
-                  trending products
-                </>
-              )}
-            </div>
-
-            {showSort && clientSafeProducts.length > 0 && (
-              <ProductSortComponent currentSort="trending" />
-            )}
-          </div>
-
-          {/* Products Grid */}
-          <ProductGrid products={clientSafeProducts} />
-
-          {/* Pagination */}
-          {showPagination && pagination.pages > 1 && (
-            <ProductPagination
-              currentPage={page}
-              totalPages={pagination.pages}
-              totalItems={pagination.total}
-            />
-          )}
-        </div>
-      );
-    } else {
-      // Client-side fallback - use regular API but with default sort
-      const { products: clientSafeProducts, pagination } = await Api.getProducts({
-        page,
-        limit,
-        sort: "newest",
-        search: searchParams.search,
-        category: searchParams.category,
-        brand: searchParams.brand,
-        minPrice: searchParams.minPrice
-          ? parseFloat(searchParams.minPrice)
-          : undefined,
-        maxPrice: searchParams.maxPrice
-          ? parseFloat(searchParams.maxPrice)
-          : undefined,
-        size: searchParams.size,
-        color: searchParams.color,
-      });
-
-      return (
-        <div className="space-y-6">
-          {/* Results Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="text-sm text-muted-foreground">
-              {pagination.total === 0 ? (
-                "No products found"
-              ) : (
-                <>
-                  Showing {(page - 1) * limit + 1}-
-                  {Math.min(page * limit, pagination.total)} of {pagination.total}{" "}
-                  products
-                </>
-              )}
-            </div>
-
-            {showSort && clientSafeProducts.length > 0 && (
-              <ProductSortComponent currentSort="newest" />
-            )}
-          </div>
-
-          {/* Products Grid */}
-          <ProductGrid products={clientSafeProducts} />
-
-          {/* Pagination */}
-          {showPagination && pagination.pages > 1 && (
-            <ProductPagination
-              currentPage={page}
-              totalPages={pagination.pages}
-              totalItems={pagination.total}
-            />
-          )}
-        </div>
-      );
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const productData = await response.json();
+
+    return (
+      <Suspense fallback={<ProductCatalogSkeleton />}>
+        <TrendingProductCatalogContent {...props} productData={productData} />
+      </Suspense>
+    );
   } catch (error) {
     console.error("Error loading trending products:", error);
     return (
@@ -187,12 +156,4 @@ async function TrendingProductCatalogContent({
       </div>
     );
   }
-}
-
-export function TrendingProductCatalog(props: TrendingProductCatalogProps) {
-  return (
-    <Suspense fallback={<ProductCatalogSkeleton />}>
-      <TrendingProductCatalogContent {...props} />
-    </Suspense>
-  );
 }
