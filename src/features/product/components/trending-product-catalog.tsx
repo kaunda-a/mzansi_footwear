@@ -70,6 +70,18 @@ function TrendingProductCatalogContent({
   const page = parseInt(searchParams.page || "1");
   const { products: clientSafeProducts, pagination } = productData;
 
+  // Handle empty state
+  if (!clientSafeProducts || clientSafeProducts.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <h3 className="text-lg font-semibold mb-2">No trending products found</h3>
+        <p className="text-muted-foreground">
+          Check back later for trending items.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Results Header */}
@@ -131,6 +143,10 @@ export async function TrendingProductCatalog(props: TrendingProductCatalogProps)
         headers: {
           "Content-Type": "application/json",
         },
+        // Add cache control to prevent aggressive caching
+        cache: "no-store",
+        // Add next.js fetch options
+        next: { revalidate: 300 } // revalidate every 5 minutes
       }
     );
 
@@ -147,6 +163,7 @@ export async function TrendingProductCatalog(props: TrendingProductCatalogProps)
     );
   } catch (error) {
     console.error("Error loading trending products:", error);
+    // Return a fallback UI instead of throwing an error
     return (
       <div className="text-center py-12">
         <h3 className="text-lg font-semibold mb-2">Something went wrong</h3>

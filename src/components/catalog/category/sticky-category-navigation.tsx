@@ -16,19 +16,38 @@ interface Category {
 export function StickyCategoryNavigation() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // Fetch categories from API
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/api/categories/trending");
-        if (response.ok) {
-          const data = await response.json();
-          setCategories(data.categories || []);
+        setError(null);
+        const response = await fetch("/api/categories/trending", {
+          // Add cache control to prevent aggressive caching
+          cache: "no-store",
+          // Add next.js fetch options
+          next: { revalidate: 300 } // revalidate every 5 minutes
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
+        
+        const data = await response.json();
+        setCategories(data.categories || []);
       } catch (error) {
         console.error("Error fetching categories:", error);
+        setError("Failed to load categories");
+        // Set some default categories as fallback
+        setCategories([
+          { id: "1", name: "Sneakers", slug: "sneakers", productCount: 24 },
+          { id: "2", name: "Boots", slug: "boots", productCount: 18 },
+          { id: "3", name: "Sandals", slug: "sandals", productCount: 15 },
+          { id: "4", name: "Formal", slug: "formal", productCount: 12 },
+          { id: "5", name: "Casual", slug: "casual", productCount: 20 },
+        ]);
       } finally {
         setLoading(false);
       }
@@ -49,6 +68,22 @@ export function StickyCategoryNavigation() {
     // Scroll to top or main content
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
+  // Show error state if needed
+  if (error && !loading && categories.length === 0) {
+    return (
+      <div className="sticky top-16 z-40 bg-background border-b py-4">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold">Shop by Category</h3>
+            <div className="text-sm text-muted-foreground">
+              Categories temporarily unavailable
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
