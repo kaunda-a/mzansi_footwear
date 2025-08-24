@@ -3,7 +3,7 @@ import Header from "@/components/layout/header";
 import { StoreFooter } from "@/components/layout/footer";
 import { TrendingProductCatalog } from "@/features/product/components/trending-product-catalog";
 import { ProductFilters } from "@/features/product/components/product-filters";
-import { CategorySelector } from "@/components/catalog/category-selector";
+import { CategorySelector } from "@/components/catalog/category/category-selector";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -12,7 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { BillboardContainer } from "@/components/catalog/billboard-container";
+import { BillboardContainer } from "@/components/catalog/billboard/billboard-container";
 
 interface TrendingPageProps {
   searchParams: Promise<{

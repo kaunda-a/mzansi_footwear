@@ -1,8 +1,6 @@
-"use client";
-
 import { ProductFilters } from "@/features/product/components/product-filters";
 
-export function ProductCatalogContainer({ children }: { children: React.ReactNode }) {
+export default function ProductCatalogContainer({ children }: { children: React.ReactNode }) {
   return (
     <div className="lg:grid lg:grid-cols-4 lg:gap-8">
       {/* Filters Sidebar */}

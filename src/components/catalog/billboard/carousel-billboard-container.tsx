@@ -1,5 +1,5 @@
 import { BillboardService, BillboardPosition } from "@/lib/services";
-import { CarouselBillboard } from "@/components/catalog/carousel-billboard";
+import { CarouselBillboard } from "./carousel-billboard";
 
 interface CarouselBillboardContainerProps {
   position: BillboardPosition;

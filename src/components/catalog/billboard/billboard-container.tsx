@@ -1,5 +1,5 @@
 import { BillboardService, BillboardPosition } from "@/lib/services";
-import { Billboard, CompactBillboard } from "@/components/catalog/billboard";
+import { Billboard, CompactBillboard } from "./billboard";
 
 interface BillboardContainerProps {
   position: BillboardPosition;

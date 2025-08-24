@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import Header from "@/components/layout/header";
 import { StoreFooter } from "@/components/layout/footer";
 import { ProductCatalog } from "@/features/product/components/product-catalog";
-import { ProductCatalogContainer } from "@/components/catalog/product-catalog-container";
+import ProductCatalogContainer from "@/components/catalog/featured/product-catalog-container";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +11,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { BillboardContainer } from "@/components/catalog/billboard-container";
+import { BillboardContainer } from "@/components/catalog/billboard/billboard-container";
 import type { SearchParams } from "nuqs/server";
 
 type ProductsPageProps = {

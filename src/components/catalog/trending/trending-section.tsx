@@ -1,7 +1,7 @@
 "use client";
 
 import { ProductFilters } from "@/features/product/components/product-filters";
-import { CategorySelector } from "@/components/catalog/category-selector";
+import { CategorySelector } from "../category/category-selector";
 import { Suspense } from "react";
 
 export function TrendingSection({ children }: { children: React.ReactNode }) {
