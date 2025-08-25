@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { BillboardService } from "@/lib/services";
+import { Api } from "@/lib/api";
 import type { BillboardWithCreator } from "@/lib/services";
 import { IconX, IconExternalLink, IconBolt } from "@tabler/icons-react";
 import Link from "next/link";
@@ -14,8 +14,8 @@ export function HeaderBillboard() {
   useEffect(() => {
     const fetchBillboards = async () => {
       try {
-        const data = await BillboardService.getActiveBillboards("HEADER");
-        setBillboards(data);
+        const result = await Api.getBillboards({ position: "HEADER" });
+        setBillboards(result.billboards);
       } catch (error) {
         console.error("Error fetching header billboards:", error);
       } finally {
