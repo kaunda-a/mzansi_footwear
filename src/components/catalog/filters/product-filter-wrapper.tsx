@@ -1,11 +1,11 @@
 "use client";
 
-import { ProductFilters } from "@/features/product/components/product-filters";
-import { CategorySelector } from "@/components/catalog/category/category-selector";
+import { HomepageTrendingFilters } from "./homepage-trending-filters";
+import { HomepageCategorySelector } from "./homepage-category-selector";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { IconFilter, IconX } from "@tabler/icons-react";
+import { IconFilter, IconX, IconTrendingUp } from "@tabler/icons-react";
 
 export function ProductFilterWrapper({ 
   children,
@@ -26,17 +26,17 @@ export function ProductFilterWrapper({
             onClick={() => setShowFilters(!showFilters)}
             className="w-full max-w-xs"
           >
-            <IconFilter className="mr-2 h-4 w-4" />
-            {showFilters ? "Hide Filters" : "Show Filters"}
+            <IconTrendingUp className="mr-2 h-4 w-4" />
+            {showFilters ? "Hide Filters" : "Show Trending Filters"}
           </Button>
         </div>
       )}
 
       <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-        {/* Category Selector and Filters Sidebar - Wider column with sticky positioning */}
+        {/* Enhanced Trending Filters - Sleek and modern */}
         <div className={`${showFilters ? "block" : "hidden"} lg:block lg:col-span-3`}>
           <div className="lg:sticky lg:top-20 space-y-6">
-            <CategorySelector />
+            <HomepageCategorySelector />
             <Suspense
               fallback={
                 <div className="space-y-4">
@@ -49,12 +49,12 @@ export function ProductFilterWrapper({
                 </div>
               }
             >
-              <ProductFilters />
+              <HomepageTrendingFilters />
             </Suspense>
           </div>
         </div>
 
-        {/* Products Grid - Wider column to accommodate products */}
+        {/* Products Grid */}
         <div className="lg:col-span-9">
           {children}
         </div>
