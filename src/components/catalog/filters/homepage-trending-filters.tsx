@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { IconFilter, IconX, IconTrendingUp, IconCategory, IconBrand } from "@tabler/icons-react";
+import { IconFilter, IconX, IconTrendingUp, IconCategory, IconBuildingStore } from "@tabler/icons-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface Category {
@@ -222,7 +222,7 @@ export function HomepageTrendingFilters() {
             <AccordionItem value="brands">
               <AccordionTrigger className="py-2 hover:no-underline">
                 <div className="flex items-center gap-2">
-                  <IconBrand className="h-4 w-4" />
+                  <IconBuildingStore className="h-4 w-4" />
                   <span className="font-medium text-sm">Popular Brands</span>
                 </div>
               </AccordionTrigger>
