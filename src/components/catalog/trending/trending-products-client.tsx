@@ -4,7 +4,7 @@ import { ProductGrid } from "@/features/product/components/product-grid";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { IconArrowRight } from "@tabler/icons-react";
+import { IconArrowRight, IconFilter } from "@tabler/icons-react";
 
 interface ProductData {
   products: any[];
@@ -80,10 +80,16 @@ export function TrendingProductsClient({ productData }: TrendingProductsClientPr
         <div className="text-sm text-muted-foreground">
           Showing {Math.min(productData.products.length, 8)} trending products
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Link href="/trending">
             <Button variant="outline" size="sm">
-              View All Products
+              <IconFilter className="mr-2 h-4 w-4" />
+              Filter Products
+            </Button>
+          </Link>
+          <Link href="/trending">
+            <Button variant="outline" size="sm">
+              View All
               <IconArrowRight className="ml-2 h-4 w-4" />
             </Button>
           </Link>
