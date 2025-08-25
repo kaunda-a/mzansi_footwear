@@ -3,8 +3,7 @@ import { ProductGrid } from "./product-grid";
 import { ProductPagination } from "./product-pagination";
 import { ProductSort as ProductSortComponent } from "./product-sort";
 import { Skeleton } from "@/components/ui/skeleton";
-import { db } from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
+import { Api } from "@/lib/api";
 
 interface ProductData {
   products: any[];
@@ -119,110 +118,43 @@ function TrendingProductCatalogContent({
   );
 }
 
+// This component should only be used in Server Components
+// It will automatically use server-side API calls when on server
 export async function TrendingProductCatalog(props: TrendingProductCatalogProps) {
   const { searchParams, limit = 12 } = props;
-  const page = parseInt(searchParams.page || "1");
 
   try {
-    // Server-side - fetch trending products directly from database
-    const limitNum = parseInt(limit.toString());
-    const skip = (page - 1) * limitNum;
-
-    // Build where clause
-    const where: Prisma.ProductWhereInput = {
-      isActive: true,
-      status: "ACTIVE",
-    };
-
-    if (searchParams.category) where.categoryId = searchParams.category;
-    if (searchParams.brand) where.brandId = searchParams.brand;
-
-    // Size and color filtering (based on variants)
-    if (searchParams.size || searchParams.color) {
-      where.variants = {
-        some: {
-          ...(searchParams.size && { size: searchParams.size }),
-          ...(searchParams.color && { color: searchParams.color }),
-        },
-      };
-    }
-
-    // Price filtering (based on variants)
-    if (searchParams.minPrice || searchParams.maxPrice) {
-      const existingVariantsFilter = where.variants?.some || {};
-      where.variants = {
-        some: {
-          ...existingVariantsFilter,
-          price: {
-            ...(searchParams.minPrice && { gte: parseFloat(searchParams.minPrice) }),
-            ...(searchParams.maxPrice && { lte: parseFloat(searchParams.maxPrice) }),
-          },
-        },
-      };
-    }
-
-    // For trending products, we'll order by reviewCount and createdAt
-    const orderBy: Prisma.ProductOrderByWithRelationInput[] = [
-      { reviewCount: "desc" },
-      { createdAt: "desc" }
-    ];
-
-    const [products, total] = await Promise.all([
-      db.product.findMany({
-        where,
-        include: {
-          category: true,
-          brand: true,
-          variants: {
-            orderBy: { price: "asc" },
-            take: 1, // Get cheapest variant for display
-          },
-          images: {
-            orderBy: { sortOrder: "asc" },
-          },
-          _count: {
-            select: { reviews: true },
-          },
-          reviews: {
-            select: { rating: true },
-          },
-        },
-        orderBy,
-        skip,
-        take: limitNum,
-      }),
-      db.product.count({ where }),
-    ]);
-
-    const formattedProducts = products.map((product: any) => {
-      const reviews = product.reviews || [];
-      const averageRating =
-        reviews.length > 0
-          ? reviews.reduce(
-              (sum: number, review: any) => sum + review.rating,
-              0,
-            ) / reviews.length
-          : 0;
-
-      return {
-        ...product,
-        variants: product.variants.map((variant: any) => ({
-          ...variant,
-          price: Number(variant.price),
-          comparePrice: variant.comparePrice ? Number(variant.comparePrice) : null,
-          costPrice: variant.costPrice ? Number(variant.costPrice) : null,
-          weight: variant.weight ? Number(variant.weight) : null,
-        })),
-        averageRating,
-        reviewCount: product._count.reviews,
-      };
+    // Use the Api service which handles server vs client automatically
+    const { products: clientSafeProducts, pagination } = await Api.getProducts({
+      page: searchParams.page ? parseInt(searchParams.page) : 1,
+      limit,
+      // For trending, we'll modify the API service to support a trending sort
+      sort: "trending",
+      category: searchParams.category,
+      brand: searchParams.brand,
+      minPrice: searchParams.minPrice ? parseFloat(searchParams.minPrice) : undefined,
+      maxPrice: searchParams.maxPrice ? parseFloat(searchParams.maxPrice) : undefined,
+      size: searchParams.size,
+      color: searchParams.color,
     });
 
+    // Check if we have products
+    if (!clientSafeProducts || clientSafeProducts.length === 0) {
+      return (
+        <div className="text-center py-12">
+          <h3 className="text-lg font-semibold mb-2">No trending products found</h3>
+          <p className="text-muted-foreground">
+            Check back later for trending items.
+          </p>
+        </div>
+      );
+    }
+
     const productData = {
-      products: formattedProducts,
+      products: clientSafeProducts,
       pagination: {
-        total,
-        pages: Math.ceil(total / limitNum),
+        total: pagination.total,
+        pages: pagination.pages,
       },
     };
 

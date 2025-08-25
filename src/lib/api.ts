@@ -106,6 +106,9 @@ export class Api {
               return { field: "name" as const, direction: "asc" as const };
             case "name-z-a":
               return { field: "name" as const, direction: "desc" as const };
+            case "trending":
+              // For trending, we sort by reviewCount first, then by createdAt
+              return { field: "reviewCount" as const, direction: "desc" as const };
             case "newest":
             default:
               return {

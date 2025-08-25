@@ -107,14 +107,22 @@ export class ProductService {
       };
     }
 
-    const orderBy: any = {};
+    let orderBy: any = {};
     if (sort.field === "price") {
       // Sort by minimum variant price
-      orderBy.variants = {
-        _min: {
-          price: sort.direction,
+      orderBy = {
+        variants: {
+          _min: {
+            price: sort.direction,
+          },
         },
       };
+    } else if (sort.field === "reviewCount") {
+      // For trending, we sort by reviewCount first, then by createdAt
+      orderBy = [
+        { reviewCount: sort.direction },
+        { createdAt: "desc" }
+      ];
     } else {
       orderBy[sort.field] = sort.direction;
     }
