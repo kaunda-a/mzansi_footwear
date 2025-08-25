@@ -9,10 +9,6 @@ import { CategorySelector } from "@/components/catalog/category/category-selecto
 import { ProductFilters } from "@/features/product/components/product-filters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
-import { CategorySelector } from "./category-selector";
-import { ProductFilters } from "@/features/product/components/product-filters";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Suspense } from "react";
 
 interface ProductData {
   products: any[];
