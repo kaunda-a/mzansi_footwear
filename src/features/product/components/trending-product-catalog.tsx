@@ -3,7 +3,8 @@ import { ProductGrid } from "./product-grid";
 import { ProductPagination } from "./product-pagination";
 import { ProductSort as ProductSortComponent } from "./product-sort";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Api } from "@/lib/api";
+import { db } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 interface ProductData {
   products: any[];
@@ -123,38 +124,107 @@ export async function TrendingProductCatalog(props: TrendingProductCatalogProps)
   const page = parseInt(searchParams.page || "1");
 
   try {
-    // Server-side - call our custom trending API
-    const baseUrl = process.env.NEXTAUTH_URL || process.env.VERCEL_URL || "http://localhost:3000";
-    const searchParamsObj = new URLSearchParams();
-    
-    if (searchParams.page) searchParamsObj.append("page", searchParams.page);
-    if (limit) searchParamsObj.append("limit", limit.toString());
-    if (searchParams.category) searchParamsObj.append("category", searchParams.category);
-    if (searchParams.brand) searchParamsObj.append("brand", searchParams.brand);
-    if (searchParams.minPrice) searchParamsObj.append("minPrice", searchParams.minPrice);
-    if (searchParams.maxPrice) searchParamsObj.append("maxPrice", searchParams.maxPrice);
-    if (searchParams.size) searchParamsObj.append("size", searchParams.size);
-    if (searchParams.color) searchParamsObj.append("color", searchParams.color);
+    // Server-side - fetch trending products directly from database
+    const limitNum = parseInt(limit.toString());
+    const skip = (page - 1) * limitNum;
 
-    const response = await fetch(
-      `${baseUrl}/api/trending?${searchParamsObj.toString()}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
+    // Build where clause
+    const where: Prisma.ProductWhereInput = {
+      isActive: true,
+      status: "ACTIVE",
+    };
+
+    if (searchParams.category) where.categoryId = searchParams.category;
+    if (searchParams.brand) where.brandId = searchParams.brand;
+
+    // Size and color filtering (based on variants)
+    if (searchParams.size || searchParams.color) {
+      where.variants = {
+        some: {
+          ...(searchParams.size && { size: searchParams.size }),
+          ...(searchParams.color && { color: searchParams.color }),
         },
-        // Add cache control to prevent aggressive caching
-        cache: "no-store",
-        // Add next.js fetch options
-        next: { revalidate: 300 } // revalidate every 5 minutes
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      };
     }
 
-    const productData = await response.json();
+    // Price filtering (based on variants)
+    if (searchParams.minPrice || searchParams.maxPrice) {
+      const existingVariantsFilter = where.variants?.some || {};
+      where.variants = {
+        some: {
+          ...existingVariantsFilter,
+          price: {
+            ...(searchParams.minPrice && { gte: parseFloat(searchParams.minPrice) }),
+            ...(searchParams.maxPrice && { lte: parseFloat(searchParams.maxPrice) }),
+          },
+        },
+      };
+    }
+
+    // For trending products, we'll order by reviewCount and createdAt
+    const orderBy: Prisma.ProductOrderByWithRelationInput[] = [
+      { reviewCount: "desc" },
+      { createdAt: "desc" }
+    ];
+
+    const [products, total] = await Promise.all([
+      db.product.findMany({
+        where,
+        include: {
+          category: true,
+          brand: true,
+          variants: {
+            orderBy: { price: "asc" },
+            take: 1, // Get cheapest variant for display
+          },
+          images: {
+            orderBy: { sortOrder: "asc" },
+          },
+          _count: {
+            select: { reviews: true },
+          },
+          reviews: {
+            select: { rating: true },
+          },
+        },
+        orderBy,
+        skip,
+        take: limitNum,
+      }),
+      db.product.count({ where }),
+    ]);
+
+    const formattedProducts = products.map((product: any) => {
+      const reviews = product.reviews || [];
+      const averageRating =
+        reviews.length > 0
+          ? reviews.reduce(
+              (sum: number, review: any) => sum + review.rating,
+              0,
+            ) / reviews.length
+          : 0;
+
+      return {
+        ...product,
+        variants: product.variants.map((variant: any) => ({
+          ...variant,
+          price: Number(variant.price),
+          comparePrice: variant.comparePrice ? Number(variant.comparePrice) : null,
+          costPrice: variant.costPrice ? Number(variant.costPrice) : null,
+          weight: variant.weight ? Number(variant.weight) : null,
+        })),
+        averageRating,
+        reviewCount: product._count.reviews,
+      };
+    });
+
+    const productData = {
+      products: formattedProducts,
+      pagination: {
+        total,
+        pages: Math.ceil(total / limitNum),
+      },
+    };
 
     return (
       <Suspense fallback={<ProductCatalogSkeleton />}>
