@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { IconArrowRight, IconFilter } from "@tabler/icons-react";
-import { CategorySelector } from "../category/category-selector";
+import { CategorySelector } from "@/components/catalog/category/category-selector";
 import { ProductFilters } from "@/features/product/components/product-filters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Suspense } from "react";
