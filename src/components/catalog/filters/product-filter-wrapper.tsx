@@ -30,13 +30,13 @@ export function ProductFilterWrapper({
         </div>
       )}
 
-      <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-        {/* Filters Sidebar - Sticky positioning */}
-        <div className={`${showFilters ? "block" : "hidden"} lg:block`}>
+      <div className="lg:grid lg:grid-cols-12 lg:gap-8">
+        {/* Filters Sidebar - Wider column with sticky positioning */}
+        <div className={`${showFilters ? "block" : "hidden"} lg:block lg:col-span-3`}>
           <div className="lg:sticky lg:top-20 space-y-6">
-            <div className="bg-muted p-4 rounded-lg">
-              <div className="flex justify-between items-center mb-3">
-                <h3 className="font-semibold">Filters</h3>
+            <div className="bg-muted p-6 rounded-lg">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold text-lg">Filters</h3>
                 <Button 
                   variant="ghost" 
                   size="sm" 
@@ -46,18 +46,20 @@ export function ProductFilterWrapper({
                   <IconX className="h-4 w-4" />
                 </Button>
               </div>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-muted-foreground mb-5">
                 Full filtering options available on dedicated pages
               </p>
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Link href="/trending">
-                  <Button variant="outline" size="sm" className="w-full">
-                    Filter Trending
+                  <Button variant="outline" size="sm" className="w-full justify-start">
+                    <IconFilter className="mr-2 h-4 w-4" />
+                    Filter Trending Products
                   </Button>
                 </Link>
                 <Link href="/products">
-                  <Button variant="outline" size="sm" className="w-full">
-                    All Products
+                  <Button variant="outline" size="sm" className="w-full justify-start">
+                    <IconFilter className="mr-2 h-4 w-4" />
+                    Browse All Products
                   </Button>
                 </Link>
               </div>
@@ -65,8 +67,8 @@ export function ProductFilterWrapper({
           </div>
         </div>
 
-        {/* Products Grid */}
-        <div className="lg:col-span-3">
+        {/* Products Grid - Narrower column to accommodate wider filters */}
+        <div className="lg:col-span-9">
           {children}
         </div>
       </div>
