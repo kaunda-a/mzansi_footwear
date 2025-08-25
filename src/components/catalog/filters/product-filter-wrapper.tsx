@@ -31,9 +31,9 @@ export function ProductFilterWrapper({
       )}
 
       <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-        {/* Filters Sidebar - Simple placeholder with link to full filtering */}
+        {/* Filters Sidebar - Sticky positioning */}
         <div className={`${showFilters ? "block" : "hidden"} lg:block`}>
-          <div className="sticky top-24 space-y-6">
+          <div className="lg:sticky lg:top-20 space-y-6">
             <div className="bg-muted p-4 rounded-lg">
               <div className="flex justify-between items-center mb-3">
                 <h3 className="font-semibold">Filters</h3>
