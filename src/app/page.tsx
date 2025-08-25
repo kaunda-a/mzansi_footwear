@@ -3,6 +3,8 @@ import { StoreFooter } from "@/components/layout/footer";
 import { MarqueeContainer } from "@/components/catalog/marquee/marquee-container";
 import { HeroBillboard } from "@/components/catalog/billboard/hero-billboard";
 import { SecondaryBillboard } from "@/components/catalog/billboard/secondary-billboard";
+import { HeaderBillboard } from "@/components/catalog/billboard/header-billboard";
+import { FooterBillboard } from "@/components/catalog/billboard/footer-billboard";
 import { FeaturedProducts } from "@/components/catalog/featured/featured-products";
 import { PopularProducts } from "@/components/catalog/featured/popular-products";
 import { TrendingProducts } from "@/components/catalog/trending/trending-products";
@@ -12,6 +14,9 @@ export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
+      
+      {/* New Header Billboard */}
+      <HeaderBillboard />
 
       <main className="flex-1">
         {/* Hero Carousel Billboard */}
@@ -38,6 +43,10 @@ export default function HomePage() {
       </main>
       
       <MarqueeContainer />
+      
+      {/* New Footer Billboard */}
+      <FooterBillboard />
+      
       <StoreFooter />
     </div>
   );
