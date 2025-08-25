@@ -11,7 +11,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { BillboardContainer } from "@/components/catalog/billboard/billboard-container";
+import { ProductPageBillboard } from "@/components/catalog/billboard/product-page-billboard";
 import type { SearchParams } from "nuqs/server";
 
 type ProductsPageProps = {
@@ -44,11 +44,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
 
         {/* Products Page Billboard */}
         <div className="container mx-auto px-4 py-4">
-          <BillboardContainer
-            position="HEADER"
-            compact={true}
-            className="h-32 md:h-40 rounded-lg"
-          />
+          <ProductPageBillboard />
         </div>
 
         {/* Page Header */}

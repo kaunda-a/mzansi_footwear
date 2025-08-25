@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { SidebarBillboard } from "@/components/catalog/billboard/sidebar-billboard";
 import {
   IconUser,
   IconPackage,
@@ -223,6 +224,11 @@ export function AccountSidebar() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Sidebar Billboard */}
+      <div className="mt-4">
+        <SidebarBillboard />
+      </div>
     </div>
   );
 }

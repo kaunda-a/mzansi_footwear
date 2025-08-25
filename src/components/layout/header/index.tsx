@@ -5,6 +5,7 @@ import { Separator } from "../../ui/separator";
 import SearchInput from "../../search-input";
 import { ThemeSelector } from "../../theme-selector";
 import { ModeToggle } from "../ThemeToggle/theme-toggle";
+import { ModalBillboard } from "@/components/catalog/billboard/modal-billboard";
 import { motion } from "motion/react";
 import Link from "next/link";
 
@@ -72,6 +73,9 @@ export function Header() {
           </motion.div>
         </div>
       </div>
+      
+      {/* Modal Billboard */}
+      <ModalBillboard />
     </motion.header>
   );
 }

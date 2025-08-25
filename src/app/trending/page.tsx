@@ -12,7 +12,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { BillboardContainer } from "@/components/catalog/billboard/billboard-container";
+import { ProductPageBillboard } from "@/components/catalog/billboard/product-page-billboard";
 
 interface TrendingPageProps {
   searchParams: Promise<{
@@ -26,7 +26,7 @@ interface TrendingPageProps {
     size?: string;
     color?: string;
   }>;
-}
+};
 
 export default async function TrendingPage({
   searchParams,
@@ -57,11 +57,7 @@ export default async function TrendingPage({
 
         {/* Trending Page Billboard */}
         <div className="container mx-auto px-4 py-4">
-          <BillboardContainer
-            position="HEADER"
-            compact={true}
-            className="h-32 md:h-40 rounded-lg"
-          />
+          <ProductPageBillboard />
         </div>
 
         {/* Page Header */}

@@ -10,6 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { auth } from "@/lib/auth";
+import { CheckoutBillboard } from "@/components/catalog/billboard/checkout-billboard";
 
 export const metadata = {
   title: "Checkout - Mzansi Footwear",
@@ -42,6 +43,11 @@ export default async function CheckoutPage() {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
+        </div>
+
+        {/* Checkout Billboard */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <CheckoutBillboard />
         </div>
 
         {/* Checkout Content */}

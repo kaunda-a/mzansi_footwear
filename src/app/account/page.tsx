@@ -4,6 +4,8 @@ import { SearchParams } from "nuqs/server";
 import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
 import { AccountAnalytics } from "@/components/account/account-analytics";
 import { AccountLayout } from "@/components/account/account-layout";
+import { DashboardTopBillboard } from "@/components/catalog/billboard/dashboard-top-billboard";
+import { DashboardBottomBillboard } from "@/components/catalog/billboard/dashboard-bottom-billboard";
 
 export const metadata: Metadata = {
   title: "My Account | Mzansi Footwear",
@@ -23,6 +25,9 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
       title="Account Overview"
       description="Welcome back! Here's a summary of your account activity and quick access to your important information."
     >
+      {/* Dashboard Top Billboard */}
+      <DashboardTopBillboard />
+      
       <Suspense
         fallback={
           <DataTableSkeleton columnCount={3} rowCount={8} filterCount={0} />
@@ -30,6 +35,9 @@ export default async function AccountPage({ searchParams }: AccountPageProps) {
       >
         <AccountAnalytics />
       </Suspense>
+      
+      {/* Dashboard Bottom Billboard */}
+      <DashboardBottomBillboard />
     </AccountLayout>
   );
 }
