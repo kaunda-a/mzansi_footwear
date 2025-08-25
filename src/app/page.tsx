@@ -21,8 +21,10 @@ export default function HomePage() {
         <CategorySection />
 
         {/* Trending Products */}
-        <div className="container mx-auto px-4 py-8">
-          <TrendingProducts />
+        <div className="bg-muted/30">
+          <div className="container mx-auto px-4 py-8">
+            <TrendingProducts />
+          </div>
         </div>
 
         {/* Popular Products */}
