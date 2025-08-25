@@ -48,7 +48,7 @@ export type ProductFilters = {
 };
 
 export type ProductSort = {
-  field: "name" | "createdAt" | "updatedAt" | "price";
+  field: "name" | "createdAt" | "updatedAt" | "price" | "reviewCount";
   direction: "asc" | "desc";
 };
 
