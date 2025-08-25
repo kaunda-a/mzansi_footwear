@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
+import { motion } from "motion/react";
+import { IconChevronLeft, IconChevronRight, IconCategory, IconCategory2, IconShoe, IconHanger } from "@tabler/icons-react";
 
 interface Category {
   id: string;
@@ -13,10 +14,33 @@ interface Category {
   productCount: number;
 }
 
+const categoryIcons = [
+  IconCategory,
+  IconCategory2,
+  IconShoe,
+  IconHanger,
+];
+
 export function StickyCategoryNavigation() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  
+  // Animation variants for marquee effect
+  const marqueeVariants = {
+    animate: {
+      x: ["0%", "-50%"],
+      transition: {
+        x: {
+          repeat: Infinity,
+          repeatType: "loop",
+          duration: 20,
+          ease: "linear",
+        },
+      },
+    },
+  };
 
   // Fetch categories from API
   useEffect(() => {
@@ -72,11 +96,11 @@ export function StickyCategoryNavigation() {
   // Show error state if needed
   if (error && !loading && categories.length === 0) {
     return (
-      <div className="sticky top-16 z-40 bg-background border-b py-4">
+      <div className="sticky top-16 z-40 bg-gradient-to-r from-background to-muted border-b py-4 shadow-sm">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold">Shop by Category</h3>
-            <div className="text-sm text-muted-foreground">
+            <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Shop by Category</h3>
+            <div className="text-sm text-muted-foreground italic">
               Categories temporarily unavailable
             </div>
           </div>
@@ -87,18 +111,18 @@ export function StickyCategoryNavigation() {
 
   if (loading) {
     return (
-      <div className="sticky top-16 z-40 bg-background border-b py-4">
+      <div className="sticky top-16 z-40 bg-gradient-to-r from-background to-muted border-b py-4 shadow-sm">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between">
-            <Skeleton className="h-6 w-32" />
+          <div className="flex items-center justify-between mb-3">
+            <Skeleton className="h-7 w-40 bg-muted-foreground/20" />
             <div className="flex gap-2">
-              <Skeleton className="h-8 w-8 rounded-full" />
-              <Skeleton className="h-8 w-8 rounded-full" />
+              <Skeleton className="h-9 w-9 rounded-full bg-muted-foreground/20" />
+              <Skeleton className="h-9 w-9 rounded-full bg-muted-foreground/20" />
             </div>
           </div>
-          <div className="flex gap-2 py-2 mt-2">
+          <div className="flex gap-3 py-2">
             {[...Array(6)].map((_, i) => (
-              <Skeleton key={i} className="h-10 w-24 rounded-full" />
+              <Skeleton key={i} className="h-11 w-28 rounded-full bg-muted-foreground/20" />
             ))}
           </div>
         </div>
@@ -107,58 +131,85 @@ export function StickyCategoryNavigation() {
   }
 
   return (
-    <div className="sticky top-16 z-40 bg-background border-b py-4">
+    <div className="sticky top-16 z-40 bg-gradient-to-r from-background to-muted/30 border-b border-border/50 py-4 backdrop-blur-sm shadow-md">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Shop by Category</h3>
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-tight">
+            Shop by Category
+          </h3>
           <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="h-8 w-8 rounded-full"
-              onClick={() => document.getElementById('sticky-category-scroll')?.scrollBy({ left: -150, behavior: 'smooth' })}
-            >
-              <IconChevronLeft className="h-4 w-4" />
-            </Button>
-            <Button 
-              variant="outline" 
-              size="icon" 
-              className="h-8 w-8 rounded-full"
-              onClick={() => document.getElementById('sticky-category-scroll')?.scrollBy({ left: 150, behavior: 'smooth' })}
-            >
-              <IconChevronRight className="h-4 w-4" />
-            </Button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
+              <Button 
+                variant="secondary" 
+                size="icon" 
+                className="h-9 w-9 rounded-full shadow-sm hover:shadow-md transition-shadow duration-300"
+                onClick={() => document.getElementById('sticky-category-scroll')?.scrollBy({ left: -200, behavior: 'smooth' })}
+              >
+                <IconChevronLeft className="h-5 w-5" />
+              </Button>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
+              <Button 
+                variant="secondary" 
+                size="icon" 
+                className="h-9 w-9 rounded-full shadow-sm hover:shadow-md transition-shadow duration-300"
+                onClick={() => document.getElementById('sticky-category-scroll')?.scrollBy({ left: 200, behavior: 'smooth' })}
+              >
+                <IconChevronRight className="h-5 w-5" />
+              </Button>
+            </motion.div>
           </div>
         </div>
         
-        <ScrollArea id="sticky-category-scroll" className="w-full whitespace-nowrap rounded-md mt-2">
-          <div className="flex w-max space-x-2 py-2">
-            <Button
-              variant="default"
-              size="sm"
-              className="rounded-full shrink-0"
-              onClick={handleAllProductsClick}
-            >
-              All Products
-            </Button>
-            
-            {categories.map((category) => (
-              <Button
-                key={category.id}
-                variant="outline"
-                size="sm"
-                className="rounded-full shrink-0"
-                onClick={() => handleCategoryClick(category.id)}
-              >
-                {category.name}
-                {category.productCount > 0 && (
-                  <span className="ml-2 text-xs opacity-70">({category.productCount})</span>
-                )}
-              </Button>
-            ))}
-          </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        <div className="relative w-full overflow-hidden">
+          {/* Gradient overlays for fade effect */}
+          <div className="absolute top-0 left-0 z-10 h-full w-12 bg-gradient-to-r from-background to-transparent" />
+          <div className="absolute top-0 right-0 z-10 h-full w-12 bg-gradient-to-l from-background to-transparent" />
+          
+          {/* Animated category container */}
+          <motion.div
+            className="flex w-max space-x-3 py-2"
+            variants={marqueeVariants}
+            animate="animate"
+            whileHover={{ 
+              x: "0%", 
+              transition: { 
+                x: { 
+                  duration: 0.1 
+                } 
+              } 
+            }}
+          >
+            {/* Duplicate categories for seamless loop */}
+            {[...categories, ...categories].map((category, index) => {
+              const IconComponent = categoryIcons[index % categoryIcons.length];
+              
+              return (
+                <motion.div
+                  key={`${category.id}-${index}`}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                >
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    className="rounded-full shrink-0 px-5 py-3 font-medium shadow-sm hover:shadow-md transition-all duration-300 border border-border/50"
+                    onClick={() => handleCategoryClick(category.id)}
+                  >
+                    <IconComponent className="mr-2 h-4 w-4" />
+                    {category.name}
+                    {category.productCount > 0 && (
+                      <span className="ml-2 text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5">
+                        {category.productCount}
+                      </span>
+                    )}
+                  </Button>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
       </div>
     </div>
   );
