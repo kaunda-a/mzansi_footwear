@@ -81,7 +81,7 @@ export function ProductFilters({
         !isNaN(maxPrice as number) ? (maxPrice as number) : priceRange.max,
       ]);
     }
-  }, [searchParams, priceRange]);
+  }, [priceRange.min, priceRange.max]);
 
   const updateURL = (filters: any) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -119,8 +119,14 @@ export function ProductFilters({
       params.set("maxPrice", filters.priceRange[1].toString());
     }
 
-    router.push(`?${params.toString()}`);
-    onFiltersChange?.(filters);
+    // Only update if params have changed
+    const currentParams = searchParams.toString();
+    const newParams = params.toString();
+    
+    if (currentParams !== newParams) {
+      router.push(`?${newParams}`);
+      onFiltersChange?.(filters);
+    }
   };
 
   const handleCategoryChange = (categoryId: string, checked: boolean) => {
