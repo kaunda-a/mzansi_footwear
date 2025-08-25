@@ -1,11 +1,9 @@
 "use client";
 
-import { ProductFilters } from "@/features/product/components/product-filters";
-import { CategorySelector } from "@/components/catalog/category/category-selector";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Suspense, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { IconFilter } from "@tabler/icons-react";
+import { IconFilter, IconX } from "@tabler/icons-react";
+import Link from "next/link";
 
 export function ProductFilterWrapper({ 
   children,
@@ -33,23 +31,38 @@ export function ProductFilterWrapper({
       )}
 
       <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-        {/* Category Selector and Filters Sidebar - Hidden on mobile by default */}
-        <div className={`${showFilters ? "block" : "hidden"} lg:block space-y-6`}>
-          <CategorySelector />
-          <Suspense
-            fallback={
-              <div className="space-y-4">
-                <Skeleton className="h-6 w-32" />
-                <div className="space-y-2">
-                  {[...Array(5)].map((_, i) => (
-                    <Skeleton key={i} className="h-10 w-full" />
-                  ))}
-                </div>
+        {/* Filters Sidebar - Simple placeholder with link to full filtering */}
+        <div className={`${showFilters ? "block" : "hidden"} lg:block`}>
+          <div className="sticky top-24 space-y-6">
+            <div className="bg-muted p-4 rounded-lg">
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-semibold">Filters</h3>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="lg:hidden"
+                  onClick={() => setShowFilters(false)}
+                >
+                  <IconX className="h-4 w-4" />
+                </Button>
               </div>
-            }
-          >
-            <ProductFilters />
-          </Suspense>
+              <p className="text-sm text-muted-foreground mb-4">
+                Full filtering options available on dedicated pages
+              </p>
+              <div className="space-y-2">
+                <Link href="/trending">
+                  <Button variant="outline" size="sm" className="w-full">
+                    Filter Trending
+                  </Button>
+                </Link>
+                <Link href="/products">
+                  <Button variant="outline" size="sm" className="w-full">
+                    All Products
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Products Grid */}
