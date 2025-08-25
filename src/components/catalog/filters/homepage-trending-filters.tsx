@@ -5,8 +5,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
-import { IconFilter, IconX, IconTrendingUp } from "@tabler/icons-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { IconFilter, IconX, IconTrendingUp, IconCategory, IconBrand } from "@tabler/icons-react";
 import { Skeleton } from "@/components/ui/skeleton";
 
 interface Category {
@@ -121,14 +121,14 @@ export function HomepageTrendingFilters() {
 
   if (loading) {
     return (
-      <Card className="border-0 shadow-none bg-transparent">
-        <CardHeader className="pb-4 px-0">
+      <Card className="border-0 shadow-sm">
+        <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2 text-lg font-semibold">
             <IconTrendingUp className="h-5 w-5 text-primary" />
             Trending Filters
           </CardTitle>
         </CardHeader>
-        <CardContent className="px-0 space-y-4">
+        <CardContent className="space-y-4">
           <div className="space-y-3">
             <Skeleton className="h-4 w-24" />
             <div className="space-y-2">
@@ -140,7 +140,6 @@ export function HomepageTrendingFilters() {
               ))}
             </div>
           </div>
-          <Separator />
           <div className="space-y-3">
             <Skeleton className="h-4 w-20" />
             <div className="space-y-2">
@@ -158,8 +157,8 @@ export function HomepageTrendingFilters() {
   }
 
   return (
-    <Card className="border-0 shadow-none bg-transparent">
-      <CardHeader className="pb-4 px-0">
+    <Card className="border-0 shadow-sm">
+      <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2 text-lg font-semibold">
             <IconTrendingUp className="h-5 w-5 text-primary" />
@@ -179,68 +178,82 @@ export function HomepageTrendingFilters() {
         </div>
       </CardHeader>
       
-      <CardContent className="px-0 space-y-5">
-        {/* Categories - Trending Specific */}
-        {categories.length > 0 && (
-          <div className="space-y-3">
-            <h4 className="font-medium text-sm text-muted-foreground">Categories</h4>
-            <div className="space-y-2">
-              {categories.slice(0, 5).map((category) => (
-                <div key={category.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`category-${category.id}`}
-                    checked={selectedCategories.includes(category.id)}
-                    onCheckedChange={(checked) =>
-                      handleCategoryChange(category.id, checked as boolean)
-                    }
-                    className="rounded-sm"
-                  />
-                  <label
-                    htmlFor={`category-${category.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
-                  >
-                    <span className="flex justify-between">
-                      <span>{category.name}</span>
-                      <span className="text-muted-foreground text-xs">({category.count})</span>
-                    </span>
-                  </label>
+      <CardContent className="space-y-5">
+        <Accordion type="multiple" className="w-full" defaultValue={["categories", "brands"]}>
+          {/* Categories - Trending Specific */}
+          {categories.length > 0 && (
+            <AccordionItem value="categories">
+              <AccordionTrigger className="py-2 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <IconCategory className="h-4 w-4" />
+                  <span className="font-medium text-sm">Categories</span>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {categories.length > 0 && <Separator />}
-
-        {/* Popular Brands */}
-        {brands.length > 0 && (
-          <div className="space-y-3">
-            <h4 className="font-medium text-sm text-muted-foreground">Popular Brands</h4>
-            <div className="space-y-2">
-              {brands.slice(0, 4).map((brand) => (
-                <div key={brand.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`brand-${brand.id}`}
-                    checked={selectedBrands.includes(brand.id)}
-                    onCheckedChange={(checked) =>
-                      handleBrandChange(brand.id, checked as boolean)
-                    }
-                    className="rounded-sm"
-                  />
-                  <label
-                    htmlFor={`brand-${brand.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
-                  >
-                    <span className="flex justify-between">
-                      <span>{brand.name}</span>
-                      <span className="text-muted-foreground text-xs">({brand.count})</span>
-                    </span>
-                  </label>
+              </AccordionTrigger>
+              <AccordionContent className="pt-2 pb-0">
+                <div className="space-y-2">
+                  {categories.slice(0, 8).map((category) => (
+                    <div key={category.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`category-${category.id}`}
+                        checked={selectedCategories.includes(category.id)}
+                        onCheckedChange={(checked) =>
+                          handleCategoryChange(category.id, checked as boolean)
+                        }
+                        className="rounded-sm"
+                      />
+                      <label
+                        htmlFor={`category-${category.id}`}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
+                      >
+                        <span className="flex justify-between">
+                          <span>{category.name}</span>
+                          <span className="text-muted-foreground text-xs">({category.count})</span>
+                        </span>
+                      </label>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+              </AccordionContent>
+            </AccordionItem>
+          )}
+
+          {/* Popular Brands */}
+          {brands.length > 0 && (
+            <AccordionItem value="brands">
+              <AccordionTrigger className="py-2 hover:no-underline">
+                <div className="flex items-center gap-2">
+                  <IconBrand className="h-4 w-4" />
+                  <span className="font-medium text-sm">Popular Brands</span>
+                </div>
+              </AccordionTrigger>
+              <AccordionContent className="pt-2 pb-0">
+                <div className="space-y-2">
+                  {brands.slice(0, 6).map((brand) => (
+                    <div key={brand.id} className="flex items-center space-x-2">
+                      <Checkbox
+                        id={`brand-${brand.id}`}
+                        checked={selectedBrands.includes(brand.id)}
+                        onCheckedChange={(checked) =>
+                          handleBrandChange(brand.id, checked as boolean)
+                        }
+                        className="rounded-sm"
+                      />
+                      <label
+                        htmlFor={`brand-${brand.id}`}
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
+                      >
+                        <span className="flex justify-between">
+                          <span>{brand.name}</span>
+                          <span className="text-muted-foreground text-xs">({brand.count})</span>
+                        </span>
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          )}
+        </Accordion>
 
         {/* Quick Filter Buttons */}
         <div className="pt-2">
