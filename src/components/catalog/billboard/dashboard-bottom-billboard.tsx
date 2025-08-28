@@ -19,11 +19,11 @@ export function DashboardBottomBillboard() {
         {/* Elegant accent border */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
         
-        {/* Premium badge indicator */}
-        <div className="absolute top-3 right-3 z-10">
-          <div className="flex items-center gap-1.5 bg-background/80 backdrop-blur-sm px-2.5 py-1 rounded-full border border-border/50 shadow-sm">
-            <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span className="text-[9px] font-semibold uppercase tracking-widest text-accent">Featured</span>
+        {/* Premium badge indicator - responsive positioning to avoid content obstruction */}
+        <div className="absolute top-2 right-2 md:top-3 md:right-3 z-10">
+          <div className="flex items-center gap-1 bg-background/80 backdrop-blur-sm px-2 py-1 rounded-full border border-border/50 shadow-sm">
+            <div className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
+            <span className="text-[8px] md:text-[9px] font-semibold uppercase tracking-widest text-accent whitespace-nowrap">Featured</span>
           </div>
         </div>
         
