@@ -52,11 +52,11 @@ export function HeaderBillboard() {
         };
       case "ANNOUNCEMENT":
         return {
-          bg: "bg-gradient-to-r from-green-500/10 via-emerald-500/5 to-teal-500/10",
-          border: "border-b border-green-200/30",
-          text: "text-green-600 dark:text-green-400",
-          icon: "text-green-500 dark:text-green-400",
-          glow: "shadow-[0_0_15px_rgba(16,185,129,0.15)] dark:shadow-[0_0_15px_rgba(52,211,153,0.15)]"
+          bg: "bg-gradient-to-r from-accent/10 via-accent/5 to-secondary/10",
+          border: "border-b border-accent/30",
+          text: "text-accent",
+          icon: "text-accent",
+          glow: "shadow-[0_0_15px_rgba(var(--accent),0.15)]"
         };
       default:
         return {
