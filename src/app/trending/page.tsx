@@ -13,6 +13,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { ProductPageBillboard } from "@/components/catalog/billboard/product-page-billboard";
+import { ModalBillboard } from "@/components/catalog/billboard/modal-billboard";
 
 interface TrendingPageProps {
   searchParams: Promise<{
@@ -129,6 +130,9 @@ export default async function TrendingPage({
       </main>
 
       <StoreFooter />
+      
+      {/* Modal Billboard - Shows automatically after 30 seconds */}
+      <ModalBillboard />
     </div>
   );
 }

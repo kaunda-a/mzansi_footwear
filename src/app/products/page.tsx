@@ -12,6 +12,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { ProductPageBillboard } from "@/components/catalog/billboard/product-page-billboard";
+import { ModalBillboard } from "@/components/catalog/billboard/modal-billboard";
 import type { SearchParams } from "nuqs/server";
 
 type ProductsPageProps = {
@@ -99,6 +100,9 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
       </main>
 
       <StoreFooter />
+      
+      {/* Modal Billboard - Shows automatically after 30 seconds */}
+      <ModalBillboard />
     </div>
   );
 }

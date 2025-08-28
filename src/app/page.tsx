@@ -9,6 +9,9 @@ import { FeaturedProducts } from "@/components/catalog/featured/featured-product
 import { PopularProducts } from "@/components/catalog/featured/popular-products";
 import { TrendingProducts } from "@/components/catalog/trending/trending-products";
 import { CategorySection } from "@/components/catalog/category/category-section";
+import { ModalBillboard } from "@/components/catalog/billboard/modal-billboard";
+import { DashboardTopBillboard } from "@/components/catalog/billboard/dashboard-top-billboard";
+import { DashboardBottomBillboard } from "@/components/catalog/billboard/dashboard-bottom-billboard";
 
 export default function HomePage() {
   return (
@@ -25,6 +28,7 @@ export default function HomePage() {
         {/* Category Navigation */}
         <CategorySection />
 
+       
         {/* Trending Products */}
         <div className="bg-muted/30">
           <div className="container mx-auto px-4 py-8">
@@ -32,14 +36,27 @@ export default function HomePage() {
           </div>
         </div>
 
+         {/* Dashboard Top Billboard - After hero, before products */}
+        <div className="container mx-auto px-4 py-4">
+          <DashboardTopBillboard />
+        </div>
+
+
         {/* Popular Products */}
         <PopularProducts />
         
         {/* Secondary Billboard */}
         <SecondaryBillboard />
+
+        {/* Dashboard Bottom Billboard  */}
+        <div className="container mx-auto px-4 py-6">
+          <DashboardBottomBillboard />
+        </div>
         
         {/* Featured Products */}
         <FeaturedProducts />
+
+     
       </main>
       
       <MarqueeContainer />
@@ -48,6 +65,9 @@ export default function HomePage() {
       <FooterBillboard />
       
       <StoreFooter />
+      
+      {/* Modal Billboard - Shows automatically after 30 seconds */}
+      <ModalBillboard />
     </div>
   );
 }
