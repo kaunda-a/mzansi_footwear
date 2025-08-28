@@ -225,7 +225,7 @@ export function StickyCategoryNavigation() {
             className="flex space-x-3 py-2 overflow-x-auto scrollbar-hide"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {/* All Categories Button */}
+            {/* All Categories Button - responsive sizing */}
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -236,15 +236,15 @@ export function StickyCategoryNavigation() {
               <Button
                 variant="default"
                 size="lg"
-                className="rounded-full shrink-0 px-5 py-3 font-medium shadow-md hover:shadow-lg transition-all duration-300 border border-primary/30 bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-sm hover:from-primary/20 hover:to-primary/10"
+                className="rounded-full shrink-0 px-4 py-2.5 font-medium shadow-md hover:shadow-lg transition-all duration-300 border border-primary/30 bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-sm hover:from-primary/20 hover:to-primary/10 text-sm md:px-5 md:py-3 md:text-base"
                 onClick={handleAllProductsClick}
               >
-                <IconCategory className="mr-2 h-4 w-4" />
+                <IconCategory className="mr-1.5 h-3.5 w-3.5 md:mr-2 md:h-4 md:w-4" />
                 All Products
               </Button>
             </motion.div>
             
-            {/* Category buttons with enhanced styling */}
+            {/* Category buttons with enhanced styling and mobile responsiveness */}
             {categories.map((category, index) => {
               const IconComponent = categoryIcons[index % categoryIcons.length];
               
@@ -260,13 +260,15 @@ export function StickyCategoryNavigation() {
                   <Button
                     variant="secondary"
                     size="lg"
-                    className="rounded-full shrink-0 px-5 py-3 font-medium shadow-md hover:shadow-lg transition-all duration-300 border border-border/50 bg-gradient-to-br from-background/80 to-muted/40 backdrop-blur-sm hover:from-accent/20 hover:to-accent/10"
+                    className="rounded-full shrink-0 px-4 py-2.5 font-medium shadow-md hover:shadow-lg transition-all duration-300 border border-border/50 bg-gradient-to-br from-background/80 to-muted/40 backdrop-blur-sm hover:from-accent/20 hover:to-accent/10 text-sm md:px-5 md:py-3 md:text-base"
                     onClick={() => handleCategoryClick(category.id)}
                   >
-                    <IconComponent className="mr-2 h-4 w-4" />
-                    {category.name}
+                    <IconComponent className="mr-1.5 h-3.5 w-3.5 md:mr-2 md:h-4 md:w-4" />
+                    <span className="truncate max-w-[100px] md:max-w-[120px]">
+                      {category.name}
+                    </span>
                     {category.productCount > 0 && (
-                      <span className="ml-2 text-xs font-bold bg-gradient-to-r from-primary/20 to-secondary/20 text-primary rounded-full px-2.5 py-1 border border-primary/30">
+                      <span className="ml-2 text-xs font-bold bg-gradient-to-r from-primary/20 to-secondary/20 text-primary rounded-full px-2 py-0.5 border border-primary/30 md:px-2.5 md:py-1">
                         {category.productCount}
                       </span>
                     )}
