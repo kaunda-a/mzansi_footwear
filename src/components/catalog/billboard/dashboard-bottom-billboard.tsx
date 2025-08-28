@@ -23,20 +23,31 @@ export function DashboardBottomBillboard() {
         <div className="absolute top-3 right-3 z-10">
           <div className="flex items-center gap-1.5 bg-background/80 backdrop-blur-sm px-2.5 py-1 rounded-full border border-border/50 shadow-sm">
             <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <span className="text-[9px] font-semibold uppercase tracking-widest text-accent">Premium</span>
+            <span className="text-[9px] font-semibold uppercase tracking-widest text-accent">Featured</span>
           </div>
         </div>
         
         <div className="relative p-1.5">
-          <CarouselBillboardContainer
-            position="DASHBOARD_BOTTOM"
-            height="h-48"
-            autoPlay={true}
-            autoPlayInterval={7000}
-            showDots={true}
-            showArrows={true}
-            className="rounded-xl shadow-lg"
-          />
+          <div className="relative rounded-xl overflow-hidden">
+            {/* Image enhancement overlay */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-black/5 pointer-events-none z-10" />
+            
+            {/* Vignette effect */}
+            <div className="absolute inset-0 shadow-[inset_0_0_5rem_0_rgba(0,0,0,0.4)] rounded-xl pointer-events-none z-10" />
+            
+            {/* Saturation boost effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 mix-blend-overlay pointer-events-none z-10" />
+            
+            <CarouselBillboardContainer
+              position="DASHBOARD_BOTTOM"
+              height="h-48"
+              autoPlay={true}
+              autoPlayInterval={7000}
+              showDots={true}
+              showArrows={true}
+              className="rounded-xl shadow-lg"
+            />
+          </div>
         </div>
         
         {/* Subtle reflection effect */}
