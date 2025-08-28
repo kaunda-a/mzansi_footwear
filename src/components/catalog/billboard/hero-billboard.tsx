@@ -68,14 +68,14 @@ export function HeroBillboard() {
           <div className="absolute bottom-0 right-0 w-4 h-4 border-r-2 border-b-2 border-primary/30 rounded-br-2xl" />
         </div>
         
-        {/* Premium badge indicator - enhanced version */}
-        <div className="absolute top-4 left-4 z-30">
-          <div className="flex items-center gap-2 bg-background/90 backdrop-blur-xl px-3.5 py-2 rounded-full border border-border/60 shadow-xl">
+        {/* Premium badge indicator - responsive positioning */}
+        <div className="absolute top-3 left-3 md:top-4 md:left-4 z-30">
+          <div className="flex items-center gap-2 bg-background/90 backdrop-blur-xl px-3 py-1.5 rounded-full border border-border/60 shadow-lg">
             <div className="relative">
               <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary to-accent" />
               <div className="absolute inset-0 w-2 h-2 rounded-full bg-gradient-to-r from-primary to-accent animate-ping opacity-30" />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Hero Collection
             </span>
           </div>
@@ -118,7 +118,7 @@ export function HeroBillboard() {
         <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-background/50 via-background/20 to-transparent rounded-b-3xl pointer-events-none" />
         
         {/* Subtle floating particles for premium feel */}
-        <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute inset-0 pointer-events-none hidden md:block">
           {[...Array(8)].map((_, i) => (
             <div
               key={i}
