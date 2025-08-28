@@ -43,12 +43,13 @@ export function HeaderBillboard() {
           glow: "shadow-[0_0_15px_rgba(var(--primary),0.15)]"
         };
       case "SALE":
+        // Use theme-adaptive colors like Hero Collection and Featured badges
         return {
-          bg: "bg-gradient-to-r from-destructive/10 via-destructive/5 to-primary/10",
-          border: "border-b border-destructive/30",
-          text: "text-destructive",
-          icon: "text-destructive",
-          glow: "shadow-[0_0_15px_rgba(var(--destructive),0.15)]"
+          bg: "bg-gradient-to-r from-primary/10 via-accent/5 to-secondary/10",
+          border: "border-b border-accent/30",
+          text: "text-accent",
+          icon: "text-accent",
+          glow: "shadow-[0_0_15px_rgba(var(--accent),0.15)]"
         };
       case "ANNOUNCEMENT":
         return {
