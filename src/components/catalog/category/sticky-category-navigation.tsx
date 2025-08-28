@@ -2,9 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { Skeleton } from "@/components/ui/skeleton";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { IconChevronLeft, IconChevronRight, IconCategory, IconCategory2, IconShoe, IconHanger } from "@tabler/icons-react";
 
 interface Category {
@@ -26,6 +24,8 @@ export function StickyCategoryNavigation() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
   
   // Animation variants for marquee effect
   const marqueeVariants = {
@@ -80,6 +80,35 @@ export function StickyCategoryNavigation() {
     fetchCategories();
   }, []);
 
+  // Check scroll position for navigation buttons
+  const checkScrollPosition = () => {
+    if (scrollAreaRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollAreaRef.current;
+      setCanScrollLeft(scrollLeft > 0);
+      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
+    }
+  };
+
+  // Handle scroll events
+  useEffect(() => {
+    const scrollElement = scrollAreaRef.current;
+    if (scrollElement) {
+      scrollElement.addEventListener("scroll", checkScrollPosition);
+      checkScrollPosition();
+      return () => scrollElement.removeEventListener("scroll", checkScrollPosition);
+    }
+  }, [categories]);
+
+  const handleScroll = (direction: "left" | "right") => {
+    if (scrollAreaRef.current) {
+      const scrollAmount = 300;
+      scrollAreaRef.current.scrollBy({
+        left: direction === "right" ? scrollAmount : -scrollAmount,
+        behavior: "smooth"
+      });
+    }
+  };
+
   const handleCategoryClick = (categoryId: string) => {
     // Scroll to the category section
     const element = document.getElementById(`category-${categoryId}`);
@@ -96,7 +125,7 @@ export function StickyCategoryNavigation() {
   // Show error state if needed
   if (error && !loading && categories.length === 0) {
     return (
-      <div className="sticky top-16 z-40 bg-gradient-to-r from-background to-muted border-b py-4 shadow-sm">
+      <div className="sticky top-16 z-40 bg-gradient-to-r from-background/80 via-background/90 to-muted/40 border-b border-border/60 py-4 backdrop-blur-xl shadow-lg">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between">
             <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">Shop by Category</h3>
@@ -111,18 +140,18 @@ export function StickyCategoryNavigation() {
 
   if (loading) {
     return (
-      <div className="sticky top-16 z-40 bg-gradient-to-r from-background to-muted border-b py-4 shadow-sm">
+      <div className="sticky top-16 z-40 bg-gradient-to-r from-background/80 via-background/90 to-muted/40 border-b border-border/60 py-4 backdrop-blur-xl shadow-lg">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between mb-3">
-            <Skeleton className="h-7 w-40 bg-muted-foreground/20" />
+            <div className="h-7 w-40 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full animate-pulse" />
             <div className="flex gap-2">
-              <Skeleton className="h-9 w-9 rounded-full bg-muted-foreground/20" />
-              <Skeleton className="h-9 w-9 rounded-full bg-muted-foreground/20" />
+              <div className="h-9 w-9 rounded-full bg-muted-foreground/20 animate-pulse" />
+              <div className="h-9 w-9 rounded-full bg-muted-foreground/20 animate-pulse" />
             </div>
           </div>
           <div className="flex gap-3 py-2">
             {[...Array(6)].map((_, i) => (
-              <Skeleton key={i} className="h-11 w-28 rounded-full bg-muted-foreground/20" />
+              <div key={i} className="h-11 w-28 rounded-full bg-muted-foreground/20 animate-pulse" />
             ))}
           </div>
         </div>
@@ -131,76 +160,112 @@ export function StickyCategoryNavigation() {
   }
 
   return (
-    <div className="sticky top-16 z-40 bg-gradient-to-r from-background to-muted/30 border-b border-border/50 py-4 backdrop-blur-sm shadow-md">
+    <div className="sticky top-16 z-40 bg-gradient-to-r from-background/80 via-background/90 to-muted/40 border-b border-border/60 py-4 backdrop-blur-xl shadow-lg">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-tight">
+          <motion.h3 
+            className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-tight"
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             Shop by Category
-          </h3>
+          </motion.h3>
           <div className="flex gap-2">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
-              <Button 
-                variant="secondary" 
-                size="icon" 
-                className="h-9 w-9 rounded-full shadow-sm hover:shadow-md transition-shadow duration-300"
-                onClick={() => document.getElementById('sticky-category-scroll')?.scrollBy({ left: -200, behavior: 'smooth' })}
-              >
-                <IconChevronLeft className="h-5 w-5" />
-              </Button>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={{ type: "spring", stiffness: 400, damping: 17 }}>
-              <Button 
-                variant="secondary" 
-                size="icon" 
-                className="h-9 w-9 rounded-full shadow-sm hover:shadow-md transition-shadow duration-300"
-                onClick={() => document.getElementById('sticky-category-scroll')?.scrollBy({ left: 200, behavior: 'smooth' })}
-              >
-                <IconChevronRight className="h-5 w-5" />
-              </Button>
-            </motion.div>
+            <AnimatePresence>
+              {canScrollLeft && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <Button 
+                    variant="secondary" 
+                    size="icon" 
+                    className="h-9 w-9 rounded-full shadow-md hover:shadow-lg transition-all duration-300 border border-border/50 bg-background/80 backdrop-blur-sm hover:bg-accent/20"
+                    onClick={() => handleScroll("left")}
+                  >
+                    <IconChevronLeft className="h-5 w-5" />
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+            <AnimatePresence>
+              {canScrollRight && (
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                >
+                  <Button 
+                    variant="secondary" 
+                    size="icon" 
+                    className="h-9 w-9 rounded-full shadow-md hover:shadow-lg transition-all duration-300 border border-border/50 bg-background/80 backdrop-blur-sm hover:bg-accent/20"
+                    onClick={() => handleScroll("right")}
+                  >
+                    <IconChevronRight className="h-5 w-5" />
+                  </Button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </div>
         
         <div className="relative w-full overflow-hidden">
           {/* Gradient overlays for fade effect */}
-          <div className="absolute top-0 left-0 z-10 h-full w-12 bg-gradient-to-r from-background to-transparent" />
-          <div className="absolute top-0 right-0 z-10 h-full w-12 bg-gradient-to-l from-background to-transparent" />
+          <div className="absolute top-0 left-0 z-10 h-full w-12 bg-gradient-to-r from-background to-transparent pointer-events-none" />
+          <div className="absolute top-0 right-0 z-10 h-full w-12 bg-gradient-to-l from-background to-transparent pointer-events-none" />
           
-          {/* Animated category container */}
-          <motion.div
-            className="flex w-max space-x-3 py-2"
-            variants={marqueeVariants}
-            animate="animate"
-            whileHover={{ 
-              x: "0%", 
-              transition: { 
-                x: { 
-                  duration: 0.1 
-                } 
-              } 
-            }}
+          {/* Scrollable category container with enhanced styling */}
+          <div
+            ref={scrollAreaRef}
+            id="sticky-category-scroll"
+            className="flex space-x-3 py-2 overflow-x-auto scrollbar-hide"
+            style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {/* Duplicate categories for seamless loop */}
-            {[...categories, ...categories].map((category, index) => {
+            {/* All Categories Button */}
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17 }}
+            >
+              <Button
+                variant="default"
+                size="lg"
+                className="rounded-full shrink-0 px-5 py-3 font-medium shadow-md hover:shadow-lg transition-all duration-300 border border-primary/30 bg-gradient-to-br from-primary/10 to-primary/5 backdrop-blur-sm hover:from-primary/20 hover:to-primary/10"
+                onClick={handleAllProductsClick}
+              >
+                <IconCategory className="mr-2 h-4 w-4" />
+                All Products
+              </Button>
+            </motion.div>
+            
+            {/* Category buttons with enhanced styling */}
+            {categories.map((category, index) => {
               const IconComponent = categoryIcons[index % categoryIcons.length];
               
               return (
                 <motion.div
-                  key={`${category.id}-${index}`}
+                  key={category.id}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.05 }}
                 >
                   <Button
                     variant="secondary"
                     size="lg"
-                    className="rounded-full shrink-0 px-5 py-3 font-medium shadow-sm hover:shadow-md transition-all duration-300 border border-border/50"
+                    className="rounded-full shrink-0 px-5 py-3 font-medium shadow-md hover:shadow-lg transition-all duration-300 border border-border/50 bg-gradient-to-br from-background/80 to-muted/40 backdrop-blur-sm hover:from-accent/20 hover:to-accent/10"
                     onClick={() => handleCategoryClick(category.id)}
                   >
                     <IconComponent className="mr-2 h-4 w-4" />
                     {category.name}
                     {category.productCount > 0 && (
-                      <span className="ml-2 text-xs bg-primary/10 text-primary rounded-full px-2 py-0.5">
+                      <span className="ml-2 text-xs font-bold bg-gradient-to-r from-primary/20 to-secondary/20 text-primary rounded-full px-2.5 py-1 border border-primary/30">
                         {category.productCount}
                       </span>
                     )}
@@ -208,7 +273,7 @@ export function StickyCategoryNavigation() {
                 </motion.div>
               );
             })}
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>
