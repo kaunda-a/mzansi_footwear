@@ -3,15 +3,31 @@ import { CarouselBillboardContainer } from "@/components/catalog/billboard/carou
 export function DashboardBottomBillboard() {
   return (
     <div className="w-full mt-6">
-      <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-muted/50 to-background/80 backdrop-blur-sm border border-border/50 shadow-lg">
-        {/* Decorative Elements - Flipped and with different colors */}
-        <div className="absolute bottom-0 left-0 w-32 h-32 bg-accent/5 rounded-full blur-2xl translate-y-16 -translate-x-16" />
-        <div className="absolute top-0 right-0 w-24 h-24 bg-primary/5 rounded-full blur-2xl -translate-y-12 translate-x-12" />
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-background/90 via-accent/5 to-muted/30 backdrop-blur-xl border border-border/60 shadow-xl shadow-accent/5">
+        {/* Modern geometric decorative elements */}
+        <div className="absolute -bottom-8 -left-8 w-40 h-40 rounded-full bg-gradient-to-br from-primary/10 to-accent/5 blur-3xl" />
+        <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-gradient-to-br from-secondary/10 to-primary/5 blur-3xl" />
         
-        {/* Unique decorative line */}
-        <div className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+        {/* Sophisticated grid pattern overlay */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 15px 15px, #ccc 1px, transparent 0)`,
+            backgroundSize: '30px 30px'
+          }} />
+        </div>
         
-        <div className="relative p-1">
+        {/* Elegant accent border */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+        
+        {/* Premium badge indicator */}
+        <div className="absolute top-3 right-3 z-10">
+          <div className="flex items-center gap-1.5 bg-background/80 backdrop-blur-sm px-2.5 py-1 rounded-full border border-border/50 shadow-sm">
+            <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+            <span className="text-[9px] font-semibold uppercase tracking-widest text-accent">Premium</span>
+          </div>
+        </div>
+        
+        <div className="relative p-1.5">
           <CarouselBillboardContainer
             position="DASHBOARD_BOTTOM"
             height="h-48"
@@ -19,9 +35,12 @@ export function DashboardBottomBillboard() {
             autoPlayInterval={7000}
             showDots={true}
             showArrows={true}
-            className="rounded-lg"
+            className="rounded-xl shadow-lg"
           />
         </div>
+        
+        {/* Subtle reflection effect */}
+        <div className="absolute inset-x-0 bottom-0 h-8 bg-gradient-to-t from-background/30 to-transparent pointer-events-none" />
       </div>
     </div>
   );
