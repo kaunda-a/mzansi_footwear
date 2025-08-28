@@ -6,10 +6,12 @@ import type { BillboardWithCreator } from "@/lib/services";
 import { IconX, IconExternalLink, IconBolt, IconSparkles } from "@tabler/icons-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useThemeConfig } from "@/components/active-theme";
 
 export function HeaderBillboard() {
   const [billboards, setBillboards] = useState<BillboardWithCreator[]>([]);
   const [loading, setLoading] = useState(true);
+  const { activeTheme } = useThemeConfig();
 
   useEffect(() => {
     const fetchBillboards = async () => {
@@ -31,45 +33,116 @@ export function HeaderBillboard() {
   // For header billboard, we'll show one message at a time
   const billboard = billboards[0];
 
-  // Determine styling based on billboard type
-  const getTypeStyles = (type: string) => {
-    switch (type) {
-      case "PROMOTIONAL":
-        return {
+  // Determine styling based on billboard type - using theme-aware classes
+  const getTypeStyles = (type: string, theme: string) => {
+    // Theme-aware color mappings
+    const themeColors = {
+      default: {
+        PROMOTIONAL: {
           bg: "bg-gradient-to-r from-blue-500/10 via-purple-500/5 to-pink-500/10",
           border: "border-b border-blue-200/30",
-          text: "text-blue-600",
-          icon: "text-blue-500",
-          glow: "shadow-[0_0_15px_rgba(59,130,246,0.15)]"
-        };
-      case "SALE":
-        return {
+          text: "text-blue-600 dark:text-blue-400",
+          icon: "text-blue-500 dark:text-blue-400",
+          glow: "shadow-[0_0_15px_rgba(59,130,246,0.15)] dark:shadow-[0_0_15px_rgba(96,165,250,0.15)]"
+        },
+        SALE: {
           bg: "bg-gradient-to-r from-red-500/10 via-orange-500/5 to-amber-500/10",
           border: "border-b border-red-200/30",
-          text: "text-red-600",
-          icon: "text-red-500",
-          glow: "shadow-[0_0_15px_rgba(239,68,68,0.15)]"
-        };
-      case "ANNOUNCEMENT":
-        return {
+          text: "text-red-600 dark:text-red-400",
+          icon: "text-red-500 dark:text-red-400",
+          glow: "shadow-[0_0_15px_rgba(239,68,68,0.15)] dark:shadow-[0_0_15px_rgba(248,113,113,0.15)]"
+        },
+        ANNOUNCEMENT: {
           bg: "bg-gradient-to-r from-green-500/10 via-emerald-500/5 to-teal-500/10",
           border: "border-b border-green-200/30",
-          text: "text-green-600",
-          icon: "text-green-500",
-          glow: "shadow-[0_0_15px_rgba(16,185,129,0.15)]"
-        };
-      default:
-        return {
-          bg: "bg-gradient-to-r from-gray-500/10 via-slate-500/5 to-zinc-500/10",
-          border: "border-b border-gray-200/30",
-          text: "text-gray-600",
-          icon: "text-gray-500",
-          glow: "shadow-[0_0_15px_rgba(107,114,128,0.15)]"
-        };
-    }
+          text: "text-green-600 dark:text-green-400",
+          icon: "text-green-500 dark:text-green-400",
+          glow: "shadow-[0_0_15px_rgba(16,185,129,0.15)] dark:shadow-[0_0_15px_rgba(52,211,153,0.15)]"
+        }
+      },
+      blue: {
+        PROMOTIONAL: {
+          bg: "bg-gradient-to-r from-blue-500/10 via-indigo-500/5 to-purple-500/10",
+          border: "border-b border-blue-200/30",
+          text: "text-blue-600 dark:text-blue-300",
+          icon: "text-blue-500 dark:text-blue-300",
+          glow: "shadow-[0_0_15px_rgba(59,130,246,0.15)] dark:shadow-[0_0_15px_rgba(147,197,253,0.15)]"
+        },
+        SALE: {
+          bg: "bg-gradient-to-r from-red-500/10 via-orange-500/5 to-amber-500/10",
+          border: "border-b border-red-200/30",
+          text: "text-red-600 dark:text-red-300",
+          icon: "text-red-500 dark:text-red-300",
+          glow: "shadow-[0_0_15px_rgba(239,68,68,0.15)] dark:shadow-[0_0_15px_rgba(252,165,165,0.15)]"
+        },
+        ANNOUNCEMENT: {
+          bg: "bg-gradient-to-r from-green-500/10 via-emerald-500/5 to-teal-500/10",
+          border: "border-b border-green-200/30",
+          text: "text-green-600 dark:text-green-300",
+          icon: "text-green-500 dark:text-green-300",
+          glow: "shadow-[0_0_15px_rgba(16,185,129,0.15)] dark:shadow-[0_0_15px_rgba(110,231,183,0.15)]"
+        }
+      },
+      green: {
+        PROMOTIONAL: {
+          bg: "bg-gradient-to-r from-lime-500/10 via-green-500/5 to-emerald-500/10",
+          border: "border-b border-lime-200/30",
+          text: "text-lime-600 dark:text-lime-300",
+          icon: "text-lime-500 dark:text-lime-300",
+          glow: "shadow-[0_0_15px_rgba(132,204,22,0.15)] dark:shadow-[0_0_15px_rgba(190,242,100,0.15)]"
+        },
+        SALE: {
+          bg: "bg-gradient-to-r from-red-500/10 via-orange-500/5 to-amber-500/10",
+          border: "border-b border-red-200/30",
+          text: "text-red-600 dark:text-red-300",
+          icon: "text-red-500 dark:text-red-300",
+          glow: "shadow-[0_0_15px_rgba(239,68,68,0.15)] dark:shadow-[0_0_15px_rgba(252,165,165,0.15)]"
+        },
+        ANNOUNCEMENT: {
+          bg: "bg-gradient-to-r from-cyan-500/10 via-teal-500/5 to-emerald-500/10",
+          border: "border-b border-cyan-200/30",
+          text: "text-cyan-600 dark:text-cyan-300",
+          icon: "text-cyan-500 dark:text-cyan-300",
+          glow: "shadow-[0_0_15px_rgba(6,182,212,0.15)] dark:shadow-[0_0_15px_rgba(103,232,249,0.15)]"
+        }
+      },
+      amber: {
+        PROMOTIONAL: {
+          bg: "bg-gradient-to-r from-amber-500/10 via-orange-500/5 to-red-500/10",
+          border: "border-b border-amber-200/30",
+          text: "text-amber-600 dark:text-amber-300",
+          icon: "text-amber-500 dark:text-amber-300",
+          glow: "shadow-[0_0_15px_rgba(245,158,11,0.15)] dark:shadow-[0_0_15px_rgba(252,211,77,0.15)]"
+        },
+        SALE: {
+          bg: "bg-gradient-to-r from-red-500/10 via-orange-500/5 to-amber-500/10",
+          border: "border-b border-red-200/30",
+          text: "text-red-600 dark:text-red-300",
+          icon: "text-red-500 dark:text-red-300",
+          glow: "shadow-[0_0_15px_rgba(239,68,68,0.15)] dark:shadow-[0_0_15px_rgba(252,165,165,0.15)]"
+        },
+        ANNOUNCEMENT: {
+          bg: "bg-gradient-to-r from-lime-500/10 via-green-500/5 to-emerald-500/10",
+          border: "border-b border-lime-200/30",
+          text: "text-lime-600 dark:text-lime-300",
+          icon: "text-lime-500 dark:text-lime-300",
+          glow: "shadow-[0_0_15px_rgba(132,204,22,0.15)] dark:shadow-[0_0_15px_rgba(190,242,100,0.15)]"
+        }
+      }
+    };
+
+    // Get theme-specific colors or fallback to default
+    const themeSpecific = themeColors[theme] || themeColors.default;
+    return themeSpecific[type] || {
+      bg: "bg-gradient-to-r from-gray-500/10 via-slate-500/5 to-zinc-500/10",
+      border: "border-b border-gray-200/30",
+      text: "text-gray-600 dark:text-gray-300",
+      icon: "text-gray-500 dark:text-gray-400",
+      glow: "shadow-[0_0_15px_rgba(107,114,128,0.15)] dark:shadow-[0_0_15px_rgba(209,213,219,0.15)]"
+    };
   };
 
-  const styles = getTypeStyles(billboard.type);
+  const styles = getTypeStyles(billboard.type, activeTheme);
   const IconComponent = billboard.type === "PROMOTIONAL" ? IconSparkles : IconBolt;
 
   return (
