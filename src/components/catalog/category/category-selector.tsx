@@ -235,10 +235,9 @@ export function CategorySelector() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 animate={isSelected ? { scale: [1, 1.05, 1] } : {}}
-                transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                transition={{ type: "spring", stiffness: 400, damping: 17, delay: (index + 1) * 0.05 }}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: (index + 1) * 0.05 }}
               >
                 <Button
                   variant={isSelected ? "default" : "secondary"}
