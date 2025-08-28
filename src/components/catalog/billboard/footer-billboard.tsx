@@ -31,43 +31,44 @@ export function FooterBillboard() {
   // For footer billboard, we'll show one message at a time
   const billboard = billboards[0];
 
-  // Determine styling based on billboard type - Footer specific styling
+  // Determine styling based on billboard type - Footer specific styling with theme-adaptive colors
   const getTypeStyles = (type: string) => {
     switch (type) {
       case "PROMOTIONAL":
         return {
-          bg: "bg-gradient-to-l from-purple-600/15 via-pink-600/10 to-rose-600/15",
-          border: "border-t border-purple-300/20",
-          text: "text-purple-400",
-          accent: "text-purple-300",
-          icon: "text-purple-400",
-          glow: "shadow-[0_0_20px_rgba(192,132,252,0.1)]"
+          bg: "bg-gradient-to-l from-primary/15 via-primary/10 to-secondary/15",
+          border: "border-t border-primary/20",
+          text: "text-primary",
+          accent: "text-primary",
+          icon: "text-primary",
+          glow: "shadow-[0_0_20px_rgba(var(--primary),0.1)]"
         };
       case "SALE":
+        // Use theme-adaptive colors like other components
         return {
-          bg: "bg-gradient-to-l from-amber-600/15 via-orange-600/10 to-red-600/15",
-          border: "border-t border-amber-300/20",
-          text: "text-amber-400",
-          accent: "text-amber-300",
-          icon: "text-amber-400",
-          glow: "shadow-[0_0_20px_rgba(251,191,36,0.1)]"
+          bg: "bg-gradient-to-l from-accent/15 via-accent/10 to-secondary/15",
+          border: "border-t border-accent/20",
+          text: "text-accent",
+          accent: "text-accent",
+          icon: "text-accent",
+          glow: "shadow-[0_0_20px_rgba(var(--accent),0.1)]"
         };
       case "ANNOUNCEMENT":
         return {
-          bg: "bg-gradient-to-l from-emerald-600/15 via-teal-600/10 to-cyan-600/15",
-          border: "border-t border-emerald-300/20",
-          text: "text-emerald-400",
-          accent: "text-emerald-300",
-          icon: "text-emerald-400",
-          glow: "shadow-[0_0_20px_rgba(52,211,153,0.1)]"
+          bg: "bg-gradient-to-l from-accent/15 via-accent/10 to-secondary/15",
+          border: "border-t border-accent/20",
+          text: "text-accent",
+          accent: "text-accent",
+          icon: "text-accent",
+          glow: "shadow-[0_0_20px_rgba(var(--accent),0.1)]"
         };
       default:
         return {
-          bg: "bg-gradient-to-l from-slate-600/15 via-gray-600/10 to-zinc-600/15",
-          border: "border-t border-slate-300/20",
-          text: "text-slate-400",
-          accent: "text-slate-300",
-          icon: "text-slate-400",
+          bg: "bg-gradient-to-l from-gray-500/15 via-slate-500/10 to-zinc-500/15",
+          border: "border-t border-gray-300/20",
+          text: "text-gray-400",
+          accent: "text-gray-300",
+          icon: "text-gray-400",
           glow: "shadow-[0_0_20px_rgba(148,163,184,0.1)]"
         };
     }
