@@ -7,22 +7,49 @@ import { motion, AnimatePresence } from "motion/react";
 
 export function ModalBillboard() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Show modal billboard after a delay or based on some condition
+  // Check if we're on mobile
   useEffect(() => {
-    const timer = setTimeout(() => {
-      // Only show if no billboard is currently active in modal position
-      setIsOpen(true);
-    }, 30000); // Show after 30 seconds
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 640); // Tailwind's sm breakpoint
+    };
+    
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
-    return () => clearTimeout(timer);
+  // Show modal billboard after a delay, then hide it after a few seconds, and repeat
+  useEffect(() => {
+    let showTimer: NodeJS.Timeout;
+    let hideTimer: NodeJS.Timeout;
+    
+    const showModal = () => {
+      setIsOpen(true);
+      // Hide after 5 seconds
+      hideTimer = setTimeout(() => {
+        setIsOpen(false);
+        // Show again after 25 seconds (30 seconds total cycle)
+        showTimer = setTimeout(showModal, 25000);
+      }, 5000);
+    };
+    
+    // Initial show after 30 seconds
+    showTimer = setTimeout(showModal, 30000);
+    
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+    };
   }, []);
 
   if (!isOpen) return null;
 
   return (
-    <AnimatePresence>
-      <motion.div
+    &lt;AnimatePresence&gt;
+      &lt;motion.div
         initial={{ opacity: 0, y: 100 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 100 }}
@@ -32,26 +59,30 @@ export function ModalBillboard() {
           damping: 30,
           duration: 0.3 
         }}
-        className="fixed bottom-4 right-4 z-50 max-w-sm w-full"
-      >
+        className={`fixed z-50 max-w-sm w-full ${
+          isMobile 
+            ? "bottom-24 left-1/2 transform -translate-x-1/2" // Position above navbar on mobile
+            : "bottom-4 right-4" // Original position on desktop
+        }`}
+      &gt;
         {/* Glowing Background Effect */}
-        <div className="absolute -inset-2 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-2xl blur-lg" />
+        &lt;div className="absolute -inset-2 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-blue-500/20 rounded-2xl blur-lg" /&gt;
         
         {/* Toast Container */}
-        <div className="relative bg-gradient-to-br from-background/90 to-muted/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
+        &lt;div className="relative bg-gradient-to-br from-background/90 to-muted/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 overflow-hidden"&gt;
           {/* Decorative Top Border */}
-          <div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500" />
+          &lt;div className="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500" /&gt;
           
           {/* Floating Orbs */}
-          <div className="absolute -top-2 -right-2 w-8 h-8 bg-purple-500/10 rounded-full blur-md" />
-          <div className="absolute -bottom-1 -left-1 w-6 h-6 bg-pink-500/10 rounded-full blur-sm" />
+          &lt;div className="absolute -top-2 -right-2 w-8 h-8 bg-purple-500/10 rounded-full blur-md" /&gt;
+          &lt;div className="absolute -bottom-1 -left-1 w-6 h-6 bg-pink-500/10 rounded-full blur-sm" /&gt;
           
           {/* Header with Close Button */}
-          <div className="flex items-center justify-between p-3 pb-1">
-            <div className="flex items-center gap-2">
-              <div className="relative">
-                <IconSparkles className="h-4 w-4 text-purple-500" />
-                <motion.div
+          &lt;div className="flex items-center justify-between p-3 pb-1"&gt;
+            &lt;div className="flex items-center gap-2"&gt;
+              &lt;div className="relative"&gt;
+                &lt;IconSparkles className="h-4 w-4 text-purple-500" /&gt;
+                &lt;motion.div
                   className="absolute inset-0 rounded-full bg-purple-500/30"
                   animate={{
                     scale: [1, 1.3, 1],
@@ -62,26 +93,26 @@ export function ModalBillboard() {
                     repeat: Infinity,
                     ease: "easeInOut",
                   }}
-                />
-              </div>
-              <span className="text-[10px] font-black uppercase tracking-widest text-purple-500">
+                /&gt;
+              &lt;/div&gt;
+              &lt;span className="text-[10px] font-black uppercase tracking-widest text-purple-500"&gt;
                 Exclusive Offer
-              </span>
-            </div>
+              &lt;/span&gt;
+            &lt;/div&gt;
             
-            <motion.button
+            &lt;motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               onClick={() => setIsOpen(false)}
               className="p-1 rounded-full hover:bg-muted/50 transition-all duration-200 text-muted-foreground"
-            >
-              <IconX className="h-3.5 w-3.5" />
-            </motion.button>
-          </div>
+            &gt;
+              &lt;IconX className="h-3.5 w-3.5" /&gt;
+            &lt;/motion.button&gt;
+          &lt;/div&gt;
           
           {/* Billboard Content - Compact Version */}
-          <div className="p-1 pb-2">
-            <CarouselBillboardContainer
+          &lt;div className="p-1 pb-2"&gt;
+            &lt;CarouselBillboardContainer
               position="MODAL"
               height="h-24"
               autoPlay={true}
@@ -89,21 +120,21 @@ export function ModalBillboard() {
               showDots={true}
               showArrows={false}
               className="rounded-xl"
-            />
-          </div>
+            /&gt;
+          &lt;/div&gt;
           
           {/* Footer */}
-          <div className="px-3 pb-2 pt-0">
-            <div className="flex items-center justify-between text-[9px] text-muted-foreground/70">
-              <div className="flex items-center gap-1">
-                <IconBolt className="h-2.5 w-2.5 text-amber-500" />
-                <span>Limited Time</span>
-              </div>
-              <span>Swipe for more</span>
-            </div>
-          </div>
-        </div>
-      </motion.div>
-    </AnimatePresence>
+          &lt;div className="px-3 pb-2 pt-0"&gt;
+            &lt;div className="flex items-center justify-between text-[9px] text-muted-foreground/70"&gt;
+              &lt;div className="flex items-center gap-1"&gt;
+                &lt;IconBolt className="h-2.5 w-2.5 text-amber-500" /&gt;
+                &lt;span&gt;Limited Time&lt;/span&gt;
+              &lt;/div&gt;
+              {!isMobile && &lt;span&gt;Swipe for more&lt;/span&gt;}
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/motion.div&gt;
+    &lt;/AnimatePresence&gt;
   );
 }
