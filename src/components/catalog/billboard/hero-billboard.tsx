@@ -68,14 +68,14 @@ export function HeroBillboard() {
           <div className="absolute bottom-0 right-0 w-4 h-4 border-r-2 border-b-2 border-primary/30 rounded-br-2xl" />
         </div>
         
-        {/* Premium badge indicator - responsive positioning */}
-        <div className="absolute top-3 left-3 md:top-4 md:left-4 z-30">
-          <div className="flex items-center gap-2 bg-background/90 backdrop-blur-xl px-3 py-1.5 rounded-full border border-border/60 shadow-lg">
+        {/* Premium badge indicator - responsive positioning (right on mobile, left on desktop) */}
+        <div className="absolute top-3 right-3 md:top-4 md:left-4 z-30">
+          <div className="flex items-center gap-1.5 bg-background/90 backdrop-blur-xl px-2.5 py-1 rounded-full border border-border/60 shadow-lg">
             <div className="relative">
-              <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary to-accent" />
-              <div className="absolute inset-0 w-2 h-2 rounded-full bg-gradient-to-r from-primary to-accent animate-ping opacity-30" />
+              <div className="w-1.5 h-1.5 rounded-full bg-gradient-to-r from-primary to-accent" />
+              <div className="absolute inset-0 w-1.5 h-1.5 rounded-full bg-gradient-to-r from-primary to-accent animate-ping opacity-30" />
             </div>
-            <span className="text-[9px] md:text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+            <span className="text-[8px] md:text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent whitespace-nowrap">
               Hero Collection
             </span>
           </div>
