@@ -229,10 +229,9 @@ export function StickyCategoryNavigation() {
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              transition={{ type: "spring", stiffness: 400, damping: 17 }}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 }}
+              transition={{ type: "spring", stiffness: 400, damping: 17, delay: 0.1 }}
             >
               <Button
                 variant="default"
