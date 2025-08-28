@@ -154,6 +154,17 @@ export function HeaderBillboard() {
         <div className="absolute top-1/4 right-4 w-2 h-2 rounded-full bg-current animate-pulse" />
         <div className="absolute top-3/4 right-8 w-1 h-1 rounded-full bg-current animate-pulse delay-1000" />
       </div>
+      
+      {/* Image enhancement if billboard has an image */}
+      {billboard.imageUrl && (
+        <>
+          {/* Vignette effect for header with image */}
+          <div className="absolute inset-0 shadow-[inset_0_0_5rem_0_rgba(0,0,0,0.3)] rounded-xl pointer-events-none z-10" />
+          
+          {/* Color enhancement for header with image */}
+          <div className="absolute inset-0 bg-gradient-to-r from-current/5 via-transparent to-current/5 mix-blend-overlay pointer-events-none z-10" />
+        </>
+      )}
     </div>
   );
 }

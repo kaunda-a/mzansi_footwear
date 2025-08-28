@@ -238,13 +238,33 @@ export function CompactBillboard({
   return (
     <div
       className={cn(
-        "relative overflow-hidden rounded-md border p-4",
+        "relative overflow-hidden rounded-md border p-4 backdrop-blur-sm",
         typeStyles[billboard.type] ||
           "bg-gradient-to-r from-gray-500/10 to-slate-500/10 border-gray-200",
         className,
       )}
     >
-      <div className="flex items-center justify-between">
+      {/* Enhanced background effects for compact billboard */}
+      {billboard.imageUrl && (
+        <>
+          <div className="absolute inset-0">
+            <Image
+              src={billboard.imageUrl}
+              alt={billboard.title}
+              fill
+              className="object-cover opacity-15"
+              priority
+            />
+            {/* Vignette effect for compact billboard */}
+            <div className="absolute inset-0 shadow-[inset_0_0_3rem_0_rgba(0,0,0,0.3)] rounded-md pointer-events-none" />
+            {/* Color enhancement */}
+            <div className="absolute inset-0 bg-gradient-to-r from-current/5 via-transparent to-current/5 mix-blend-overlay pointer-events-none" />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-r from-background/85 to-background/60" />
+        </>
+      )}
+      
+      <div className="flex items-center justify-between relative z-10">
         <div className="flex-1 space-y-1">
           <div className="flex items-center space-x-2">
             <h3 className="font-semibold text-sm">{billboard.title}</h3>

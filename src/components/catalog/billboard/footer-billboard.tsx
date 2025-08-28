@@ -166,6 +166,17 @@ export function FooterBillboard() {
         <div className="absolute bottom-0 left-1/4 w-16 h-16 rounded-full bg-current/5 blur-xl animate-pulse" />
         <div className="absolute top-0 right-1/3 w-12 h-12 rounded-full bg-current/5 blur-lg animate-pulse delay-1000" />
       </div>
+      
+      {/* Image enhancement if billboard has an image */}
+      {billboard.imageUrl && (
+        <>
+          {/* Vignette effect for footer with image */}
+          <div className="absolute inset-0 shadow-[inset_0_0_4rem_0_rgba(0,0,0,0.4)] rounded-xl pointer-events-none z-10" />
+          
+          {/* Color enhancement for footer with image */}
+          <div className="absolute inset-0 bg-gradient-to-r from-current/8 via-transparent to-current/8 mix-blend-overlay pointer-events-none z-10" />
+        </>
+      )}
     </div>
   );
 }
