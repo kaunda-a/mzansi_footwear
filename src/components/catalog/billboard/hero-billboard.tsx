@@ -42,45 +42,30 @@ export function HeroBillboard() {
         onHoverStart={() => setIsHovered(true)}
         onHoverEnd={() => setIsHovered(false)}
       >
-        {/* Advanced hero-specific enhancements */}
+        {/* Sophisticated grid pattern overlay (from dashboard) */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none z-0">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 15px 15px, #ccc 1px, transparent 0)`,
+            backgroundSize: '30px 30px'
+          }} />
+        </div>
+        
+        {/* Enhanced geometric decorative elements (inspired by dashboard) */}
+        <div className="absolute inset-0 pointer-events-none z-0">
+          <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-gradient-to-br from-primary/15 to-accent/10 blur-3xl" />
+          <div className="absolute -bottom-16 -left-16 w-48 h-48 rounded-full bg-gradient-to-br from-secondary/15 to-primary/10 blur-3xl" />
+        </div>
         
         {/* Multi-layer gradient foundation */}
         <div className="absolute inset-0 bg-gradient-to-br from-background/95 via-primary/5 to-secondary/10 backdrop-blur-2xl pointer-events-none z-0" />
         
-        {/* Dynamic animated background elements */}
-        <div className="absolute inset-0 opacity-20 pointer-events-none z-0">
-          <motion.div 
-            className="absolute top-1/4 left-1/4 w-64 h-64 rounded-full bg-gradient-to-r from-primary/40 to-accent/30 blur-3xl"
-            animate={{ 
-              x: isHovered ? [0, -20, 0] : [0, 10, 0],
-              y: isHovered ? [0, -15, 0] : [0, -10, 0],
-            }}
-            transition={{ 
-              duration: 8,
-              repeat: Infinity,
-              repeatType: "reverse",
-              ease: "easeInOut"
-            }}
-          />
-          <motion.div 
-            className="absolute bottom-1/3 right-1/3 w-48 h-48 rounded-full bg-gradient-to-r from-secondary/40 to-primary/30 blur-3xl"
-            animate={{ 
-              x: isHovered ? [0, 15, 0] : [0, -10, 0],
-              y: isHovered ? [0, 10, 0] : [0, 15, 0],
-            }}
-            transition={{ 
-              duration: 10,
-              repeat: Infinity,
-              repeatType: "reverse",
-              ease: "easeInOut"
-            }}
-          />
-        </div>
+        {/* Elegant accent border (from dashboard) */}
+        <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent z-20" />
         
         {/* Sophisticated image enhancement layers */}
         <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20 pointer-events-none z-10" />
         
-        {/* Advanced vignette effect with dynamic intensity */}
+        {/* Advanced vignette effect */}
         <div className="absolute inset-0 shadow-[inset_0_0_10rem_0_rgba(0,0,0,0.6)] rounded-3xl pointer-events-none z-10" />
         
         {/* Color enhancement with blend modes */}
@@ -104,38 +89,18 @@ export function HeroBillboard() {
           transition={{ duration: 0.3 }}
         />
         
-        {/* Premium badge indicator */}
+        {/* Premium badge indicator (enhanced version of dashboard badge) */}
         <div className="absolute top-4 left-4 z-30">
           <div className="flex items-center gap-2 bg-background/80 backdrop-blur-xl px-3 py-1.5 rounded-full border border-border/50 shadow-lg">
             <div className="w-2 h-2 rounded-full bg-gradient-to-r from-primary to-accent animate-pulse" />
             <span className="text-[10px] font-black uppercase tracking-widest bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              Premium Collection
+              Featured Collection
             </span>
           </div>
         </div>
         
-        {/* Floating particles effect */}
-        <div className="absolute inset-0 pointer-events-none z-15">
-          {[...Array(6)].map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-1 h-1 rounded-full bg-white/40"
-              style={{
-                left: `${15 + i * 12}%`,
-                top: `${20 + (i % 3) * 20}%`,
-              }}
-              animate={{
-                y: [0, -15, 0],
-                opacity: [0.3, 0.8, 0.3],
-              }}
-              transition={{
-                duration: 3 + i,
-                repeat: Infinity,
-                delay: i * 0.5,
-              }}
-            />
-          ))}
-        </div>
+        {/* Subtle reflection effect */}
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background/40 to-transparent rounded-b-3xl pointer-events-none z-25" />
         
         <div className="relative z-20">
           <CarouselBillboard
@@ -148,9 +113,6 @@ export function HeroBillboard() {
             className="rounded-3xl"
           />
         </div>
-        
-        {/* Subtle reflection effect at bottom */}
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-background/40 to-transparent rounded-b-3xl pointer-events-none z-25" />
       </motion.div>
     </div>
   );
