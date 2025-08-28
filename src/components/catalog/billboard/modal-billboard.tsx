@@ -1,13 +1,17 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CarouselBillboardContainer } from "@/components/catalog/billboard/carousel-billboard-container";
+import { Api } from "@/lib/api";
+import type { BillboardWithCreator } from "@/lib/services";
+import { CarouselBillboard } from "@/components/catalog/billboard/carousel-billboard";
 import { IconX, IconSparkles, IconBolt } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export function ModalBillboard() {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [billboards, setBillboards] = useState<BillboardWithCreator[]>([]);
+  const [loading, setLoading] = useState(true);
 
   // Check if we're on mobile
   useEffect(() => {
@@ -21,8 +25,28 @@ export function ModalBillboard() {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
+  // Fetch billboards
+  useEffect(() => {
+    const fetchBillboards = async () => {
+      try {
+        setLoading(true);
+        const result = await Api.getBillboards({ position: "MODAL" });
+        setBillboards(result.billboards);
+      } catch (error) {
+        console.error("Error fetching modal billboards:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchBillboards();
+  }, []);
+
   // Show modal billboard after a delay, then hide it after a few seconds, and repeat
   useEffect(() => {
+    // Don't show modal if there are no billboards
+    if (!billboards.length) return;
+
     let showTimer: NodeJS.Timeout;
     let hideTimer: NodeJS.Timeout;
     
@@ -43,7 +67,10 @@ export function ModalBillboard() {
       clearTimeout(showTimer);
       clearTimeout(hideTimer);
     };
-  }, []);
+  }, [billboards.length]);
+
+  // Don't show anything if loading or no billboards
+  if (loading || !billboards.length) return null;
 
   if (!isOpen) return null;
 
@@ -112,8 +139,8 @@ export function ModalBillboard() {
           
           {/* Billboard Content - Compact Version */}
           <div className="p-1 pb-2">
-            <CarouselBillboardContainer
-              position="MODAL"
+            <CarouselBillboard
+              billboards={billboards}
               height="h-24"
               autoPlay={true}
               autoPlayInterval={5000}
