@@ -8,6 +8,24 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useThemeConfig } from "@/components/active-theme";
 
+// Define types for our theme styles
+type BillboardType = "PROMOTIONAL" | "SALE" | "ANNOUNCEMENT" | string;
+type ThemeName = "default" | "blue" | "green" | "amber" | string;
+
+interface BillboardStyle {
+  bg: string;
+  border: string;
+  text: string;
+  icon: string;
+  glow: string;
+}
+
+interface ThemeColors {
+  [key: string]: {
+    [key: string]: BillboardStyle;
+  };
+}
+
 export function HeaderBillboard() {
   const [billboards, setBillboards] = useState<BillboardWithCreator[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,9 +52,9 @@ export function HeaderBillboard() {
   const billboard = billboards[0];
 
   // Determine styling based on billboard type - using theme-aware classes
-  const getTypeStyles = (type: string, theme: string) => {
+  const getTypeStyles = (type: BillboardType, theme: ThemeName): BillboardStyle => {
     // Theme-aware color mappings
-    const themeColors = {
+    const themeColors: ThemeColors = {
       default: {
         PROMOTIONAL: {
           bg: "bg-gradient-to-r from-blue-500/10 via-purple-500/5 to-pink-500/10",
@@ -126,7 +144,7 @@ export function HeaderBillboard() {
           border: "border-b border-lime-200/30",
           text: "text-lime-600 dark:text-lime-300",
           icon: "text-lime-500 dark:text-lime-300",
-          glow: "shadow-[0_0_15px_rgba(132,204,22,0.15)] dark:shadow-[0_0_15px_rgba(190,242,100,0.15)]"
+          glow: "shadow-[0_0_15px_rgba(132,204,22,0.15)] dark:shadow-[0_0_15pxrgba(190,242,100,0.15)]"
         }
       }
     };
