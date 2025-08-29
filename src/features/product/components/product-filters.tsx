@@ -8,7 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { IconX, IconFilter } from "@tabler/icons-react";
+import { IconX, IconFilter, IconChevronDown, IconChevronUp } from "@tabler/icons-react";
 import { formatPrice } from "@/lib/format";
 import type { ProductFiltersProps } from "../types";
 
@@ -33,6 +33,13 @@ export function ProductFilters({
   const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
+    categories: true,
+    brands: true,
+    price: true,
+    sizes: true,
+    colors: true
+  });
 
   // Fetch filter options from API
   useEffect(() => {
@@ -82,6 +89,13 @@ export function ProductFilters({
       ]);
     }
   }, [priceRange.min, priceRange.max]);
+
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => ({
+      ...prev,
+      [section]: !prev[section]
+    }));
+  };
 
   const updateURL = (filters: any) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -233,11 +247,11 @@ export function ProductFilters({
 
   if (loading) {
     return (
-      <Card>
+      <Card className="border-border/70 shadow-xl backdrop-blur-2xl bg-gradient-to-br from-background/90 via-background/95 to-muted/50">
         <CardHeader className="pb-4">
           <CardTitle className="flex items-center gap-2">
             <IconFilter className="h-5 w-5" />
-            Filters
+            <span className="text-lg font-bold">Filters</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -250,15 +264,15 @@ export function ProductFilters({
   }
 
   return (
-    <Card>
+    <Card className="border-border/70 shadow-xl backdrop-blur-2xl bg-gradient-to-br from-background/90 via-background/95 to-muted/50">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <IconFilter className="h-5 w-5" />
-            Filters
+            <span className="text-lg font-bold">Filters</span>
           </CardTitle>
           {hasActiveFilters && (
-            <Button variant="ghost" size="sm" onClick={clearAllFilters}>
+            <Button variant="ghost" size="sm" onClick={clearAllFilters} className="h-8 px-2 text-xs">
               Clear All
             </Button>
           )}
@@ -266,132 +280,205 @@ export function ProductFilters({
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {/* Categories */}
+        {/* Categories - Collapsible on mobile */}
         {categories.length > 0 && (
           <div className="space-y-3">
-            <h4 className="font-medium">Categories</h4>
-            <div className="space-y-2">
-              {categories.map((category) => (
-                <div key={category.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`category-${category.id}`}
-                    checked={selectedCategories.includes(category.id)}
-                    onCheckedChange={(checked) =>
-                      handleCategoryChange(category.id, checked as boolean)
-                    }
-                  />
-                  <label
-                    htmlFor={`category-${category.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                  >
-                    {category.name}{" "}
-                    <span className="text-muted-foreground">({category.count})</span>
-                  </label>
-                </div>
-              ))}
-            </div>
+            <Button
+              variant="ghost"
+              className="w-full flex justify-between p-0 h-auto hover:bg-transparent md:hover:bg-accent"
+              onClick={() => toggleSection("categories")}
+            >
+              <h4 className="font-bold text-base">Categories</h4>
+              {expandedSections.categories ? (
+                <IconChevronUp className="h-5 w-5" />
+              ) : (
+                <IconChevronDown className="h-5 w-5" />
+              )}
+            </Button>
+            {expandedSections.categories && (
+              <div className="space-y-2 pl-1">
+                {categories.map((category) => (
+                  <div key={category.id} className="flex items-center space-x-3 py-1 md:py-2">
+                    <Checkbox
+                      id={`category-${category.id}`}
+                      checked={selectedCategories.includes(category.id)}
+                      onCheckedChange={(checked) =>
+                        handleCategoryChange(category.id, checked as boolean)
+                      }
+                      className="h-5 w-5 rounded-full data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                    />
+                    <label
+                      htmlFor={`category-${category.id}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
+                    >
+                      <div className="flex justify-between">
+                        <span>{category.name}</span>
+                        <span className="text-muted-foreground text-xs">({category.count})</span>
+                      </div>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         {categories.length > 0 && <Separator />}
 
-        {/* Brands */}
+        {/* Brands - Collapsible on mobile */}
         {brands.length > 0 && (
           <div className="space-y-3">
-            <h4 className="font-medium">Brands</h4>
-            <div className="space-y-2">
-              {brands.map((brand) => (
-                <div key={brand.id} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`brand-${brand.id}`}
-                    checked={selectedBrands.includes(brand.id)}
-                    onCheckedChange={(checked) =>
-                      handleBrandChange(brand.id, checked as boolean)
-                    }
-                  />
-                  <label
-                    htmlFor={`brand-${brand.id}`}
-                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-                  >
-                    {brand.name}{" "}
-                    <span className="text-muted-foreground">({brand.count})</span>
-                  </label>
-                </div>
-              ))}
-            </div>
+            <Button
+              variant="ghost"
+              className="w-full flex justify-between p-0 h-auto hover:bg-transparent md:hover:bg-accent"
+              onClick={() => toggleSection("brands")}
+            >
+              <h4 className="font-bold text-base">Brands</h4>
+              {expandedSections.brands ? (
+                <IconChevronUp className="h-5 w-5" />
+              ) : (
+                <IconChevronDown className="h-5 w-5" />
+              )}
+            </Button>
+            {expandedSections.brands && (
+              <div className="space-y-2 pl-1">
+                {brands.map((brand) => (
+                  <div key={brand.id} className="flex items-center space-x-3 py-1 md:py-2">
+                    <Checkbox
+                      id={`brand-${brand.id}`}
+                      checked={selectedBrands.includes(brand.id)}
+                      onCheckedChange={(checked) =>
+                        handleBrandChange(brand.id, checked as boolean)
+                      }
+                      className="h-5 w-5 rounded-full data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                    />
+                    <label
+                      htmlFor={`brand-${brand.id}`}
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer flex-1"
+                    >
+                      <div className="flex justify-between">
+                        <span>{brand.name}</span>
+                        <span className="text-muted-foreground text-xs">({brand.count})</span>
+                      </div>
+                    </label>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         {brands.length > 0 && <Separator />}
 
-        {/* Price Range */}
+        {/* Price Range - Collapsible on mobile */}
         <div className="space-y-3">
-          <h4 className="font-medium">Price Range</h4>
-          <div className="space-y-4">
-            <Slider
-              value={selectedPriceRange}
-              onValueChange={handlePriceRangeChange}
-              onValueCommit={handlePriceRangeCommit}
-              max={priceRange.max}
-              min={priceRange.min}
-              step={50}
-              className="w-full"
-            />
-            <div className="flex items-center justify-between text-sm text-muted-foreground">
-              <span>{formatPrice(selectedPriceRange[0])}</span>
-              <span>{formatPrice(selectedPriceRange[1])}</span>
+          <Button
+            variant="ghost"
+            className="w-full flex justify-between p-0 h-auto hover:bg-transparent md:hover:bg-accent"
+            onClick={() => toggleSection("price")}
+          >
+            <h4 className="font-bold text-base">Price Range</h4>
+            {expandedSections.price ? (
+              <IconChevronUp className="h-5 w-5" />
+            ) : (
+              <IconChevronDown className="h-5 w-5" />
+            )}
+          </Button>
+          {expandedSections.price && (
+            <div className="space-y-4 pl-1">
+              <Slider
+                value={selectedPriceRange}
+                onValueChange={handlePriceRangeChange}
+                onValueCommit={handlePriceRangeCommit}
+                max={priceRange.max}
+                min={priceRange.min}
+                step={50}
+                className="w-full"
+              />
+              <div className="flex items-center justify-between text-sm text-muted-foreground">
+                <span>{formatPrice(selectedPriceRange[0])}</span>
+                <span>{formatPrice(selectedPriceRange[1])}</span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         <Separator />
 
-        {/* Sizes */}
+        {/* Sizes - Collapsible on mobile */}
         <div className="space-y-3">
-          <h4 className="font-medium">Sizes</h4>
-          <div className="flex flex-wrap gap-2">
-            {availableSizes.map((size) => (
-              <Button
-                key={size.value}
-                variant={selectedSizes.includes(size.value) ? "default" : "outline"}
-                size="sm"
-                onClick={() =>
-                  handleSizeChange(size.value, !selectedSizes.includes(size.value))
-                }
-              >
-                {size.label}{" "}
-                <span className="text-xs opacity-70 ml-1">({size.count})</span>
-              </Button>
-            ))}
-          </div>
+          <Button
+            variant="ghost"
+            className="w-full flex justify-between p-0 h-auto hover:bg-transparent md:hover:bg-accent"
+            onClick={() => toggleSection("sizes")}
+          >
+            <h4 className="font-bold text-base">Sizes</h4>
+            {expandedSections.sizes ? (
+              <IconChevronUp className="h-5 w-5" />
+            ) : (
+              <IconChevronDown className="h-5 w-5" />
+            )}
+          </Button>
+          {expandedSections.sizes && (
+            <div className="flex flex-wrap gap-2 pl-1">
+              {availableSizes.map((size) => (
+                <Button
+                  key={size.value}
+                  variant={selectedSizes.includes(size.value) ? "default" : "outline"}
+                  size="sm"
+                  onClick={() =>
+                    handleSizeChange(size.value, !selectedSizes.includes(size.value))
+                  }
+                  className="rounded-full px-3 h-8 text-xs md:text-sm"
+                >
+                  {size.label}
+                  <span className="text-xs opacity-70 ml-1">({size.count})</span>
+                </Button>
+              ))}
+            </div>
+          )}
         </div>
 
         <Separator />
 
-        {/* Colors */}
+        {/* Colors - Collapsible on mobile */}
         <div className="space-y-3">
-          <h4 className="font-medium">Colors</h4>
-          <div className="flex flex-wrap gap-2">
-            {availableColors.map((color) => (
-              <Button
-                key={color.value}
-                variant={selectedColors.includes(color.value) ? "default" : "outline"}
-                size="sm"
-                style={{ 
-                  backgroundColor: selectedColors.includes(color.value) ? color.hex : 'transparent',
-                  color: selectedColors.includes(color.value) ? 
-                    (parseInt(color.hex.replace('#', ''), 16) > 0xffffff/2 ? '#000' : '#fff') : 
-                    '#000'
-                }}
-                onClick={() =>
-                  handleColorChange(color.value, !selectedColors.includes(color.value))
-                }
-              >
-                {color.label}{" "}
-                <span className="text-xs opacity-70 ml-1">({color.count})</span>
-              </Button>
-            ))}
-          </div>
+          <Button
+            variant="ghost"
+            className="w-full flex justify-between p-0 h-auto hover:bg-transparent md:hover:bg-accent"
+            onClick={() => toggleSection("colors")}
+          >
+            <h4 className="font-bold text-base">Colors</h4>
+            {expandedSections.colors ? (
+              <IconChevronUp className="h-5 w-5" />
+            ) : (
+              <IconChevronDown className="h-5 w-5" />
+            )}
+          </Button>
+          {expandedSections.colors && (
+            <div className="flex flex-wrap gap-2 pl-1">
+              {availableColors.map((color) => (
+                <Button
+                  key={color.value}
+                  variant={selectedColors.includes(color.value) ? "default" : "outline"}
+                  size="sm"
+                  style={{ 
+                    backgroundColor: selectedColors.includes(color.value) ? color.hex : 'transparent',
+                    color: selectedColors.includes(color.value) ? 
+                      (parseInt(color.hex.replace('#', ''), 16) > 0xffffff/2 ? '#000' : '#fff') : 
+                      '#000'
+                  }}
+                  onClick={() =>
+                    handleColorChange(color.value, !selectedColors.includes(color.value))
+                  }
+                  className="rounded-full px-3 h-8 text-xs md:text-sm"
+                >
+                  {color.label}
+                  <span className="text-xs opacity-70 ml-1">({color.count})</span>
+                </Button>
+              ))}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
