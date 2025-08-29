@@ -99,7 +99,7 @@ export function CategorySelector() {
             className="h-10 rounded-full px-4 bg-gradient-to-r from-background/80 to-muted/40 backdrop-blur-sm border border-border/50 shadow-md"
           >
             <IconFilter className="h-4 w-4 mr-2" />
-            <span className="text-sm">Filter</span>
+            <span className="text-sm">Categories</span>
           </Button>
         </div>
       );
@@ -115,11 +115,11 @@ export function CategorySelector() {
               className="h-10 rounded-full px-4 bg-gradient-to-r from-background/80 to-muted/40 backdrop-blur-sm border border-border/50 shadow-md hover:from-accent/20 hover:to-accent/10"
             >
               <IconFilter className="h-4 w-4 mr-2" />
-              <span className="text-sm">Filter</span>
+              <span className="text-sm">Categories</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-[95vw] rounded-2xl p-0">
-            <DialogHeader className="p-4 border-b flex items-center justify-between">
+          <DialogContent className="max-w-[95vw] rounded-2xl p-0 max-h-[80vh] flex flex-col">
+            <DialogHeader className="p-4 border-b flex items-center justify-between shrink-0">
               <DialogTitle className="text-lg font-bold">Shop by Category</DialogTitle>
               <Button 
                 variant="ghost" 
@@ -130,12 +130,12 @@ export function CategorySelector() {
                 <IconX className="h-5 w-5" />
               </Button>
             </DialogHeader>
-            <div className="p-2 max-h-[60vh] overflow-y-auto">
+            <div className="overflow-y-auto flex-1 p-2">
               <div className="space-y-1">
                 {/* All Categories Option */}
                 <Button
                   variant={selectedCategory === null ? "default" : "ghost"}
-                  className="w-full justify-between h-14 px-4 py-3 rounded-xl text-left font-medium text-base"
+                  className="w-full justify-between h-14 px-4 py-3 rounded-xl text-left font-medium text-base hover:scale-[1.02] transition-transform"
                   onClick={() => handleCategoryClick(null)}
                 >
                   <div className="flex items-center">
@@ -159,7 +159,7 @@ export function CategorySelector() {
                     <Button
                       key={category.id}
                       variant={isSelected ? "default" : "ghost"}
-                      className="w-full justify-between h-14 px-4 py-3 rounded-xl text-left font-medium text-base"
+                      className="w-full justify-between h-14 px-4 py-3 rounded-xl text-left font-medium text-base hover:scale-[1.02] transition-transform"
                       onClick={() => handleCategoryClick(category.id)}
                     >
                       <div className="flex items-center">
