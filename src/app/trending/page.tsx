@@ -3,6 +3,7 @@ import Header from "@/components/layout/header";
 import { StoreFooter } from "@/components/layout/footer";
 import { TrendingProductCatalog } from "@/features/product/components/trending-product-catalog";
 import { ProductFilters } from "@/features/product/components/product-filters";
+import { MobileProductFilters } from "@/features/product/components/mobile-product-filters";
 import { CategorySelector } from "@/components/catalog/category/category-selector";
 import {
   Breadcrumb,
@@ -78,7 +79,7 @@ export default async function TrendingPage({
         {/* Main Content */}
         <div className="container mx-auto px-4 py-8">
           <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-            {/* Category Selector and Filters Sidebar */}
+            {/* Category Selector and Filters Sidebar - Desktop */}
             <div className="hidden lg:block">
               <div className="sticky top-24 space-y-6">
                 <CategorySelector />
@@ -92,8 +93,12 @@ export default async function TrendingPage({
               </div>
             </div>
 
-            {/* Products Grid */}
+            {/* Mobile Filters and Products */}
             <div className="lg:col-span-3">
+              {/* Mobile Filters - Only visible on mobile/tablet */}
+              <MobileProductFilters className="lg:hidden" />
+              
+              {/* Products Grid */}
               <Suspense
                 fallback={
                   <div className="space-y-6">
