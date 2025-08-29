@@ -2,6 +2,7 @@ import React, { Suspense } from "react";
 import { ProductGrid } from "./product-grid";
 import { ProductPagination } from "./product-pagination";
 import { ProductSort as ProductSortComponent } from "./product-sort";
+import { MobileTrendingFilters } from "./mobile-trending-filters";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Api } from "@/lib/api";
 
@@ -84,6 +85,11 @@ function TrendingProductCatalogContent({
 
   return (
     <div className="space-y-6">
+      {/* Mobile Filters - Only visible on mobile/tablet */}
+      <div className="lg:hidden">
+        <MobileTrendingFilters />
+      </div>
+      
       {/* Results Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="text-sm text-muted-foreground">
@@ -99,7 +105,9 @@ function TrendingProductCatalogContent({
         </div>
 
         {showSort && clientSafeProducts.length > 0 && (
-          <ProductSortComponent currentSort="trending" />
+          <div className="hidden lg:block">
+            <ProductSortComponent currentSort="trending" />
+          </div>
         )}
       </div>
 
