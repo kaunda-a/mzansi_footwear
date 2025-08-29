@@ -11,7 +11,8 @@ import {
   IconHanger, 
   IconClothesRack,
   IconX,
-  IconChevronRight
+  IconChevronRight,
+  IconFilter
 } from "@tabler/icons-react";
 import { 
   Dialog, 
@@ -91,104 +92,96 @@ export function CategorySelector() {
   const renderMobileDialog = () => {
     if (loading) {
       return (
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button 
-              variant="secondary" 
-              size="icon" 
-              className="fixed bottom-20 right-4 z-50 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-br from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 backdrop-blur-sm border border-primary/30 md:hidden"
-            >
-              <IconCategory className="h-6 w-6 text-white" />
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-[95vw] rounded-2xl p-0">
-            <DialogHeader className="p-4 border-b">
-              <DialogTitle className="text-lg font-bold">Categories</DialogTitle>
-            </DialogHeader>
-            <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
-              <div className="h-12 w-full bg-muted-foreground/20 rounded-full animate-pulse" />
-              <div className="h-12 w-full bg-muted-foreground/20 rounded-full animate-pulse" />
-              <div className="h-12 w-full bg-muted-foreground/20 rounded-full animate-pulse" />
-            </div>
-          </DialogContent>
-        </Dialog>
+        <div className="flex justify-end mb-4 md:hidden">
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            className="h-10 rounded-full px-4 bg-gradient-to-r from-background/80 to-muted/40 backdrop-blur-sm border border-border/50 shadow-md"
+          >
+            <IconFilter className="h-4 w-4 mr-2" />
+            <span className="text-sm">Filter</span>
+          </Button>
+        </div>
       );
     }
 
     return (
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogTrigger asChild>
-          <Button 
-            variant="secondary" 
-            size="icon" 
-            className="fixed bottom-20 right-4 z-50 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-br from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 backdrop-blur-sm border border-primary/30 md:hidden"
-          >
-            <IconCategory className="h-6 w-6 text-white" />
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="max-w-[95vw] rounded-2xl p-0">
-          <DialogHeader className="p-4 border-b flex items-center justify-between">
-            <DialogTitle className="text-lg font-bold">Shop by Category</DialogTitle>
+      <div className="flex justify-end mb-4 md:hidden">
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
             <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => setIsDialogOpen(false)}
-              className="h-8 w-8"
+              variant="secondary" 
+              size="sm" 
+              className="h-10 rounded-full px-4 bg-gradient-to-r from-background/80 to-muted/40 backdrop-blur-sm border border-border/50 shadow-md hover:from-accent/20 hover:to-accent/10"
             >
-              <IconX className="h-5 w-5" />
+              <IconFilter className="h-4 w-4 mr-2" />
+              <span className="text-sm">Filter</span>
             </Button>
-          </DialogHeader>
-          <div className="p-2 max-h-[60vh] overflow-y-auto">
-            <div className="space-y-1">
-              {/* All Categories Option */}
-              <Button
-                variant={selectedCategory === null ? "default" : "ghost"}
-                className="w-full justify-between h-14 px-4 py-3 rounded-xl text-left font-medium text-base"
-                onClick={() => handleCategoryClick(null)}
+          </DialogTrigger>
+          <DialogContent className="max-w-[95vw] rounded-2xl p-0">
+            <DialogHeader className="p-4 border-b flex items-center justify-between">
+              <DialogTitle className="text-lg font-bold">Shop by Category</DialogTitle>
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => setIsDialogOpen(false)}
+                className="h-8 w-8"
               >
-                <div className="flex items-center">
-                  <IconCategory className="h-5 w-5 mr-3 text-primary" />
-                  <span>All Products</span>
-                </div>
-                <div className="flex items-center">
-                  <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-1 mr-2">
-                    All
-                  </span>
-                  <IconChevronRight className="h-4 w-4 text-muted-foreground" />
-                </div>
+                <IconX className="h-5 w-5" />
               </Button>
-              
-              {/* Category List */}
-              {categories.map((category, index) => {
-                const IconComponent = categoryIcons[index % categoryIcons.length];
-                const isSelected = selectedCategory === category.id;
+            </DialogHeader>
+            <div className="p-2 max-h-[60vh] overflow-y-auto">
+              <div className="space-y-1">
+                {/* All Categories Option */}
+                <Button
+                  variant={selectedCategory === null ? "default" : "ghost"}
+                  className="w-full justify-between h-14 px-4 py-3 rounded-xl text-left font-medium text-base"
+                  onClick={() => handleCategoryClick(null)}
+                >
+                  <div className="flex items-center">
+                    <IconCategory className="h-5 w-5 mr-3 text-primary" />
+                    <span>All Products</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-1 mr-2">
+                      All
+                    </span>
+                    <IconChevronRight className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                </Button>
                 
-                return (
-                  <Button
-                    key={category.id}
-                    variant={isSelected ? "default" : "ghost"}
-                    className="w-full justify-between h-14 px-4 py-3 rounded-xl text-left font-medium text-base"
-                    onClick={() => handleCategoryClick(category.id)}
-                  >
-                    <div className="flex items-center">
-                      <IconComponent className="h-5 w-5 mr-3 text-primary" />
-                      <span>{category.name}</span>
-                    </div>
-                    <div className="flex items-center">
-                      {category.productCount > 0 && (
-                        <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-1 mr-2">
-                          {category.productCount}
-                        </span>
-                      )}
-                      <IconChevronRight className="h-4 w-4 text-muted-foreground" />
-                    </div>
-                  </Button>
-                );
-              })}
+                {/* Category List */}
+                {categories.map((category, index) => {
+                  const IconComponent = categoryIcons[index % categoryIcons.length];
+                  const isSelected = selectedCategory === category.id;
+                  
+                  return (
+                    <Button
+                      key={category.id}
+                      variant={isSelected ? "default" : "ghost"}
+                      className="w-full justify-between h-14 px-4 py-3 rounded-xl text-left font-medium text-base"
+                      onClick={() => handleCategoryClick(category.id)}
+                    >
+                      <div className="flex items-center">
+                        <IconComponent className="h-5 w-5 mr-3 text-primary" />
+                        <span>{category.name}</span>
+                      </div>
+                      <div className="flex items-center">
+                        {category.productCount > 0 && (
+                          <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-1 mr-2">
+                            {category.productCount}
+                          </span>
+                        )}
+                        <IconChevronRight className="h-4 w-4 text-muted-foreground" />
+                      </div>
+                    </Button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+          </DialogContent>
+        </Dialog>
+      </div>
     );
   };
 
@@ -199,14 +192,10 @@ export function CategorySelector() {
         <div className="hidden space-y-6 p-6 rounded-3xl bg-gradient-to-br from-background/90 via-background/95 to-muted/50 border border-border/70 shadow-2xl backdrop-blur-2xl md:block">
           <div className="flex items-center justify-between">
             <div className="h-8 w-48 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full animate-pulse" />
-            <div className="flex gap-3">
-              <div className="h-10 w-10 rounded-full bg-muted-foreground/20 animate-pulse" />
-              <div className="h-10 w-10 rounded-full bg-muted-foreground/20 animate-pulse" />
-            </div>
           </div>
-          <div className="flex gap-4 py-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-12 w-32 rounded-full bg-muted-foreground/20 animate-pulse" />
+              <div key={i} className="h-24 w-full rounded-2xl bg-muted-foreground/20 animate-pulse" />
             ))}
           </div>
         </div>
@@ -284,9 +273,9 @@ export function CategorySelector() {
   };
 
   return (
-    <>
+    <div className="w-full">
       {renderMobileDialog()}
       {renderDesktopSelector()}
-    </>
+    </div>
   );
 }
