@@ -96,7 +96,9 @@ export default async function TrendingPage({
             {/* Mobile Filters and Products */}
             <div className="lg:col-span-3">
               {/* Mobile Filters - Only visible on mobile/tablet */}
-              <MobileProductFilters className="lg:hidden" />
+              <div className="lg:hidden">
+                <MobileProductFilters />
+              </div>
               
               {/* Products Grid */}
               <Suspense
