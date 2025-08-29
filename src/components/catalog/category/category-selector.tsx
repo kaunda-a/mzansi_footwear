@@ -1,10 +1,25 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { motion, AnimatePresence } from "motion/react";
-import { IconChevronLeft, IconChevronRight, IconCategory, IconShoe, IconCategory2, IconHanger, IconClothesRack } from "@tabler/icons-react";
+import { 
+  IconCategory, 
+  IconShoe, 
+  IconCategory2, 
+  IconHanger, 
+  IconClothesRack,
+  IconX,
+  IconChevronRight
+} from "@tabler/icons-react";
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader, 
+  DialogTitle, 
+  DialogTrigger 
+} from "@/components/ui/dialog";
 
 interface Category {
   id: string;
@@ -27,24 +42,7 @@ export function CategorySelector() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [canScrollLeft, setCanScrollLeft] = useState(false);
-  const [canScrollRight, setCanScrollRight] = useState(false);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
-  
-  // Animation variants for marquee effect
-  const marqueeVariants = {
-    animate: {
-      x: ["0%", "-50%"],
-      transition: {
-        x: {
-          repeat: Infinity,
-          repeatType: "loop",
-          duration: 20,
-          ease: "linear",
-        },
-      },
-    },
-  };
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   // Fetch categories from API
   useEffect(() => {
@@ -72,37 +70,9 @@ export function CategorySelector() {
     setSelectedCategory(categoryParam);
   }, [searchParams]);
 
-  // Check scroll position for navigation buttons
-  const checkScrollPosition = () => {
-    if (scrollAreaRef.current) {
-      const { scrollLeft, scrollWidth, clientWidth } = scrollAreaRef.current;
-      setCanScrollLeft(scrollLeft > 0);
-      setCanScrollRight(scrollLeft < scrollWidth - clientWidth - 1);
-    }
-  };
-
-  // Handle scroll events
-  useEffect(() => {
-    const scrollElement = scrollAreaRef.current;
-    if (scrollElement) {
-      scrollElement.addEventListener("scroll", checkScrollPosition);
-      checkScrollPosition();
-      return () => scrollElement.removeEventListener("scroll", checkScrollPosition);
-    }
-  }, [categories]);
-
-  const handleScroll = (direction: "left" | "right") => {
-    if (scrollAreaRef.current) {
-      const scrollAmount = 300;
-      scrollAreaRef.current.scrollBy({
-        left: direction === "right" ? scrollAmount : -scrollAmount,
-        behavior: "smooth"
-      });
-    }
-  };
-
   const handleCategoryClick = (categoryId: string | null) => {
     setSelectedCategory(categoryId);
+    setIsDialogOpen(false); // Close dialog on selection
     
     const params = new URLSearchParams(searchParams.toString());
     
@@ -117,113 +87,164 @@ export function CategorySelector() {
     router.push(`/trending?${params.toString()}`);
   };
 
-  if (loading) {
+  // Render mobile category dialog
+  const renderMobileDialog = () => {
+    if (loading) {
+      return (
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger asChild>
+            <Button 
+              variant="secondary" 
+              size="icon" 
+              className="fixed bottom-20 right-4 z-50 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-br from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 backdrop-blur-sm border border-primary/30 md:hidden"
+            >
+              <IconCategory className="h-6 w-6 text-white" />
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-[95vw] rounded-2xl p-0">
+            <DialogHeader className="p-4 border-b">
+              <DialogTitle className="text-lg font-bold">Categories</DialogTitle>
+            </DialogHeader>
+            <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+              <div className="h-12 w-full bg-muted-foreground/20 rounded-full animate-pulse" />
+              <div className="h-12 w-full bg-muted-foreground/20 rounded-full animate-pulse" />
+              <div className="h-12 w-full bg-muted-foreground/20 rounded-full animate-pulse" />
+            </div>
+          </DialogContent>
+        </Dialog>
+      );
+    }
+
     return (
-      <div className="space-y-6 p-4 rounded-2xl bg-gradient-to-br from-background/90 via-background/95 to-muted/50 border border-border/70 shadow-xl backdrop-blur-xl md:p-6 md:rounded-3xl">
-        <div className="flex items-center justify-between">
-          <div className="h-7 w-32 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full animate-pulse md:h-8 md:w-48" />
-          <div className="flex gap-2">
-            <div className="h-8 w-8 rounded-full bg-muted-foreground/20 animate-pulse md:h-10 md:w-10" />
-            <div className="h-8 w-8 rounded-full bg-muted-foreground/20 animate-pulse md:h-10 md:w-10" />
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogTrigger asChild>
+          <Button 
+            variant="secondary" 
+            size="icon" 
+            className="fixed bottom-20 right-4 z-50 h-14 w-14 rounded-full shadow-2xl bg-gradient-to-br from-primary to-secondary hover:from-primary/90 hover:to-secondary/90 backdrop-blur-sm border border-primary/30 md:hidden"
+          >
+            <IconCategory className="h-6 w-6 text-white" />
+          </Button>
+        </DialogTrigger>
+        <DialogContent className="max-w-[95vw] rounded-2xl p-0">
+          <DialogHeader className="p-4 border-b flex items-center justify-between">
+            <DialogTitle className="text-lg font-bold">Shop by Category</DialogTitle>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => setIsDialogOpen(false)}
+              className="h-8 w-8"
+            >
+              <IconX className="h-5 w-5" />
+            </Button>
+          </DialogHeader>
+          <div className="p-2 max-h-[60vh] overflow-y-auto">
+            <div className="space-y-1">
+              {/* All Categories Option */}
+              <Button
+                variant={selectedCategory === null ? "default" : "ghost"}
+                className="w-full justify-between h-14 px-4 py-3 rounded-xl text-left font-medium text-base"
+                onClick={() => handleCategoryClick(null)}
+              >
+                <div className="flex items-center">
+                  <IconCategory className="h-5 w-5 mr-3 text-primary" />
+                  <span>All Products</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-1 mr-2">
+                    All
+                  </span>
+                  <IconChevronRight className="h-4 w-4 text-muted-foreground" />
+                </div>
+              </Button>
+              
+              {/* Category List */}
+              {categories.map((category, index) => {
+                const IconComponent = categoryIcons[index % categoryIcons.length];
+                const isSelected = selectedCategory === category.id;
+                
+                return (
+                  <Button
+                    key={category.id}
+                    variant={isSelected ? "default" : "ghost"}
+                    className="w-full justify-between h-14 px-4 py-3 rounded-xl text-left font-medium text-base"
+                    onClick={() => handleCategoryClick(category.id)}
+                  >
+                    <div className="flex items-center">
+                      <IconComponent className="h-5 w-5 mr-3 text-primary" />
+                      <span>{category.name}</span>
+                    </div>
+                    <div className="flex items-center">
+                      {category.productCount > 0 && (
+                        <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-1 mr-2">
+                          {category.productCount}
+                        </span>
+                      )}
+                      <IconChevronRight className="h-4 w-4 text-muted-foreground" />
+                    </div>
+                  </Button>
+                );
+              })}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  };
+
+  // Render desktop category selector
+  const renderDesktopSelector = () => {
+    if (loading) {
+      return (
+        <div className="hidden space-y-6 p-6 rounded-3xl bg-gradient-to-br from-background/90 via-background/95 to-muted/50 border border-border/70 shadow-2xl backdrop-blur-2xl md:block">
+          <div className="flex items-center justify-between">
+            <div className="h-8 w-48 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full animate-pulse" />
+            <div className="flex gap-3">
+              <div className="h-10 w-10 rounded-full bg-muted-foreground/20 animate-pulse" />
+              <div className="h-10 w-10 rounded-full bg-muted-foreground/20 animate-pulse" />
+            </div>
+          </div>
+          <div className="flex gap-4 py-3">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-12 w-32 rounded-full bg-muted-foreground/20 animate-pulse" />
+            ))}
           </div>
         </div>
-        <div className="flex gap-2 py-2 md:gap-4 md:py-3">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="h-10 w-24 rounded-full bg-muted-foreground/20 animate-pulse md:h-12 md:w-32" />
-          ))}
-        </div>
-      </div>
-    );
-  }
+      );
+    }
 
-  return (
-    <div className="space-y-6 p-4 rounded-2xl bg-gradient-to-br from-background/90 via-background/95 to-muted/50 border border-border/70 shadow-xl backdrop-blur-xl md:p-6 md:rounded-3xl">
-      <div className="flex items-center justify-between">
+    return (
+      <div className="hidden space-y-6 p-6 rounded-3xl bg-gradient-to-br from-background/90 via-background/95 to-muted/50 border border-border/70 shadow-2xl backdrop-blur-2xl md:block">
         <motion.h2 
-          className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-tight md:text-2xl"
+          className="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-tight"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
           Shop by Category
         </motion.h2>
-        <div className="flex gap-2">
-          <AnimatePresence>
-            {canScrollLeft && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <Button 
-                  variant="secondary" 
-                  size="icon" 
-                  className="h-8 w-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 bg-background/80 backdrop-blur-sm hover:bg-accent/20 md:h-10 md:w-10"
-                  onClick={() => handleScroll("left")}
-                >
-                  <IconChevronLeft className="h-4 w-4 md:h-5 md:w-5" />
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <AnimatePresence>
-            {canScrollRight && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ type: "spring", stiffness: 300, damping: 20 }}
-              >
-                <Button 
-                  variant="secondary" 
-                  size="icon" 
-                  className="h-8 w-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-border/50 bg-background/80 backdrop-blur-sm hover:bg-accent/20 md:h-10 md:w-10"
-                  onClick={() => handleScroll("right")}
-                >
-                  <IconChevronRight className="h-4 w-4 md:h-5 md:w-5" />
-                </Button>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-      
-      <div className="relative w-full overflow-hidden">
-        {/* Gradient overlays for fade effect */}
-        <div className="absolute top-0 left-0 z-10 h-full w-10 bg-gradient-to-r from-background to-transparent pointer-events-none md:w-12" />
-        <div className="absolute top-0 right-0 z-10 h-full w-10 bg-gradient-to-l from-background to-transparent pointer-events-none md:w-12" />
         
-        {/* Scrollable category container with enhanced styling */}
-        <div
-          ref={scrollAreaRef}
-          id="category-scroll-area"
-          className="flex space-x-2 py-2 overflow-x-auto scrollbar-hide md:space-x-4 md:py-3"
-          style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
-        >
-          {/* All Categories Button - responsive sizing */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          {/* All Categories Option */}
           <motion.div
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ type: "spring", stiffness: 400, damping: 17, delay: 0.1 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
           >
             <Button
               variant={selectedCategory === null ? "default" : "secondary"}
-              size="lg"
-              className="rounded-full shrink-0 px-4 py-2.5 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border border-primary/30 bg-gradient-to-br from-primary/15 to-primary/5 backdrop-blur-sm hover:from-primary/25 hover:to-primary/15 text-sm md:px-6 md:py-4 md:text-base"
+              className="w-full h-24 flex flex-col items-center justify-center rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-primary/30 bg-gradient-to-br from-primary/15 to-primary/5 backdrop-blur-sm hover:from-primary/25 hover:to-primary/15"
               onClick={() => handleCategoryClick(null)}
             >
-              <IconCategory className="mr-1.5 h-3.5 w-3.5 md:mr-2 md:h-4 md:w-4" />
-              All Products
-              <span className="ml-2 text-xs font-bold bg-gradient-to-r from-primary/20 to-secondary/20 text-primary rounded-full px-2 py-0.5 border border-primary/30 md:px-3 md:py-1">
-                All
-              </span>
+              <IconCategory className="h-8 w-8 mb-2 text-primary" />
+              <span className="font-semibold text-sm">All Products</span>
+              <span className="text-xs mt-1 text-primary/80">All Items</span>
             </Button>
           </motion.div>
           
-          {/* Category buttons with enhanced styling and mobile responsiveness */}
+          {/* Category Grid */}
           {categories.map((category, index) => {
             const IconComponent = categoryIcons[index % categoryIcons.length];
             const isSelected = selectedCategory === category.id;
@@ -231,33 +252,26 @@ export function CategorySelector() {
             return (
               <motion.div
                 key={category.id}
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ type: "spring", stiffness: 400, damping: 17, delay: (index + 1) * 0.05 }}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: (index + 1) * 0.05 }}
               >
                 <Button
                   variant={isSelected ? "default" : "secondary"}
-                  size="lg"
-                  className={`rounded-full shrink-0 px-4 py-2.5 font-semibold shadow-lg hover:shadow-xl transition-all duration-300 border backdrop-blur-sm text-sm md:px-6 md:py-4 md:text-base ${
+                  className={`w-full h-24 flex flex-col items-center justify-center rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border backdrop-blur-sm ${
                     isSelected
                       ? "border-primary/50 bg-gradient-to-br from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 shadow-primary/20"
                       : "border-border/50 bg-gradient-to-br from-background/80 to-muted/40 hover:from-accent/20 hover:to-accent/10"
                   }`}
                   onClick={() => handleCategoryClick(category.id)}
                 >
-                  <IconComponent className="mr-1.5 h-3.5 w-3.5 md:mr-2 md:h-4 md:w-4" />
-                  <span className="truncate max-w-[90px] md:max-w-[120px]">
-                    {category.name}
-                  </span>
+                  <IconComponent className="h-8 w-8 mb-2 text-primary" />
+                  <span className="font-semibold text-sm truncate w-full px-1">{category.name}</span>
                   {category.productCount > 0 && (
-                    <span className={`ml-2 text-xs font-bold rounded-full px-2 py-0.5 border md:px-3 md:py-1 ${
-                      isSelected
-                        ? "bg-gradient-to-r from-primary/30 to-secondary/30 text-primary border-primary/50"
-                        : "bg-gradient-to-r from-primary/20 to-secondary/20 text-primary border-primary/30"
-                    }`}>
-                      {category.productCount}
+                    <span className="text-xs mt-1 bg-primary/10 text-primary rounded-full px-2 py-0.5">
+                      {category.productCount} items
                     </span>
                   )}
                 </Button>
@@ -266,6 +280,13 @@ export function CategorySelector() {
           })}
         </div>
       </div>
-    </div>
+    );
+  };
+
+  return (
+    <>
+      {renderMobileDialog()}
+      {renderDesktopSelector()}
+    </>
   );
 }
