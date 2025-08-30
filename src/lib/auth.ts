@@ -8,23 +8,6 @@ import type { Adapter } from "next-auth/adapters";
 
 const prismaAdapter = PrismaAdapter(db as PrismaClient);
 
-// Determine the base URL based on environment
-const getBaseUrl = () => {
-  if (typeof window !== 'undefined') return window.location.origin;
-  
-  // Explicitly check for production domains first
-  if (process.env.NEXTAUTH_URL && process.env.NEXTAUTH_URL !== "http://localhost:3000") {
-    // Remove trailing slash if present
-    return process.env.NEXTAUTH_URL.replace(/\/$/, '');
-  }
-  
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  if (process.env.NEXT_PUBLIC_APP_URL) return process.env.NEXT_PUBLIC_APP_URL;
-  return 'http://localhost:3000';
-};
-
-const baseUrl = getBaseUrl();
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: {
     ...prismaAdapter,
@@ -123,12 +106,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-      // Explicitly set the callback URL to ensure it uses the correct path
-      authorization: {
-        params: {
-          redirect_uri: `${baseUrl}/api/auth/callback/google`
-        }
-      }
     }),
   ],
   session: {
@@ -157,15 +134,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
     async redirect({ url, baseUrl }) {
-      // Ensure we always use the correct callback URL structure
-      // NextAuth.js by default uses /api/auth/callback/:provider
-      const apiCallbackUrl = `${baseUrl}/api/auth/callback/google`;
-      
-      // If this is a Google OAuth callback, ensure it uses the correct path
-      if (url.includes('callback/google') && !url.includes('/api/auth/')) {
-        return apiCallbackUrl;
-      }
-      
       // If redirecting after successful sign in
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       // If it's a callback URL, use it
