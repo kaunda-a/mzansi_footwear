@@ -12,7 +12,10 @@ import {
   IconClothesRack,
   IconX,
   IconChevronRight,
-  IconFilter
+  IconFilter,
+  IconGridDots,
+  IconLayoutGrid,
+  IconList
 } from "@tabler/icons-react";
 import { 
   Dialog, 
@@ -21,6 +24,7 @@ import {
   DialogTitle, 
   DialogTrigger 
 } from "@/components/ui/dialog";
+import { CategoryCard } from "@/components/catalog/category/category-card";
 
 interface Category {
   id: string;
@@ -35,6 +39,9 @@ const categoryIcons = [
   IconCategory2,
   IconHanger,
   IconClothesRack,
+  IconGridDots,
+  IconLayoutGrid,
+  IconList
 ];
 
 export function CategorySelector() {
@@ -44,6 +51,7 @@ export function CategorySelector() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   // Fetch categories from API
   useEffect(() => {
@@ -92,7 +100,8 @@ export function CategorySelector() {
   const renderMobileDialog = () => {
     if (loading) {
       return (
-        <div className="flex justify-end mb-4 md:hidden">
+        <div className="flex justify-between items-center mb-4 md:hidden">
+          <div className="h-6 w-32 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full animate-pulse" />
           <Button 
             variant="secondary" 
             size="sm" 
@@ -106,7 +115,11 @@ export function CategorySelector() {
     }
 
     return (
-      <div className="flex justify-end mb-4 md:hidden">
+      <div className="flex justify-between items-center mb-4 md:hidden">
+        <div className="flex items-center">
+          <IconCategory className="h-5 w-5 mr-2 text-primary" />
+          <span className="font-semibold text-foreground">Categories</span>
+        </div>
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogTrigger asChild>
             <Button 
@@ -115,7 +128,7 @@ export function CategorySelector() {
               className="h-10 rounded-full px-4 bg-gradient-to-r from-background/80 to-muted/40 backdrop-blur-sm border border-border/50 shadow-md hover:from-accent/20 hover:to-accent/10"
             >
               <IconFilter className="h-4 w-4 mr-2" />
-              <span className="text-sm">Categories</span>
+              <span className="text-sm">Filter</span>
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-[95vw] rounded-2xl p-0 max-h-[80vh] flex flex-col">
@@ -133,22 +146,14 @@ export function CategorySelector() {
             <div className="overflow-y-auto flex-1 p-2">
               <div className="space-y-1">
                 {/* All Categories Option */}
-                <Button
-                  variant={selectedCategory === null ? "default" : "ghost"}
-                  className="w-full justify-between h-14 px-4 py-3 rounded-xl text-left font-medium text-base hover:scale-[1.02] transition-transform"
+                <CategoryCard
+                  id="all"
+                  name="All Products"
+                  icon={<IconCategory className="h-5 w-5 text-primary" />}
+                  isSelected={selectedCategory === null}
                   onClick={() => handleCategoryClick(null)}
-                >
-                  <div className="flex items-center">
-                    <IconCategory className="h-5 w-5 mr-3 text-primary" />
-                    <span>All Products</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-1 mr-2">
-                      All
-                    </span>
-                    <IconChevronRight className="h-4 w-4 text-muted-foreground" />
-                  </div>
-                </Button>
+                  variant="list"
+                />
                 
                 {/* Category List */}
                 {categories.map((category, index) => {
@@ -156,25 +161,16 @@ export function CategorySelector() {
                   const isSelected = selectedCategory === category.id;
                   
                   return (
-                    <Button
+                    <CategoryCard
                       key={category.id}
-                      variant={isSelected ? "default" : "ghost"}
-                      className="w-full justify-between h-14 px-4 py-3 rounded-xl text-left font-medium text-base hover:scale-[1.02] transition-transform"
+                      id={category.id}
+                      name={category.name}
+                      productCount={category.productCount}
+                      icon={<IconComponent className="h-5 w-5 text-primary" />}
+                      isSelected={isSelected}
                       onClick={() => handleCategoryClick(category.id)}
-                    >
-                      <div className="flex items-center">
-                        <IconComponent className="h-5 w-5 mr-3 text-primary" />
-                        <span>{category.name}</span>
-                      </div>
-                      <div className="flex items-center">
-                        {category.productCount > 0 && (
-                          <span className="text-xs bg-primary/10 text-primary rounded-full px-2 py-1 mr-2">
-                            {category.productCount}
-                          </span>
-                        )}
-                        <IconChevronRight className="h-4 w-4 text-muted-foreground" />
-                      </div>
-                    </Button>
+                      variant="list"
+                    />
                   );
                 })}
               </div>
@@ -192,6 +188,10 @@ export function CategorySelector() {
         <div className="hidden space-y-6 p-6 rounded-3xl bg-gradient-to-br from-background/90 via-background/95 to-muted/50 border border-border/70 shadow-2xl backdrop-blur-2xl md:block">
           <div className="flex items-center justify-between">
             <div className="h-8 w-48 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full animate-pulse" />
+            <div className="flex gap-2">
+              <div className="h-8 w-8 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg animate-pulse" />
+              <div className="h-8 w-8 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-lg animate-pulse" />
+            </div>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
             {[...Array(6)].map((_, i) => (
@@ -204,34 +204,55 @@ export function CategorySelector() {
 
     return (
       <div className="hidden space-y-6 p-6 rounded-3xl bg-gradient-to-br from-background/90 via-background/95 to-muted/50 border border-border/70 shadow-2xl backdrop-blur-2xl md:block">
-        <motion.h2 
-          className="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-tight"
+        <motion.div 
+          className="flex items-center justify-between"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          Shop by Category
-        </motion.h2>
-        
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-          {/* All Categories Option */}
-          <motion.div
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            initial={{ opacity: 0, y: 20 }}
+          <motion.h2 
+            className="text-2xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-tight"
+            initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+            transition={{ duration: 0.3 }}
           >
+            Shop by Category
+          </motion.h2>
+          
+          {/* View mode toggle */}
+          <div className="flex gap-2">
             <Button
-              variant={selectedCategory === null ? "default" : "secondary"}
-              className="w-full h-24 flex flex-col items-center justify-center rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border border-primary/30 bg-gradient-to-br from-primary/15 to-primary/5 backdrop-blur-sm hover:from-primary/25 hover:to-primary/15"
-              onClick={() => handleCategoryClick(null)}
+              variant={viewMode === "grid" ? "default" : "outline"}
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={() => setViewMode("grid")}
             >
-              <IconCategory className="h-8 w-8 mb-2 text-primary" />
-              <span className="font-semibold text-sm">All Products</span>
-              <span className="text-xs mt-1 text-primary/80">All Items</span>
+              <IconGridDots className="h-4 w-4" />
             </Button>
-          </motion.div>
+            <Button
+              variant={viewMode === "list" ? "default" : "outline"}
+              size="sm"
+              className="h-8 w-8 p-0"
+              onClick={() => setViewMode("list")}
+            >
+              <IconList className="h-4 w-4" />
+            </Button>
+          </div>
+        </motion.div>
+        
+        <div className={viewMode === "grid" 
+          ? "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3" 
+          : "grid grid-cols-1 md:grid-cols-2 gap-3"
+        }>
+          {/* All Categories Option */}
+          <CategoryCard
+            id="all"
+            name="All Products"
+            icon={<IconCategory className="h-8 w-8 text-primary" />}
+            isSelected={selectedCategory === null}
+            onClick={() => handleCategoryClick(null)}
+            variant={viewMode}
+          />
           
           {/* Category Grid */}
           {categories.map((category, index) => {
@@ -239,32 +260,16 @@ export function CategorySelector() {
             const isSelected = selectedCategory === category.id;
             
             return (
-              <motion.div
+              <CategoryCard
                 key={category.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: (index + 1) * 0.05 }}
-              >
-                <Button
-                  variant={isSelected ? "default" : "secondary"}
-                  className={`w-full h-24 flex flex-col items-center justify-center rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 border backdrop-blur-sm ${
-                    isSelected
-                      ? "border-primary/50 bg-gradient-to-br from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 shadow-primary/20"
-                      : "border-border/50 bg-gradient-to-br from-background/80 to-muted/40 hover:from-accent/20 hover:to-accent/10"
-                  }`}
-                  onClick={() => handleCategoryClick(category.id)}
-                >
-                  <IconComponent className="h-8 w-8 mb-2 text-primary" />
-                  <span className="font-semibold text-sm truncate w-full px-1">{category.name}</span>
-                  {category.productCount > 0 && (
-                    <span className="text-xs mt-1 bg-primary/10 text-primary rounded-full px-2 py-0.5">
-                      {category.productCount} items
-                    </span>
-                  )}
-                </Button>
-              </motion.div>
+                id={category.id}
+                name={category.name}
+                productCount={category.productCount}
+                icon={<IconComponent className="h-8 w-8 text-primary" />}
+                isSelected={isSelected}
+                onClick={() => handleCategoryClick(category.id)}
+                variant={viewMode}
+              />
             );
           })}
         </div>

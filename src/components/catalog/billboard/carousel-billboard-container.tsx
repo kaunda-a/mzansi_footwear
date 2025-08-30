@@ -1,5 +1,6 @@
-import { BillboardService, BillboardPosition } from "@/lib/services";
+import { BillboardService, BillboardPosition, BillboardWithCreator } from "@/lib/services";
 import { CarouselBillboard } from "./carousel-billboard";
+import { SophisticatedBillboard } from "./sophisticated-billboard";
 
 interface CarouselBillboardContainerProps {
   position: BillboardPosition;
@@ -24,6 +25,21 @@ export async function CarouselBillboardContainer({
     const billboards = await BillboardService.getActiveBillboards(position);
 
     if (!billboards.length) return null;
+
+    // If there's only one billboard, show it as a sophisticated billboard instead of a carousel
+    if (billboards.length === 1) {
+      const billboard = billboards[0];
+      return (
+        <SophisticatedBillboard
+          title={billboard.title}
+          description={billboard.description}
+          type={billboard.type as any}
+          linkUrl={billboard.linkUrl || undefined}
+          linkText={billboard.linkText || undefined}
+          className={className}
+        />
+      );
+    }
 
     return (
       <CarouselBillboard

@@ -1,47 +1,37 @@
-"use client";
-
-import { useState, useEffect } from "react";
-import { Api } from "@/lib/api";
-import type { BillboardWithCreator } from "@/lib/services";
-import { 
-  IconX, 
-  IconExternalLink, 
-  IconBolt, 
-  IconSparkles,
-  IconAlertCircle,
-  IconInfoCircle,
-  IconTag
-} from "@tabler/icons-react";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
+import { 
+  IconBolt, 
+  IconSparkles, 
+  IconTag, 
+  IconInfoCircle,
+  IconExternalLink,
+  IconX
+} from "@tabler/icons-react";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
-export function HeaderBillboard() {
-  const [billboards, setBillboards] = useState<BillboardWithCreator[]>([]);
-  const [loading, setLoading] = useState(true);
+interface SophisticatedBillboardProps {
+  title: string;
+  description: string;
+  type?: "PROMOTIONAL" | "SALE" | "ANNOUNCEMENT" | "DEFAULT";
+  linkUrl?: string;
+  linkText?: string;
+  onClose?: () => void;
+  className?: string;
+}
 
-  useEffect(() => {
-    const fetchBillboards = async () => {
-      try {
-        const result = await Api.getBillboards({ position: "HEADER" });
-        setBillboards(result.billboards);
-      } catch (error) {
-        console.error("Error fetching header billboards:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchBillboards();
-  }, []);
-
-  if (loading || billboards.length === 0) return null;
-
-  // For header billboard, we'll show one message at a time
-  const billboard = billboards[0];
-
-  // Determine styling based on billboard type - using CSS variables from theme.css
-  const getTypeStyles = (type: string) => {
+export function SophisticatedBillboard({
+  title,
+  description,
+  type = "DEFAULT",
+  linkUrl,
+  linkText,
+  onClose,
+  className
+}: SophisticatedBillboardProps) {
+  // Determine styling based on billboard type
+  const getTypeStyles = () => {
     switch (type) {
       case "PROMOTIONAL":
         return {
@@ -82,11 +72,11 @@ export function HeaderBillboard() {
     }
   };
 
-  const styles = getTypeStyles(billboard.type);
+  const styles = getTypeStyles();
   
   // Select icon based on type
   const getIconComponent = () => {
-    switch (billboard.type) {
+    switch (type) {
       case "PROMOTIONAL": return IconSparkles;
       case "SALE": return IconTag;
       case "ANNOUNCEMENT": return IconInfoCircle;
@@ -99,12 +89,13 @@ export function HeaderBillboard() {
   return (
     <motion.div 
       className={cn(
-        "relative overflow-hidden backdrop-blur-xl linear-glass",
+        "relative overflow-hidden backdrop-blur-xl linear-glass rounded-2xl",
         styles.bg,
         styles.border,
         styles.glow,
         "before:absolute before:inset-0 before:bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.1)_0%,transparent_70%)]",
-        "after:absolute after:inset-0 after:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.05)_50%,transparent_100%)]"
+        "after:absolute after:inset-0 after:bg-[linear-gradient(90deg,transparent_0%,rgba(255,255,255,0.05)_50%,transparent_100%)]",
+        className
       )}
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -126,7 +117,7 @@ export function HeaderBillboard() {
               <div className={cn("absolute inset-0 rounded-full", styles.icon, "bg-current/20 blur-sm animate-pulse")} />
             </div>
             
-            {/* Content with Unique Header Styling */}
+            {/* Content */}
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <motion.span 
@@ -140,7 +131,7 @@ export function HeaderBillboard() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 }}
                 >
-                  {billboard.type.replace("_", " ")}
+                  {type.replace("_", " ")}
                 </motion.span>
                 <div className="w-1 h-1 rounded-full bg-current/40" />
                 <motion.h3 
@@ -149,37 +140,31 @@ export function HeaderBillboard() {
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
                 >
-                  {billboard.title}
+                  {title}
                 </motion.h3>
               </div>
               
-              {/* Unique Scrolling Description for Header */}
-              <div className="relative mt-1 overflow-hidden h-5">
-                <motion.div 
-                  className="absolute inset-0 flex items-center"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                >
-                  <div className="animate-marquee whitespace-nowrap text-xs text-muted-foreground font-medium">
-                    <span className="mx-4">• {billboard.description} •</span>
-                    <span className="mx-4">• {billboard.title} •</span>
-                    <span className="mx-4">• {billboard.description} •</span>
-                  </div>
-                </motion.div>
-              </div>
+              {/* Description */}
+              <motion.p 
+                className="text-xs text-muted-foreground mt-1 truncate"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                {description}
+              </motion.p>
             </div>
           </div>
 
-          {/* Enhanced Actions */}
+          {/* Actions */}
           <div className="flex items-center gap-2 flex-shrink-0">
-            {billboard.linkUrl && (
+            {linkUrl && (
               <motion.div
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
               >
                 <Link 
-                  href={billboard.linkUrl} 
+                  href={linkUrl} 
                   target="_blank"
                   className={cn(
                     "text-xs font-black flex items-center gap-1.5 px-3 py-1.5 rounded-lg",
@@ -190,20 +175,22 @@ export function HeaderBillboard() {
                     "flex-shrink-0"
                   )}
                 >
-                  {billboard.linkText || "LEARN MORE"}
+                  {linkText || "LEARN MORE"}
                   <IconExternalLink className="w-3 h-3" />
                 </Link>
               </motion.div>
             )}
             
-            <motion.button 
-              className="text-muted-foreground hover:text-foreground p-1.5 rounded-full hover:bg-muted/50 transition-all duration-200"
-              onClick={() => setBillboards([])}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <IconX className="w-4 h-4" />
-            </motion.button>
+            {onClose && (
+              <motion.button 
+                className="text-muted-foreground hover:text-foreground p-1.5 rounded-full hover:bg-muted/50 transition-all duration-200"
+                onClick={onClose}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+              >
+                <IconX className="w-4 h-4" />
+              </motion.button>
+            )}
           </div>
         </div>
       </div>
@@ -236,17 +223,6 @@ export function HeaderBillboard() {
           }}
         />
       </div>
-      
-      {/* Image enhancement if billboard has an image */}
-      {billboard.imageUrl && (
-        <>
-          {/* Vignette effect for header with image */}
-          <div className="absolute inset-0 shadow-[inset_0_0_5rem_0_rgba(0,0,0,0.3)] rounded-xl pointer-events-none z-10" />
-          
-          {/* Color enhancement for header with image */}
-          <div className="absolute inset-0 bg-gradient-to-r from-current/5 via-transparent to-current/5 mix-blend-overlay pointer-events-none z-10" />
-        </>
-      )}
     </motion.div>
   );
 }
