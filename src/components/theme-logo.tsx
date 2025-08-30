@@ -1,7 +1,6 @@
 "use client";
 
 import { useTheme } from "next-themes";
-import Image from "next/image";
 import React from "react";
 
 interface ThemeLogoProps {
@@ -29,14 +28,14 @@ export default function ThemeLogo({ size, className }: ThemeLogoProps) {
       "/logo-white.svg" : 
       "/logo-black.svg";
 
+  // Use regular img tag for SVG files to avoid Next.js Image component issues
   return (
-    <Image
+    <img
       src={logoSrc}
       alt="Mzansi Footwear"
       width={dimensions}
       height={dimensions}
       className={className}
-      priority={true}
     />
   );
 }
