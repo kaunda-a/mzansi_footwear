@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { ThemeLogo } from "./theme-logo";
+import ThemeLogo from "./theme-logo";
 
 export default function Logo({ size }: { size?: "sm" | undefined }) {
   return (
