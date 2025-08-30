@@ -32,7 +32,7 @@ export async function CarouselBillboardContainer({
       return (
         <SophisticatedBillboard
           title={billboard.title}
-          description={billboard.description}
+          description={billboard.description || "No description available"}
           type={billboard.type as any}
           linkUrl={billboard.linkUrl || undefined}
           linkText={billboard.linkText || undefined}
