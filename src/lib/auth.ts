@@ -134,6 +134,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
     async redirect({ url, baseUrl }) {
+      console.log("Redirect callback called with:", { url, baseUrl });
+      
       // If redirecting after successful sign in
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       // If it's a callback URL, use it
