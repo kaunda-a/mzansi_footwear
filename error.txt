@@ -1,165 +1,305 @@
-Download the React DevTools for a better development experience: https://react.dev/link/react-devtools
-products.ts:190  Server  Error fetching products: PrismaClientKnownRequestError: 
-Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].product.findMany()` invocation in
-C:\Users\27766\Desktop\mzansi-footwear\shop\.next\server\chunks\ssr\[root-of-the-server]__7628e5e3._.js:540:148
+i thought because of my updates of the domain this error would go away https://www.mzansifootwear.co.za/auth/sign-in?callbackUrl=%2F                                  Sign in with Google
+Access blocked: This app’s request is invalid
 
-  537 }
-  538 try {
-  539     const [products, total] = await Promise.all([
-→ 540         __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["db"].product.findMany(
-Can't reach database server at `aws-0-ap-southeast-1.pooler.supabase.com:6543`
+vibes1890@gmail.com
+You can’t sign in because this app sent an invalid request. You can try again later, or contact the developer about this issue. Learn more about this error
+If you are a developer of this app, see error details.
+Error 400: redirect_uri_mismatch
+ChatGPT said:
 
-Please make sure your database server is running at `aws-0-ap-southeast-1.pooler.supabase.com:6543`.
-    at async ProductService.getProducts (products.ts:131:33)
-    at async Api.getProducts (api.ts:121:16)
-    at async TrendingProducts (trending-products.tsx:15:38)
-    at resolveErrorDev (react-server-dom-turbopack-client.browser.development.js:1858:46)
-    at getOutlinedModel (react-server-dom-turbopack-client.browser.development.js:1342:22)
-    at parseModelString (react-server-dom-turbopack-client.browser.development.js:1482:15)
-    at Array.<anonymous> (react-server-dom-turbopack-client.browser.development.js:2287:18)
-    at JSON.parse (<anonymous>)
-    at resolveConsoleEntry (react-server-dom-turbopack-client.browser.development.js:2122:28)
-    at processFullStringRow (react-server-dom-turbopack-client.browser.development.js:2263:11)
-    at processFullBinaryRow (react-server-dom-turbopack-client.browser.development.js:2226:7)
-    at progress (react-server-dom-turbopack-client.browser.development.js:2472:17)
-error @ intercept-console-error.ts:40
-ProductService.getProducts @ products.ts:190
-async Api.getProducts @ api.ts:121
-async TrendingProducts @ trending-products.tsx:15
-react-stack-bottom-frame @ react-server-dom-turbopack-client.browser.development.js:2654
-resolveConsoleEntry @ react-server-dom-turbopack-client.browser.development.js:2128
-processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:2263
-processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:2226
-progress @ react-server-dom-turbopack-client.browser.development.js:2472
-<TrendingProducts>
-HomePage @ page.tsx:35
-buildFakeTask @ react-server-dom-turbopack-client.browser.development.js:2034
-initializeFakeTask @ react-server-dom-turbopack-client.browser.development.js:2020
-resolveDebugInfo @ react-server-dom-turbopack-client.browser.development.js:2056
-processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:2254
-processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:2226
-progress @ react-server-dom-turbopack-client.browser.development.js:2472
-<HomePage>
-buildFakeTask @ react-server-dom-turbopack-client.browser.development.js:2033
-initializeFakeTask @ react-server-dom-turbopack-client.browser.development.js:2020
-resolveDebugInfo @ react-server-dom-turbopack-client.browser.development.js:2056
-processFullStringRow @ react-server-dom-turbopack-client.browser.development.js:2254
-processFullBinaryRow @ react-server-dom-turbopack-client.browser.development.js:2226
-progress @ react-server-dom-turbopack-client.browser.development.js:2472
-"use server"
-ResponseInstance @ react-server-dom-turbopack-client.browser.development.js:1580
-createResponseFromOptions @ react-server-dom-turbopack-client.browser.development.js:2389
-exports.createFromReadableStream @ react-server-dom-turbopack-client.browser.development.js:2702
-[project]/node_modules/.pnpm/next@15.3.2_react-dom@19.0.0_react@19.0.0__react@19.0.0/node_modules/next/dist/client/app-index.js [app-client] (ecmascript) @ app-index.tsx:157
-(anonymous) @ dev-base.ts:201
-runModuleExecutionHooks @ dev-base.ts:261
-instantiateModule @ dev-base.ts:199
-getOrInstantiateModuleFromParent @ dev-base.ts:128
-commonJsRequire @ runtime-utils.ts:241
-(anonymous) @ app-next-turbopack.ts:11
-(anonymous) @ app-bootstrap.ts:78
-loadScriptsInSequence @ app-bootstrap.ts:20
-appBootstrap @ app-bootstrap.ts:60
-[project]/node_modules/.pnpm/next@15.3.2_react-dom@19.0.0_react@19.0.0__react@19.0.0/node_modules/next/dist/client/app-next-turbopack.js [app-client] (ecmascript) @ app-next-turbopack.ts:10
-(anonymous) @ dev-base.ts:201
-runModuleExecutionHooks @ dev-base.ts:261
-instantiateModule @ dev-base.ts:199
-getOrInstantiateRuntimeModule @ dev-base.ts:97
-registerChunk @ runtime-backend-dom.ts:85
-await in registerChunk
-registerChunk @ runtime-base.ts:356
-(anonymous) @ dev-backend-dom.ts:127
-(anonymous) @ dev-backend-dom.ts:127
-product-card.tsx:48 Product images for Puma : [{…}]
-product-card.tsx:48 Product images for Puma : [{…}]
-product-card.tsx:48 Product images for Puma : [{…}]
-product-card.tsx:48 Product images for Puma : [{…}]
-product-card.tsx:48 Product images for Adidas Ultraboost 22 : (2) [{…}, {…}]
-product-card.tsx:48 Product images for Adidas Ultraboost 22 : (2) [{…}, {…}]
-product-card.tsx:48 Product images for Ubuntu Executive Oxford : [{…}]
-product-card.tsx:48 Product images for Ubuntu Executive Oxford : [{…}]
-product-card.tsx:48 Product images for Mzansi Heritage Runner : [{…}]
-product-card.tsx:48 Product images for Mzansi Heritage Runner : [{…}]
-product-card.tsx:48 Product images for Vans Old Skool : (2) [{…}, {…}]
-product-card.tsx:48 Product images for Vans Old Skool : (2) [{…}, {…}]
-product-card.tsx:48 Product images for Puma Suede Classic : [{…}]
-product-card.tsx:48 Product images for Puma Suede Classic : [{…}]
-product-card.tsx:48 Product images for Adidas Stan Smith : [{…}]
-product-card.tsx:48 Product images for Adidas Stan Smith : [{…}]
-product-card.tsx:48 Product images for Nike Air Max 270 : [{…}]
-product-card.tsx:48 Product images for Nike Air Max 270 : [{…}]
-stitched-error.ts:23 Uncaught Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+Got it ✅ — the Google sign-in error you’re seeing (redirect_uri_mismatch) isn’t about DNS or your domain being valid.
 
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
+It’s about your Google OAuth app configuration.
 
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
+🔍 Why this happens
 
-https://react.dev/link/hydration-mismatch
+When you use Google Sign-In, Google checks if the redirect_uri (the callback URL your app is sending) matches exactly with what you’ve set in the Google Cloud Console (OAuth credentials).
 
-  ...
-    <ProductCatalogContent>
-      <div className="space-y-6">
-        <div>
-        <ProductGrid products={[...]}>
-          <div className={"grid gri..."}>
-            <ProductCard product={{id:"cmeqh0...", ...}} showQuickView={true} showCompare={true} priority={true} ...>
-              <Card className="group over...">
-                <div data-slot="card" className="bg-card te...">
-                  <CardContent className="p-0">
-                    <div data-slot="card-content" className="p-0">
-                      <LinkComponent href="/products/...">
-stitched-error.ts:23 Uncaught Error: Hydration failed because the server rendered text didn't match the client. As a result this tree will be regenerated on the client. This can happen if a SSR-ed Client Component used:
+Right now, your app is trying to redirect to:
 
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
+https://www.mzansifootwear.co.za/auth/callback/google
 
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
 
-https://react.dev/link/hydration-mismatch
+(or something similar, based on your NextAuth/Clerk/Supabase/etc. setup).
 
-  ...
-    <FeaturedProductsContent>
-      <section className="py-16 over...">
-        ...
-          <div className="relative w...">
-            <div>
-            <div>
-            <motion.div className="flex gap-6..." variants={{...}} animate="animate">
-              <div className="flex gap-6..." style={{}} ref={function useMotionRef.useCallback}>
-                <div className="flex-shrink-0" style={{width:"220px"}}>
-                  <ProductCard product={{id:"cmeqh0...", ...}}>
-                    <Card className="group over...">
-                      <div data-slot="card" className="bg-card te...">
-                        <CardContent className="p-0">
-                          <div data-slot="card-content" className="p-0">
-                            <LinkComponent>
-                            <div className="p-4 space-y-2">
-                              <div>
-                              <div className="flex items...">
-                                <span className="font-semibold text-lg">
-+                                 R 2,000.00
--                                 R 2 000,00
-                              ...
-                ...
-            ...
+But in your Google Cloud settings, you probably only registered:
 
-    at ProductCard (product-card.tsx:389:13)
-    at featured-products-client.tsx:91:13
-    at Array.map (<anonymous>)
-    at AnimatedProductDisplay (featured-products-client.tsx:85:37)
-    at FeaturedProductsContent (featured-products.tsx:34:11)
-    at FeaturedProducts (featured-products.tsx:47:7)
-    at HomePage (page.tsx:57:9)
-turbopack-hot-reloader-common.ts:41 [
-GET http://localhost:3000/_next/image?url=https%3A%2F%2Fres.cloudinary.com%2Fdbmgwtawv%2Fimage%2Fupload%2Fv1755168831%2Fbillboards%2Fnr8lzvzhte9x8kums5mx.jpg&w=256&q=75 500 (Internal Server Error)
-(index):31  GET http://localhost:3000/_next/image?url=https%3A%2F%2Fres.cloudinary.com%2Fdbmgwtawv%2Fimage%2Fupload%2Fv1755168629%2Fbillboards%2Fv7iyn5eiu7nr5f8pjyd7.jpg&w=256&q=75 500 (Internal Server Error)
-GET http://localhost:3000/_next/image?url=https%3A%2F%2Fres.cloudinary.com%2Fdbmgwtawv%2Fimage%2Fupload%2Fv1755168553%2Fbillboards%2Fhqppomdzfd534hceljdb.jpg&w=384&q=75 500 (Internal Server Error)
-turbopack-hot-reloader-common.ts:41 [Fast Refresh] rebuilding
-image:1  GET http://localhost:3000/_next/image?url=https%3A%2F%2Fres.cloudinary.com%2Fdbmgwtawv%2Fimage%2Fupload%2Fv1755168629%2Fbillboards%2Fv7iyn5eiu7nr5f8pjyd7.jpg&w=384&q=75 504 (Gateway Timeout)
+https://mzansifootwear.vercel.app/auth/callback/google
+
+
+(or without the www, or only localhost).
+
+So Google rejects it with Error 400: redirect_uri_mismatch.
+
+✅ How to Fix
+
+Go to Google Cloud Console
+.
+
+Navigate to:
+
+APIs & Services → Credentials → OAuth 2.0 Client IDs
+
+
+Select your OAuth client (the one you use for Google login).
+
+Under Authorized redirect URIs, add all the domains you’re using, for example:
+
+https://mzansifootwear.co.za/auth/callback/google
+https://www.mzansifootwear.co.za/auth/callback/google
+https://mzansi-footwear.vercel.app/auth/callback/google   (optional, keep if you used it during dev)
+http://localhost:3000/auth/callback/google               (for local dev)
+
+
+Save changes.
+
+Redeploy / restart your app if needed.
+
+⚡ Pro tip
+
+Make sure your Authorized domains also include mzansifootwear.co.za and www.mzansifootwear.co.za under OAuth consent screen settings.
+
+Google is very strict — the URL must match exactly (https vs http, www vs no-www, trailing slash vs no trailing slash).
+
+👉 Do you want me to write out the exact callback URL you should use in Google Console for your NextAuth (or whichever auth system you’re using)? If you tell me which library you’re using, I can give the precise string.
+
+You said:
+
+URIs 1 
+http://localhost:3000
+URIs 2 
+https://mzansi-footwear.vercel.app
+URIs 3 
+https://mzansi-footwear.co.za
+URIs 4 
+https://www.mzansi-footwear.co.za
+
+Authorized redirect URIs
+For use with requests from a web server
+URIs 1 
+http://localhost:3000/api/auth/callback/google
+URIs 2 
+https://mzansi-footwear.vercel.app/api/auth/callback/google
+URIs 3 
+https://mzansi-footwear.co.za/api/auth/callback/google
+URIs 4 
+https://www.mzansi-footwear.co.za/api/auth/callback/google
+ChatGPT said:
+
+Perfect 🙌 thanks for pasting your Authorized redirect URIs and Authorized JavaScript origins.
+
+Looking at what you added:
+
+✅ http://localhost:3000 → good for local dev.
+
+✅ https://mzansi-footwear.vercel.app → correct for your Vercel preview app.
+
+✅ https://mzansi-footwear.co.za → root domain.
+
+✅ https://www.mzansi-footwear.co.za → www domain.
+
+And the redirect URIs match each one with /api/auth/callback/google. That’s exactly what NextAuth.js (and similar auth libraries) expects.
+
+🔍 So why are you still getting redirect_uri_mismatch?
+
+The error shows up at:
+
+https://www.mzansifootwear.co.za/auth/sign-in?callbackUrl=%2F
+
+
+That means:
+
+Your sign-in page is under /auth/sign-in.
+
+When Google redirects back, your app sends a redirect_uri → likely to:
+
+https://www.mzansifootwear.co.za/auth/callback/google
+
+
+(❌ notice it’s missing /api/ in the path).
+
+But in your Google Cloud Console, you only whitelisted:
+
+https://www.mzansifootwear.co.za/api/auth/callback/google
+
+✅ Fix
+
+Check your NextAuth configuration (usually in pages/api/auth/[...nextauth].ts or nextauth.js).
+
+Make sure the Google provider is set correctly:
+
+GoogleProvider({
+  clientId: process.env.GOOGLE_CLIENT_ID!,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+})
+
+
+By default, NextAuth automatically uses /api/auth/callback/google.
+If you’ve customized your redirect, you might have accidentally set it to /auth/callback/google.
+
+🔧 Steps
+
+Go into your project code and check next-auth.config (or [...nextauth].ts).
+
+Confirm that the callback path is /api/auth/callback/google (not /auth/callback/google).
+
+If your code is already correct, then:
+
+In Google Cloud Console, also add these as fallback redirect URIs:
+
+https://mzansi-footwear.co.za/auth/callback/google
+https://www.mzansi-footwear.co.za/auth/callback/google
+
+
+That way, if something in your app is still generating /auth/callback/google, Google won’t reject it.
+
+⚡ My bet: Your app is generating the wrong callback path (/auth/ instead of /api/auth/).
+
+👉 Do you want me to inspect your NextAuth setup file (the [...nextauth].ts or auth.ts) so I can point to the exact line that needs fixing?
+
+You said:
+whats suprisng is that on development it works just fine
+ChatGPT said:
+
+Yes 👌 that actually makes sense — and it’s a super common trap when going from localhost → production with Google OAuth.
+
+Here’s why it happens:
+
+🔍 Why it works on localhost but fails on production
+
+Local dev is stricter but simpler
+On http://localhost:3000, NextAuth always calls back to:
+
+http://localhost:3000/api/auth/callback/google
+
+
+…which matches what you whitelisted in Google Cloud (/api/auth/callback/google).
+
+Production may be generating a different callback
+On production (mzansifootwear.co.za or www.mzansifootwear.co.za), something in your NextAuth config or environment variables is causing the callback URL to be:
+
+https://www.mzansifootwear.co.za/auth/callback/google
+
+
+(missing /api/) → which does NOT match Google’s list.
+
+This mismatch usually comes from one of these:
+
+NEXTAUTH_URL is set incorrectly in your Vercel environment (maybe you set it to https://www.mzansifootwear.co.za/auth instead of just https://www.mzansifootwear.co.za).
+
+A custom pages: { signIn: '/auth/sign-in' } in NextAuth config sometimes tricks people into thinking they need /auth/callback/google, but the callback route is always under /api/auth/callback/google.
+
+✅ Fix in Production
+
+In your Vercel project, go to:
+
+Settings → Environment Variables
+
+
+Make sure you have:
+
+NEXTAUTH_URL = https://www.mzansifootwear.co.za
+
+
+(⚠️ no /auth at the end).
+
+If you also want to support the www subdomain, either:
+
+Add another env var in Vercel:
+
+NEXTAUTH_URL = https://www.mzansifootwear.co.za
+
+
+(and set domain alias in Vercel properly),
+
+Or just configure a redirect in Vercel so everything goes to the non-www domain.
+
+Double-check your [...nextauth].ts — you don’t need to hardcode any redirect URL for Google. NextAuth handles it automatically as long as NEXTAUTH_URL is correct.
+
+👉 So the surprise isn’t Google being inconsistent — it’s that your local NEXTAUTH_URL is correct but your Vercel one is probably misconfigured.
+
+Do you want me to show you exactly how to set up NEXTAUTH_URL and GOOGLE_CLIENT_ID/SECRET in Vercel so you don’t have to touch them again?
+
+You said:
+NEXTAUTH_URL =https://www.mzansifootwear.co.za
+ChatGPT said:
+
+Perfect 👌 — that’s the correct value. But since you’re still getting the /auth/callback/google mismatch, it means something else in production is influencing the redirect.
+
+Let’s break this down carefully:
+
+✅ Things to check
+
+Check your deployed code on Vercel
+
+In [...nextauth].ts (or wherever you define NextAuth), make sure you haven’t customized redirect or pages incorrectly.
+
+Example of a correct minimal config:
+
+import NextAuth from "next-auth";
+import GoogleProvider from "next-auth/providers/google";
+
+export default NextAuth({
+  providers: [
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+  ],
+});
+
+
+🚫 Wrong would be something like this:
+
+pages: {
+  signIn: "/auth/sign-in", // ✅ fine
+  // ❌ don’t set callback manually, NextAuth handles this
+}
+
+
+Or:
+
+callbacks: {
+  async redirect() {
+    return "/auth/callback/google"; // ❌ wrong
+  }
+}
+
+
+Check your Vercel Environment Variables
+
+In Vercel, under Settings → Environment Variables, confirm you set:
+
+NEXTAUTH_URL = https://www.mzansifootwear.co.za
+
+
+and did not accidentally set NEXTAUTH_URL=https://www.mzansifootwear.co.za/auth.
+
+Make sure no duplicate variables exist (sometimes people add both NEXTAUTH_URL and NEXT_PUBLIC_NEXTAUTH_URL and confuse the config).
+
+Authorized Redirect URIs in Google Cloud
+
+You already have:
+
+https://www.mzansifootwear.co.za/api/auth/callback/google
+https://mzansi-footwear.co.za/api/auth/callback/google
+
+
+✅ That’s correct.
+
+If your app is still sending /auth/callback/google, you can temporarily add that version too in Google Cloud:
+
+https://www.mzansifootwear.co.za/auth/callback/google
+
+
+…but this is a patch, not a fix. Ideally, NextAuth should be generating /api/auth/callback/google.
+
+🔧 Next Step
+
+Since this works fine on localhost but not on Vercel, it almost certainly means:
+
+Your Vercel env var (NEXTAUTH_URL) isn’t being applied properly.
+
+Or your NextAuth config has a small override causing the wrong callback path.
+
+👉 Can you paste your [...nextauth].ts (or wherever you configure NextAuth)? I’ll spot whether the issue is in the config or if it’s 100% environment-variable related.
