@@ -10,7 +10,6 @@ import {
   DialogTrigger 
 } from "@/components/ui/dialog";
 import { IconFilter, IconX } from "@tabler/icons-react";
-import { CategorySelector } from "@/components/catalog/category/category-selector";
 import { ProductFilters } from "@/features/product/components/product-filters";
 import { Suspense } from "react";
 
@@ -34,7 +33,7 @@ export function MobileFilterDialog() {
           <DialogHeader className="p-4 border-b flex items-center justify-between shrink-0">
             <DialogTitle className="text-lg font-bold flex items-center">
               <IconFilter className="h-5 w-5 mr-2" />
-              Filters & Categories
+              Filters
             </DialogTitle>
             <Button 
               variant="ghost" 
@@ -47,7 +46,6 @@ export function MobileFilterDialog() {
           </DialogHeader>
           <div className="overflow-y-auto flex-1 p-4">
             <div className="space-y-6">
-              <CategorySelector />
               <Suspense
                 fallback={
                   <div className="h-64 bg-muted rounded animate-pulse" />

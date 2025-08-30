@@ -4,7 +4,6 @@ import { StoreFooter } from "@/components/layout/footer";
 import { TrendingProductCatalog } from "@/features/product/components/trending-product-catalog";
 import { ProductFilters } from "@/features/product/components/product-filters";
 import { MobileProductFilters } from "@/features/product/components/mobile-product-filters";
-import { CategorySelector } from "@/components/catalog/category/category-selector";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -79,10 +78,9 @@ export default async function TrendingPage({
         {/* Main Content */}
         <div className="container mx-auto px-4 py-8">
           <div className="lg:grid lg:grid-cols-4 lg:gap-8">
-            {/* Category Selector and Filters Sidebar - Desktop */}
+            {/* Filters Sidebar - Desktop */}
             <div className="hidden lg:block">
-              <div className="sticky top-24 space-y-6">
-                <CategorySelector />
+              <div className="sticky top-24">
                 <Suspense
                   fallback={
                     <div className="h-96 bg-muted rounded animate-pulse" />
