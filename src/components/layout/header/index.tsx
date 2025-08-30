@@ -7,6 +7,8 @@ import { ThemeSelector } from "../../theme-selector";
 import { ModeToggle } from "../ThemeToggle/theme-toggle";
 import { motion } from "motion/react";
 import Link from "next/link";
+import ThemeLogo from "@/components/theme-logo";
+import Logo from "@/components/logo";
 
 export function Header() {
   return (
@@ -32,11 +34,7 @@ export function Header() {
                 className="inline-block"
               >
                 <Link href="/" className="flex items-center gap-2">
-                  <img
-                    src="/logo.svg"
-                    alt="Mzansi Footwear Logo"
-                    className="h-8 w-auto"
-                  />
+                  <ThemeLogo className="h-8 w-auto" />
                   <span className="text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
                     Mzansi Footwear
                   </span>

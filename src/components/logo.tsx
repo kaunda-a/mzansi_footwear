@@ -1,7 +1,7 @@
 import clsx from "clsx";
-import Image from "next/image";
+import { ThemeLogo } from "./theme-logo";
 
-export default function LogoSquare({ size }: { size?: "sm" | undefined }) {
+export default function Logo({ size }: { size?: "sm" | undefined }) {
   return (
     <div
       className={clsx(
@@ -12,13 +12,7 @@ export default function LogoSquare({ size }: { size?: "sm" | undefined }) {
         },
       )}
     >
-      <Image
-        src="/logo.svg"
-        alt="Mzansi Footwear"
-        width={size === "sm" ? 10 : 16}
-        height={size === "sm" ? 10 : 16}
-        className="object-contain"
-      />
+      <ThemeLogo size={size} />
     </div>
   );
 }

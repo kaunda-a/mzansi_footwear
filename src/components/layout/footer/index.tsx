@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import { FooterBillboard } from "@/components/catalog/billboard/footer-billboard";
 import {
@@ -8,6 +10,7 @@ import {
   IconPhone,
   IconMapPin,
 } from "@tabler/icons-react";
+import ThemeLogo from "@/components/theme-logo";
 
 const footerLinks = {
   support: [
@@ -53,11 +56,7 @@ export function StoreFooter() {
           {/* Brand and contact info */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <img
-                src="/logo.svg"
-                alt="Mzansi Footwear Logo"
-                className="h-8 w-auto"
-              />
+              <ThemeLogo className="h-8 w-auto" />
             </div>
             <p className="text-muted-foreground mb-4 max-w-sm">
               Your ultimate destination for premium sneakers, streetwear, and
@@ -138,6 +137,11 @@ export function StoreFooter() {
           </div>
         </div>
 
+        {/* Billboard */}
+        <div className="mt-8">
+          <FooterBillboard />
+        </div>
+
         {/* Bottom section */}
         <div className="mt-12 pt-8 border-t flex flex-col md:flex-row justify-between items-center">
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4 md:mb-0">
@@ -172,11 +176,6 @@ export function StoreFooter() {
               );
             })}
           </div>
-        </div>
-
-        {/* Footer Billboard */}
-        <div className="mt-8">
-          <FooterBillboard />
         </div>
 
         {/* Copyright */}

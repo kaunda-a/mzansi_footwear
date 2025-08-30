@@ -35,20 +35,14 @@ import {
   IconSpeakerphone,
   IconUsers,
 } from "@tabler/icons-react";
-import Image from "next/image";
+import ThemeLogo from "@/components/theme-logo";
 import * as React from "react";
 
 export type Icon = React.ComponentType<IconProps>;
 
-// Custom logo component using the logo from public folder
+// Custom logo component using the theme-aware logo
 const MzansiLogo = ({ className }: { className?: string }) => (
-  <Image
-    src="/logo.svg"
-    alt="Mzansi Footwear"
-    width={24}
-    height={24}
-    className={className}
-  />
+  <ThemeLogo className={className} />
 );
 
 export const Icons = {
