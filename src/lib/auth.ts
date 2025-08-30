@@ -8,11 +8,6 @@ import type { Adapter } from "next-auth/adapters";
 
 const prismaAdapter = PrismaAdapter(db as PrismaClient);
 
-// Debug logging
-console.log("NEXTAUTH_URL from env:", process.env.NEXTAUTH_URL);
-console.log("VERCEL_URL from env:", process.env.VERCEL_URL);
-console.log("NEXT_PUBLIC_APP_URL from env:", process.env.NEXT_PUBLIC_APP_URL);
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: {
     ...prismaAdapter,
@@ -139,10 +134,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
     async redirect({ url, baseUrl }) {
-      console.log("Redirect callback called with:", { url, baseUrl });
-      console.log("Process env NEXTAUTH_URL:", process.env.NEXTAUTH_URL);
-      console.log("Process env VERCEL_URL:", process.env.VERCEL_URL);
-      
       // If redirecting after successful sign in
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       // If it's a callback URL, use it

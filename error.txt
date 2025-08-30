@@ -1,18 +1,33 @@
-only this link works fine https://mzansi-footwear.vercel.app/account
+www.mzansifootwear.co.za
+Valid Configuration
+Production
+View DNS Records & More for mzansifootwear.co.za →
 
 
-my console  oauth client ids looks like the following
+mzansi-footwear.vercel.app
+Valid Configuration
+Production
+Domain
+mzansi-footwear.vercel.app
+​
+Connect to an environment
+
+Production
+​
+Redirect to Another Domain
+
+307 Temporary Redirect
+No Redirect
 
 
-URIs 1 
-http://localhost:3000/api/auth/callback/google
-URIs 2 
-https://mzansi-footwear.vercel.app/api/auth/callback/google
-URIs 3 
-https://mzansi-footwear.co.za/api/auth/callback/google
-URIs 4 
-https://www.mzansi-footwear.co.za/api/auth/callback/google
-URIs 5 
-https://mzansifootwear.co.za/auth/callback/google
-URIs 6 
-https://www.mzansifootwear.co.za/auth/callback/google
+https://accounts.google.com/signin/oauth/error/v2?authError=ChVyZWRpcmVjdF91cmlfbWlzbWF0Y2gSsAEKWW91IGNhbid0IHNpZ24gaW4gdG8gdGhpcyBhcHAgYmVjYXVzZSBpdCBkb2Vzbid0IGNvbXBseSB3aXRoIEdvb2dsZSdzIE9BdXRoIDIuMCBwb2xpY3kuCgpJZiB5b3UncmUgdGhlIGFwcCBkZXZlbG9wZXIsIHJlZ2lzdGVyIHRoZSByZWRpcmVjdCBVUkkgaW4gdGhlIEdvb2dsZSBDbG91ZCBDb25zb2xlLgogIBptaHR0cHM6Ly9kZXZlbG9wZXJzLmdvb2dsZS5jb20vaWRlbnRpdHkvcHJvdG9jb2xzL29hdXRoMi93ZWItc2VydmVyI2F1dGhvcml6YXRpb24tZXJyb3JzLXJlZGlyZWN0LXVyaS1taXNtYXRjaCCQAypJCgxyZWRpcmVjdF91cmkSOWh0dHBzOi8vd3d3Lm16YW5zaWZvb3R3ZWFyLmNvLnphL2FwaS9hdXRoL2NhbGxiYWNrL2dvb2dsZTKkAggBErABCllvdSBjYW4ndCBzaWduIGluIHRvIHRoaXMgYXBwIGJlY2F1c2UgaXQgZG9lc24ndCBjb21wbHkgd2l0aCBHb29nbGUncyBPQXV0aCAyLjAgcG9saWN5LgoKSWYgeW91J3JlIHRoZSBhcHAgZGV2ZWxvcGVyLCByZWdpc3RlciB0aGUgcmVkaXJlY3QgVVJJIGluIHRoZSBHb29nbGUgQ2xvdWQgQ29uc29sZS4KICAabWh0dHBzOi8vZGV2ZWxvcGVycy5nb29nbGUuY29tL2lkZW50aXR5L3Byb3RvY29scy9vYXV0aDIvd2ViLXNlcnZlciNhdXRob3JpemF0aW9uLWVycm9ycy1yZWRpcmVjdC11cmktbWlzbWF0Y2g%3D&client_id=815853857025-m47si65su2d29rlb3oupiflvfhe53uro.apps.googleusercontent.com&flowName=GeneralOAuthFlow
+
+
+
+Sign in with Google
+Access blocked: This app’s request is invalid
+
+vibes1890@gmail.com
+You can’t sign in because this app sent an invalid request. You can try again later, or contact the developer about this issue. Learn more about this error
+If you are a developer of this app, see error details.
+Error 400: redirect_uri_mismatch
