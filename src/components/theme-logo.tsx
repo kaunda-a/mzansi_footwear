@@ -10,38 +10,19 @@ interface ThemeLogoProps {
 }
 
 export default function ThemeLogo({ size, className }: ThemeLogoProps) {
-  const { resolvedTheme, theme } = useTheme();
-  const [isMounted, setIsMounted] = React.useState(false);
-  
-  React.useEffect(() => {
-    setIsMounted(true);
-  }, []);
+  const { resolvedTheme } = useTheme();
+  const [mounted, setMounted] = React.useState(false);
 
-  // Determine which logo to use based on theme
-  const logoSrc = React.useMemo(() => {
-    // During SSR or before mounting, use a default
-    if (!isMounted) {
-      return "/logo-black.svg";
-    }
-    
-    // Use resolvedTheme when available, fallback to theme
-    const currentTheme = resolvedTheme || theme;
-    
-    if (currentTheme === "dark") {
-      return "/logo-white.svg";
-    } else if (currentTheme === "light") {
-      return "/logo-black.svg";
-    }
-    
-    // Default fallback
-    return "/logo-black.svg";
-  }, [resolvedTheme, theme, isMounted]);
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Set dimensions based on size prop
   const dimensions = size === "sm" ? 30 : 40;
 
-  // Don't render until mounted to avoid hydration mismatch
-  if (!isMounted) {
+  // Render nothing on the server, and only render on the client after mounting
+  // This prevents hydration mismatches
+  if (!mounted) {
     return (
       <div 
         className={className} 
@@ -61,6 +42,16 @@ export default function ThemeLogo({ size, className }: ThemeLogoProps) {
     );
   }
 
+  // Determine which logo to use based on theme
+  // Only determine this on the client side to avoid hydration mismatches
+  let logoSrc: string;
+  if (resolvedTheme === "dark") {
+    logoSrc = "/logo-white.svg";
+  } else {
+    // Default to black logo for light theme or any other case
+    logoSrc = "/logo-black.svg";
+  }
+
   return (
     <Image
       src={logoSrc}
@@ -68,7 +59,6 @@ export default function ThemeLogo({ size, className }: ThemeLogoProps) {
       width={dimensions}
       height={dimensions}
       className={className}
-      // Add priority for important logos to improve loading
       priority={true}
     />
   );
