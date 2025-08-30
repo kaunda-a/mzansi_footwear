@@ -20,37 +20,14 @@ export default function ThemeLogo({ size, className }: ThemeLogoProps) {
   // Set dimensions based on size prop
   const dimensions = size === "sm" ? 30 : 40;
 
-  // Render nothing on the server, and only render on the client after mounting
-  // This prevents hydration mismatches
-  if (!mounted) {
-    return (
-      <div 
-        className={className} 
-        style={{ 
-          width: dimensions, 
-          height: dimensions,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}
-      >
-        <div 
-          className="bg-gray-200 rounded-full animate-pulse" 
-          style={{ width: dimensions, height: dimensions }}
-        />
-      </div>
-    );
-  }
-
-  // Determine which logo to use based on theme
-  // Only determine this on the client side to avoid hydration mismatches
-  let logoSrc: string;
-  if (resolvedTheme === "dark") {
-    logoSrc = "/logo-white.svg";
-  } else {
-    // Default to black logo for light theme or any other case
-    logoSrc = "/logo-black.svg";
-  }
+  // Determine which logo to use
+  // On server or before mounting, use default logo
+  // On client, use logo based on resolved theme
+  const logoSrc = !mounted || !resolvedTheme ? 
+    "/logo-black.svg" : 
+    resolvedTheme === "dark" ? 
+      "/logo-white.svg" : 
+      "/logo-black.svg";
 
   return (
     <Image
