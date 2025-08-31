@@ -40,39 +40,39 @@ export function HeaderBillboard() {
   // For header billboard, we'll show one message at a time
   const billboard = billboards[0];
 
-  // Determine styling based on billboard type - using CSS variables from theme.css
+  // Determine styling based on billboard type - using theme-adaptive colors like other components
   const getTypeStyles = (type: string) => {
     switch (type) {
       case "PROMOTIONAL":
         return {
-          bg: "bg-gradient-to-r from-blue-500/5 via-blue-400/5 to-indigo-500/5",
-          border: "border-b border-blue-500/20",
-          text: "text-blue-600 dark:text-blue-400",
-          icon: "text-blue-500 dark:text-blue-400",
-          glow: "shadow-[0_0_15px_rgba(59,130,246,0.15)]",
-          badge: "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+          bg: "bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/10",
+          border: "border-b border-primary/20",
+          text: "text-primary",
+          icon: "text-primary",
+          glow: "shadow-[0_0_15px_rgba(var(--primary),0.15)]",
+          badge: "bg-primary/10 text-primary"
         };
       case "SALE":
         return {
-          bg: "bg-gradient-to-r from-amber-500/5 via-orange-400/5 to-red-500/5",
-          border: "border-b border-amber-500/20",
-          text: "text-amber-600 dark:text-amber-400",
-          icon: "text-amber-500 dark:text-amber-400",
-          glow: "shadow-[0_0_15px_rgba(245,158,11,0.15)]",
-          badge: "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+          bg: "bg-gradient-to-r from-accent/10 via-accent/5 to-secondary/10",
+          border: "border-b border-accent/20",
+          text: "text-accent",
+          icon: "text-accent",
+          glow: "shadow-[0_0_15px_rgba(var(--accent),0.15)]",
+          badge: "bg-accent/10 text-accent"
         };
       case "ANNOUNCEMENT":
         return {
-          bg: "bg-gradient-to-r from-emerald-500/5 via-teal-400/5 to-cyan-500/5",
-          border: "border-b border-emerald-500/20",
-          text: "text-emerald-600 dark:text-emerald-400",
-          icon: "text-emerald-500 dark:text-emerald-400",
-          glow: "shadow-[0_0_15px_rgba(16,185,129,0.15)]",
-          badge: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+          bg: "bg-gradient-to-r from-accent/10 via-accent/5 to-secondary/10",
+          border: "border-b border-accent/20",
+          text: "text-accent",
+          icon: "text-accent",
+          glow: "shadow-[0_0_15px_rgba(var(--accent),0.15)]",
+          badge: "bg-accent/10 text-accent"
         };
       default:
         return {
-          bg: "bg-gradient-to-r from-gray-500/5 via-slate-500/5 to-zinc-500/5",
+          bg: "bg-gradient-to-r from-gray-500/10 via-slate-500/5 to-zinc-500/10",
           border: "border-b border-gray-500/20",
           text: "text-gray-600 dark:text-gray-300",
           icon: "text-gray-500 dark:text-gray-400",
@@ -99,7 +99,7 @@ export function HeaderBillboard() {
   return (
     <motion.div 
       className={cn(
-        "relative overflow-hidden backdrop-blur-xl linear-glass mx-2 sm:mx-4 rounded-lg sm:rounded-xl",
+        "relative overflow-hidden backdrop-blur-xl mx-2 sm:mx-4 rounded-lg sm:rounded-xl",
         styles.bg,
         styles.border,
         styles.glow,
