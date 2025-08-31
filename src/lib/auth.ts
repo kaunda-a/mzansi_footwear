@@ -139,13 +139,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       // If it's a callback URL, use it
       if (new URL(url).origin === baseUrl) return url;
 
-      // Default redirect to account page for customers after sign in
-      // Check if it's coming from sign in page
-      if (url === baseUrl || url.includes("callback")) {
-        return `${baseUrl}/account`;
-      }
-
-      return baseUrl;
+      // Always redirect to account page after successful sign in
+      return `${baseUrl}/account`;
     },
   },
   events: {
