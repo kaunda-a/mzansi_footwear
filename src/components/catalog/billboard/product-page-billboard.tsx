@@ -1,4 +1,7 @@
+"use client";
+
 import { CarouselBillboardContainer } from "@/components/catalog/billboard/carousel-billboard-container";
+import { Suspense } from "react";
 
 export function ProductPageBillboard() {
   return (
@@ -17,15 +20,17 @@ export function ProductPageBillboard() {
         <div className="absolute -inset-1 bg-gradient-to-r from-accent/15 to-secondary/15 rounded-2xl blur-lg opacity-40 z-0" />
         
         <div className="relative z-20">
-          <CarouselBillboardContainer
-            position="PRODUCT_PAGE"
-            height="h-56"
-            autoPlay={true}
-            autoPlayInterval={5000}
-            showDots={true}
-            showArrows={true}
-            className="rounded-2xl shadow-lg"
-          />
+          <Suspense fallback={<div className="h-56 rounded-2xl shadow-lg bg-muted animate-pulse" />}>
+            <CarouselBillboardContainer
+              position="PRODUCT_PAGE"
+              height="h-56"
+              autoPlay={true}
+              autoPlayInterval={5000}
+              showDots={true}
+              showArrows={true}
+              className="rounded-2xl shadow-lg"
+            />
+          </Suspense>
         </div>
       </div>
     </div>

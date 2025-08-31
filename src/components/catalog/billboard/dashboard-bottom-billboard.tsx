@@ -1,4 +1,7 @@
+"use client";
+
 import { CarouselBillboardContainer } from "@/components/catalog/billboard/carousel-billboard-container";
+import { Suspense } from "react";
 
 export function DashboardBottomBillboard() {
   return (
@@ -38,15 +41,17 @@ export function DashboardBottomBillboard() {
             {/* Saturation boost effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5 mix-blend-overlay pointer-events-none z-10" />
             
-            <CarouselBillboardContainer
-              position="DASHBOARD_BOTTOM"
-              height="h-48"
-              autoPlay={true}
-              autoPlayInterval={7000}
-              showDots={true}
-              showArrows={true}
-              className="rounded-xl shadow-lg"
-            />
+            <Suspense fallback={<div className="h-48 rounded-xl bg-muted animate-pulse" />}>
+              <CarouselBillboardContainer
+                position="DASHBOARD_BOTTOM"
+                height="h-48"
+                autoPlay={true}
+                autoPlayInterval={7000}
+                showDots={true}
+                showArrows={true}
+                className="rounded-xl shadow-lg"
+              />
+            </Suspense>
           </div>
         </div>
         

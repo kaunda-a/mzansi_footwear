@@ -16,6 +16,20 @@ import type {
 import { MarqueeService } from "@/lib/services/marquee";
 import { ProductService } from "@/lib/services/products";
 
+// Determine the base URL based on the environment
+const getBaseUrl = () => {
+  if (process.env.NEXTAUTH_URL) {
+    return process.env.NEXTAUTH_URL;
+  }
+  
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  
+  // For local development
+  return "http://localhost:3000";
+};
+
 export class Api {
   private static getBaseUrl(): string {
     if (typeof window !== "undefined") {
@@ -23,11 +37,7 @@ export class Api {
       return "";
     }
     // Server-side
-    return (
-      process.env.NEXTAUTH_URL ||
-      process.env.VERCEL_URL ||
-      "http://localhost:3000"
-    );
+    return getBaseUrl();
   }
 
   static async getActiveMarqueeMessages(): Promise<
