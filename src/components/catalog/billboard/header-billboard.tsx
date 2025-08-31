@@ -40,44 +40,45 @@ export function HeaderBillboard() {
   // For header billboard, we'll show one message at a time
   const billboard = billboards[0];
 
-  // Determine styling based on billboard type - using theme-adaptive colors like other components
+  // Determine styling based on billboard type - Footer specific styling with theme-adaptive colors
   const getTypeStyles = (type: string) => {
     switch (type) {
       case "PROMOTIONAL":
         return {
-          bg: "bg-gradient-to-r from-primary/10 via-primary/5 to-secondary/10",
+          bg: "bg-gradient-to-r from-primary/15 via-primary/10 to-secondary/15",
           border: "border-b border-primary/20",
           text: "text-primary",
+          accent: "text-primary",
           icon: "text-primary",
-          glow: "shadow-[0_0_15px_rgba(var(--primary),0.15)]",
-          badge: "bg-primary/10 text-primary"
+          glow: "shadow-[0_0_20px_rgba(var(--primary),0.15)]"
         };
       case "SALE":
+        // Use theme-adaptive colors like other components
         return {
-          bg: "bg-gradient-to-r from-accent/10 via-accent/5 to-secondary/10",
+          bg: "bg-gradient-to-r from-accent/15 via-accent/10 to-secondary/15",
           border: "border-b border-accent/20",
           text: "text-accent",
+          accent: "text-accent",
           icon: "text-accent",
-          glow: "shadow-[0_0_15px_rgba(var(--accent),0.15)]",
-          badge: "bg-accent/10 text-accent"
+          glow: "shadow-[0_0_20px_rgba(var(--accent),0.15)]"
         };
       case "ANNOUNCEMENT":
         return {
-          bg: "bg-gradient-to-r from-accent/10 via-accent/5 to-secondary/10",
+          bg: "bg-gradient-to-r from-accent/15 via-accent/10 to-secondary/15",
           border: "border-b border-accent/20",
           text: "text-accent",
+          accent: "text-accent",
           icon: "text-accent",
-          glow: "shadow-[0_0_15px_rgba(var(--accent),0.15)]",
-          badge: "bg-accent/10 text-accent"
+          glow: "shadow-[0_0_20px_rgba(var(--accent),0.15)]"
         };
       default:
         return {
-          bg: "bg-gradient-to-r from-gray-500/10 via-slate-500/5 to-zinc-500/10",
+          bg: "bg-gradient-to-r from-gray-500/15 via-slate-500/10 to-zinc-500/15",
           border: "border-b border-gray-500/20",
           text: "text-gray-600 dark:text-gray-300",
+          accent: "text-gray-300",
           icon: "text-gray-500 dark:text-gray-400",
-          glow: "shadow-[0_0_15px_rgba(107,114,128,0.15)] dark:shadow-[0_0_15px_rgba(209,213,219,0.15)]",
-          badge: "bg-gray-500/10 text-gray-600 dark:text-gray-300"
+          glow: "shadow-[0_0_20px_rgba(107,114,128,0.15)] dark:shadow-[0_0_20px_rgba(209,213,219,0.15)]"
         };
     }
   };
@@ -117,7 +118,7 @@ export function HeaderBillboard() {
             {/* Pulsing Icon */}
             <div className="flex-shrink-0 relative">
               <motion.div
-                className={cn("p-1.5 sm:p-2 rounded-lg", styles.badge)}
+                className={cn("p-1.5 sm:p-2 rounded-lg", styles.accent)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
@@ -134,7 +135,7 @@ export function HeaderBillboard() {
                     "text-[8px] xs:text-[10px] font-black uppercase tracking-widest",
                     styles.text,
                     "px-1.5 py-0.5 xs:px-2 xs:py-1 rounded-full",
-                    styles.badge
+                    styles.accent
                   )}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
