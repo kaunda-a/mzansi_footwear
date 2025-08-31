@@ -111,30 +111,30 @@ export function HeaderBillboard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
-      <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 max-w-7xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 px-1">
+      <div className="container mx-auto px-2 sm:px-4 py-1 sm:py-1.5 max-w-7xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 px-1">
           {/* Animated Content Area */}
-          <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
             {/* Pulsing Icon */}
             <div className="flex-shrink-0 relative">
               <motion.div
-                className={cn("p-1.5 sm:p-2 rounded-lg", styles.accent)}
+                className={cn("p-1 sm:p-1.5 rounded-lg", styles.accent)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <IconComponent className={cn("h-3 w-3 sm:h-4 sm:w-4", styles.icon)} />
+                <IconComponent className={cn("h-2.5 w-2.5 sm:h-3 sm:w-3", styles.icon)} />
               </motion.div>
               <div className={cn("absolute inset-0 rounded-full", styles.icon, "bg-current/20 blur-sm animate-pulse")} />
             </div>
             
             {/* Content with Unique Header Styling */}
             <div className="min-w-0 flex-1">
-              <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-2">
+              <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-1.5">
                 <motion.span 
                   className={cn(
-                    "text-[8px] xs:text-[10px] font-black uppercase tracking-widest",
+                    "text-[7px] xs:text-[8px] font-black uppercase tracking-widest",
                     styles.text,
-                    "px-1.5 py-0.5 xs:px-2 xs:py-1 rounded-full",
+                    "px-1 py-0.5 xs:px-1.5 xs:py-0.5 rounded-full",
                     styles.accent
                   )}
                   initial={{ opacity: 0, x: -10 }}
@@ -145,7 +145,7 @@ export function HeaderBillboard() {
                 </motion.span>
                 <div className="hidden xs:block w-1 h-1 rounded-full bg-current/40" />
                 <motion.h3 
-                  className="text-xs sm:text-sm font-semibold truncate text-foreground"
+                  className="text-[9px] sm:text-xs font-semibold truncate text-foreground"
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
@@ -155,17 +155,17 @@ export function HeaderBillboard() {
               </div>
               
               {/* Unique Scrolling Description for Header */}
-              <div className="relative mt-1 overflow-hidden h-4 sm:h-5">
+              <div className="relative mt-0.5 overflow-hidden h-3.5 sm:h-4">
                 <motion.div 
                   className="absolute inset-0 flex items-center"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <div className="animate-marquee-mobile sm:animate-marquee-slow whitespace-nowrap text-[10px] sm:text-xs text-muted-foreground font-normal sm:font-medium">
-                    <span className="mx-2 sm:mx-4">• {billboard.description} •</span>
-                    <span className="mx-2 sm:mx-4">• {billboard.title} •</span>
-                    <span className="mx-2 sm:mx-4">• {billboard.description} •</span>
+                  <div className="animate-marquee-mobile sm:animate-marquee-slow whitespace-nowrap text-[9px] sm:text-[10px] text-muted-foreground font-normal sm:font-medium">
+                    <span className="mx-1.5 sm:mx-2">• {billboard.description} •</span>
+                    <span className="mx-1.5 sm:mx-2">• {billboard.title} •</span>
+                    <span className="mx-1.5 sm:mx-2">• {billboard.description} •</span>
                   </div>
                 </motion.div>
               </div>
@@ -173,7 +173,7 @@ export function HeaderBillboard() {
           </div>
 
           {/* Enhanced Actions */}
-          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+          <div className="flex items-center gap-1 sm:gap-1.5 flex-shrink-0">
             {billboard.linkUrl && (
               <motion.div
                 whileHover={{ scale: 1.03 }}
@@ -183,7 +183,7 @@ export function HeaderBillboard() {
                   href={billboard.linkUrl} 
                   target="_blank"
                   className={cn(
-                    "text-[10px] sm:text-xs font-black flex items-center gap-1 sm:gap-1.5 px-2 py-1 sm:px-3 sm:py-1.5 rounded-lg",
+                    "text-[9px] sm:text-[10px] font-black flex items-center gap-1 px-1.5 py-1 sm:px-2 sm:py-1 rounded-lg",
                     "bg-current/15 hover:bg-current/25 transition-all duration-300",
                     "border border-current/20 backdrop-blur-sm",
                     "hover:scale-105 hover:shadow-lg transform",
@@ -192,27 +192,18 @@ export function HeaderBillboard() {
                   )}
                 >
                   {billboard.linkText || "LEARN MORE"}
-                  <IconExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+                  <IconExternalLink className="w-2 h-2 sm:w-2.5 sm:h-2.5" />
                 </Link>
               </motion.div>
             )}
-            
-            <motion.button 
-              className="text-muted-foreground hover:text-foreground p-1 sm:p-1.5 rounded-full hover:bg-muted/50 transition-all duration-200"
-              onClick={() => setBillboards([])}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-            >
-              <IconX className="w-3 h-3 sm:w-4 sm:h-4" />
-            </motion.button>
           </div>
         </div>
       </div>
       
       {/* Subtle Animated Background Elements */}
-      <div className="absolute top-0 right-0 w-16 sm:w-32 h-full opacity-20">
+      <div className="absolute top-0 right-0 w-12 sm:w-24 h-full opacity-20">
         <motion.div 
-          className="absolute top-1/4 right-2 sm:right-4 w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-current animate-pulse" 
+          className="absolute top-1/4 right-1.5 sm:right-3 w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full bg-current animate-pulse" 
           animate={{ 
             scale: [1, 1.2, 1],
             opacity: [0.5, 1, 0.5]
@@ -224,7 +215,7 @@ export function HeaderBillboard() {
           }}
         />
         <motion.div 
-          className="absolute top-3/4 right-4 sm:right-8 w-1 h-1 sm:w-1 sm:h-1 rounded-full bg-current animate-pulse delay-1000" 
+          className="absolute top-3/4 right-3 sm:right-6 w-0.5 h-0.5 sm:w-1 sm:h-1 rounded-full bg-current animate-pulse delay-1000" 
           animate={{ 
             scale: [1, 1.2, 1],
             opacity: [0.5, 1, 0.5]
@@ -242,7 +233,7 @@ export function HeaderBillboard() {
       {billboard.imageUrl && (
         <>
           {/* Vignette effect for header with image */}
-          <div className="absolute inset-0 shadow-[inset_0_0_5rem_0_rgba(0,0,0,0.3)] rounded-xl pointer-events-none z-10" />
+          <div className="absolute inset-0 shadow-[inset_0_0_3rem_0_rgba(0,0,0,0.3)] rounded-xl pointer-events-none z-10" />
           
           {/* Color enhancement for header with image */}
           <div className="absolute inset-0 bg-gradient-to-r from-current/5 via-transparent to-current/5 mix-blend-overlay pointer-events-none z-10" />
