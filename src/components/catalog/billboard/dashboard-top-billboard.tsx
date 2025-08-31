@@ -1,5 +1,6 @@
 import { CarouselBillboardContainer } from "@/components/catalog/billboard/carousel-billboard-container";
 import { motion } from "motion/react";
+import { Suspense } from "react";
 
 export function DashboardTopBillboard() {
   return (
@@ -72,15 +73,17 @@ export function DashboardTopBillboard() {
             {/* Saturation boost effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-secondary/5 via-transparent to-primary/5 mix-blend-overlay pointer-events-none z-10" />
             
-            <CarouselBillboardContainer
-              position="DASHBOARD_TOP"
-              height="h-48"
-              autoPlay={true}
-              autoPlayInterval={6000}
-              showDots={true}
-              showArrows={true}
-              className="rounded-xl shadow-lg"
-            />
+            <Suspense fallback={<div className="h-48 rounded-xl bg-muted animate-pulse" />}>
+              <CarouselBillboardContainer
+                position="DASHBOARD_TOP"
+                height="h-48"
+                autoPlay={true}
+                autoPlayInterval={6000}
+                showDots={true}
+                showArrows={true}
+                className="rounded-xl shadow-lg"
+              />
+            </Suspense>
           </div>
         </div>
         

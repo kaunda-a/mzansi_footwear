@@ -1,4 +1,5 @@
 import { CarouselBillboardContainer } from "@/components/catalog/billboard/carousel-billboard-container";
+import { Suspense } from "react";
 
 export function CheckoutBillboard() {
   return (
@@ -17,15 +18,17 @@ export function CheckoutBillboard() {
         <div className="absolute -inset-1 bg-gradient-to-r from-green-500/15 to-emerald-500/15 rounded-xl blur-lg opacity-30 z-0" />
         
         <div className="relative z-20">
-          <CarouselBillboardContainer
-            position="CHECKOUT"
-            height="h-40"
-            autoPlay={true}
-            autoPlayInterval={4000}
-            showDots={true}
-            showArrows={false}
-            className="rounded-lg border"
-          />
+          <Suspense fallback={<div className="h-40 rounded-lg border bg-muted animate-pulse" />}>
+            <CarouselBillboardContainer
+              position="CHECKOUT"
+              height="h-40"
+              autoPlay={true}
+              autoPlayInterval={4000}
+              showDots={true}
+              showArrows={false}
+              className="rounded-lg border"
+            />
+          </Suspense>
         </div>
       </div>
     </div>
