@@ -4,6 +4,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Add xs breakpoint for better mobile responsiveness */
+@custom-media --xs (min-width: 480px);
+
 @import "./theme.css";
 
 /* Fix layout issues */
