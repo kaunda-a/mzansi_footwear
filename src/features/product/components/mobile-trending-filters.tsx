@@ -25,7 +25,6 @@ import {
 } from "@tabler/icons-react";
 
 const sortOptions = [
-  { value: "trending", label: "Trending" },
   { value: "newest", label: "Newest First" },
   { value: "oldest", label: "Oldest First" },
   { value: "price-low-high", label: "Price: Low to High" },
@@ -45,7 +44,7 @@ export function MobileTrendingFilters({ onFiltersChange }: MobileTrendingFilters
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState<string>(
-    searchParams.get("sort") || "trending"
+    searchParams.get("sort") || "newest"
   );
 
   const handleSortChange = (value: string) => {
@@ -53,11 +52,7 @@ export function MobileTrendingFilters({ onFiltersChange }: MobileTrendingFilters
     
     const params = new URLSearchParams(searchParams.toString());
     
-    if (value === "trending") {
-      params.delete("sort");
-    } else {
-      params.set("sort", value);
-    }
+    params.set("sort", value);
     
     // Reset to first page when sort changes
     params.delete("page");
@@ -128,7 +123,7 @@ export function MobileTrendingFilters({ onFiltersChange }: MobileTrendingFilters
             {/* Filter Options - Could be expanded with more filters */}
             <div className="space-y-3">
               <h3 className="font-bold text-base">Quick Filters</h3>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-2">
                 <Button 
                   variant="outline" 
                   className="rounded-full h-12"
@@ -146,20 +141,6 @@ export function MobileTrendingFilters({ onFiltersChange }: MobileTrendingFilters
                   }}
                 >
                   Clear All
-                </Button>
-                <Button 
-                  variant="outline" 
-                  className="rounded-full h-12"
-                  onClick={() => {
-                    const params = new URLSearchParams(searchParams.toString());
-                    params.set("sort", "trending");
-                    params.delete("page");
-                    router.push(`?${params.toString()}`);
-                    setSelectedSort("trending");
-                    onFiltersChange?.({ sort: "trending" });
-                  }}
-                >
-                  Trending
                 </Button>
               </div>
             </div>

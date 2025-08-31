@@ -7,7 +7,6 @@ import { HeaderBillboard } from "@/components/catalog/billboard/header-billboard
 import { FooterBillboard } from "@/components/catalog/billboard/footer-billboard";
 import { FeaturedProducts } from "@/components/catalog/featured/featured-products";
 import { PopularProducts } from "@/components/catalog/featured/popular-products";
-import { TrendingProducts } from "@/components/catalog/trending/trending-products";
 import { ModalBillboard } from "@/components/catalog/billboard/modal-billboard";
 import { DashboardTopBillboard } from "@/components/catalog/billboard/dashboard-top-billboard";
 import { DashboardBottomBillboard } from "@/components/catalog/billboard/dashboard-bottom-billboard";
@@ -23,14 +22,6 @@ export default function HomePage() {
       <main className="flex-1">
         {/* Hero Carousel Billboard */}
         <HeroBillboard />
-
-       
-        {/* Trending Products */}
-        <div className="bg-muted/30">
-          <div className="container mx-auto px-4 py-8">
-            <TrendingProducts />
-          </div>
-        </div>
 
          {/* Dashboard Top Billboard - After hero, before products */}
         <div className="container mx-auto px-4 py-4">

@@ -6,10 +6,9 @@ import { motion, AnimatePresence } from "motion/react";
 import { IconChevronLeft, IconChevronRight, IconCategory, IconCategory2, IconShoe, IconHanger } from "@tabler/icons-react";
 
 interface Category {
-  id: string;
   name: string;
   slug: string;
-  productCount: number;
+  href: string;
 }
 
 const categoryIcons = [
@@ -48,7 +47,7 @@ export function StickyCategoryNavigation() {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch("/api/categories/trending", {
+        const response = await fetch("/api/search-data", {
           // Add cache control to prevent aggressive caching
           cache: "no-store",
           // Add next.js fetch options
@@ -60,17 +59,17 @@ export function StickyCategoryNavigation() {
         }
         
         const data = await response.json();
-        setCategories(data.categories || []);
+        setCategories(data.trendingCategories || []);
       } catch (error) {
         console.error("Error fetching categories:", error);
         setError("Failed to load categories");
         // Set some default categories as fallback
         setCategories([
-          { id: "1", name: "Sneakers", slug: "sneakers", productCount: 24 },
-          { id: "2", name: "Boots", slug: "boots", productCount: 18 },
-          { id: "3", name: "Sandals", slug: "sandals", productCount: 15 },
-          { id: "4", name: "Formal", slug: "formal", productCount: 12 },
-          { id: "5", name: "Casual", slug: "casual", productCount: 20 },
+          { name: "Sneakers", slug: "sneakers", href: "/categories/sneakers" },
+          { name: "Boots", slug: "boots", href: "/categories/boots" },
+          { name: "Sandals", slug: "sandals", href: "/categories/sandals" },
+          { name: "Formal", slug: "formal", href: "/categories/formal" },
+          { name: "Casual", slug: "casual", href: "/categories/casual" },
         ]);
       } finally {
         setLoading(false);
@@ -106,14 +105,6 @@ export function StickyCategoryNavigation() {
         left: direction === "right" ? scrollAmount : -scrollAmount,
         behavior: "smooth"
       });
-    }
-  };
-
-  const handleCategoryClick = (categoryId: string) => {
-    // Scroll to the category section
-    const element = document.getElementById(`category-${categoryId}`);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth", block: "start" });
     }
   };
 
@@ -250,7 +241,7 @@ export function StickyCategoryNavigation() {
               
               return (
                 <motion.div
-                  key={category.id}
+                  key={category.slug}
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, x: -20 }}
@@ -261,17 +252,12 @@ export function StickyCategoryNavigation() {
                     variant="secondary"
                     size="lg"
                     className="rounded-full shrink-0 px-4 py-2.5 font-medium shadow-md hover:shadow-lg transition-all duration-300 border border-border/50 bg-gradient-to-br from-background/80 to-muted/40 backdrop-blur-sm hover:from-accent/20 hover:to-accent/10 text-sm md:px-5 md:py-3 md:text-base"
-                    onClick={() => handleCategoryClick(category.id)}
+                    onClick={() => window.location.href = category.href}
                   >
                     <IconComponent className="mr-1.5 h-3.5 w-3.5 md:mr-2 md:h-4 md:w-4" />
                     <span className="truncate max-w-[100px] md:max-w-[120px]">
                       {category.name}
                     </span>
-                    {category.productCount > 0 && (
-                      <span className="ml-2 text-xs font-bold bg-gradient-to-r from-primary/20 to-secondary/20 text-primary rounded-full px-2 py-0.5 border border-primary/30 md:px-2.5 md:py-1">
-                        {category.productCount}
-                      </span>
-                    )}
                   </Button>
                 </motion.div>
               );
