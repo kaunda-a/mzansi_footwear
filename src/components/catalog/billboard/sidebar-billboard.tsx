@@ -1,3 +1,5 @@
+"use client";
+
 import { CarouselBillboardContainer } from "@/components/catalog/billboard/carousel-billboard-container";
 import { Suspense } from "react";
 

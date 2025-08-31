@@ -1,3 +1,5 @@
+"use client";
+
 import { BillboardContainer } from "@/components/catalog/billboard/billboard-container";
 import { Suspense } from "react";
 
