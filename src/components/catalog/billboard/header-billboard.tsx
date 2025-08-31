@@ -99,7 +99,7 @@ export function HeaderBillboard() {
   return (
     <motion.div 
       className={cn(
-        "relative overflow-hidden backdrop-blur-xl linear-glass",
+        "relative overflow-hidden backdrop-blur-xl linear-glass mx-2 sm:mx-4 rounded-lg sm:rounded-xl",
         styles.bg,
         styles.border,
         styles.glow,
@@ -110,8 +110,8 @@ export function HeaderBillboard() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: "easeOut" }}
     >
-      <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4">
+      <div className="container mx-auto px-2 sm:px-4 py-2 sm:py-3 max-w-7xl">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-4 px-1">
           {/* Animated Content Area */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
             {/* Pulsing Icon */}
@@ -144,7 +144,7 @@ export function HeaderBillboard() {
                 </motion.span>
                 <div className="hidden xs:block w-1 h-1 rounded-full bg-current/40" />
                 <motion.h3 
-                  className="text-xs sm:text-sm font-bold truncate text-foreground"
+                  className="text-xs sm:text-sm font-semibold truncate text-foreground"
                   initial={{ opacity: 0, x: -10 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.2 }}
@@ -161,7 +161,7 @@ export function HeaderBillboard() {
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
                 >
-                  <div className="animate-marquee whitespace-nowrap text-[10px] sm:text-xs text-muted-foreground font-medium">
+                  <div className="animate-marquee-mobile sm:animate-marquee-slow whitespace-nowrap text-[10px] sm:text-xs text-muted-foreground font-normal sm:font-medium">
                     <span className="mx-2 sm:mx-4">• {billboard.description} •</span>
                     <span className="mx-2 sm:mx-4">• {billboard.title} •</span>
                     <span className="mx-2 sm:mx-4">• {billboard.description} •</span>
