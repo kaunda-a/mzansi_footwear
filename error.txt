@@ -1,16 +1,12 @@
-Runtime Error
 
+you know i get redirect to this url when i press loggin,  but i can see that it has logged in successfully, 
 
-Error: Switched to client rendering because the server rendering errored:
+i think the issue might be a redirect error since its supose to take me to the main https://www.mzansifootwear.co.za
+but i get 
+https://www.mzansifootwear.co.za/auth/error?error=Configuration
 
-Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Call Stack
-
-Runtime Error
-
-
-Error: Element type is invalid: expected a string (for built-in components) or a class/function (for composite components) but got: undefined. You likely forgot to export your component from the file it's defined in, or you might have mixed up default and named imports.
-
-Check the render method of `DashboardTopBillboard`.
-
+Authentication Error
+We encountered an issue while trying to sign you in
+There is a problem with the server configuration.
+Try AgainBack to Store
+If you continue to experience issues, please contact our support team.

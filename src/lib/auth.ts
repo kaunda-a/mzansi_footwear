@@ -8,6 +8,22 @@ import type { Adapter } from "next-auth/adapters";
 
 const prismaAdapter = PrismaAdapter(db as PrismaClient);
 
+// Determine the base URL based on the environment
+const getBaseUrl = () => {
+  if (process.env.NEXTAUTH_URL) {
+    return process.env.NEXTAUTH_URL;
+  }
+  
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  
+  // For local development
+  return "http://localhost:3000";
+};
+
+const baseUrl = getBaseUrl();
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: {
     ...prismaAdapter,
@@ -134,18 +150,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return session;
     },
     async redirect({ url, baseUrl }) {
+      // Use our dynamic base URL
+      const dynamicBaseUrl = getBaseUrl();
+      
       // If redirecting after successful sign in
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      if (url.startsWith("/")) return `${dynamicBaseUrl}${url}`;
       // If it's a callback URL, use it
-      if (new URL(url).origin === baseUrl) return url;
+      if (new URL(url).origin === dynamicBaseUrl) return url;
 
       // Default redirect to account page for customers after sign in
       // Check if it's coming from sign in page
-      if (url === baseUrl || url.includes("callback")) {
-        return `${baseUrl}/account`;
+      if (url === dynamicBaseUrl || url.includes("callback")) {
+        return `${dynamicBaseUrl}/account`;
       }
 
-      return baseUrl;
+      return dynamicBaseUrl;
     },
   },
   events: {
