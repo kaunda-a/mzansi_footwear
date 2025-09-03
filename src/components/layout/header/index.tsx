@@ -2,15 +2,20 @@
 
 import React from "react";
 import { Separator } from "../../ui/separator";
-import SearchInput from "../../search-input";
-import { ThemeSelector } from "../../theme-selector";
-import { ModeToggle } from "../ThemeToggle/theme-toggle";
 import { motion } from "motion/react";
 import Link from "next/link";
 import ThemeLogo from "@/components/theme-logo";
 import Logo from "@/components/logo";
+import { IconShoppingCart } from "@tabler/icons-react";
+import { useCartStore } from "@/lib/cart-store";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { ExpandableSearch } from "./expandable-search";
 
 export function Header() {
+  const { items } = useCartStore();
+  const cartItemCount = items.reduce((total, item) => total + item.quantity, 0);
+
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
@@ -44,34 +49,33 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Expandable Search */}
+            <ExpandableSearch />
+            
+            {/* Cart Icon */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <ModeToggle />
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <ThemeSelector />
+              <Link 
+                href="/cart" 
+                className="relative p-2 rounded-lg hover:bg-accent transition-colors"
+                aria-label="Shopping cart"
+              >
+                <IconShoppingCart className="h-5 w-5 text-foreground" />
+                {cartItemCount > 0 && (
+                  <Badge
+                    variant="destructive"
+                    className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[8px] font-bold border border-background/60 shadow-lg"
+                  >
+                    {cartItemCount > 99 ? "99+" : cartItemCount}
+                  </Badge>
+                )}
+              </Link>
             </motion.div>
           </div>
-        </div>
-
-        {/* Enhanced search bar section */}
-        <div className="px-4 sm:px-6 pb-4">
-          <motion.div
-            initial={{ scale: 0.95, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{
-              delay: 0.1,
-              type: "spring",
-              stiffness: 400,
-              damping: 30,
-            }}
-            className="relative"
-          >
-            <SearchInput />
-          </motion.div>
         </div>
       </div>
     </motion.header>
   );
 }
 
+export { Header };
 export default Header;

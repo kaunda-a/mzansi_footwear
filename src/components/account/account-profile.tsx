@@ -34,10 +34,13 @@ import {
   Camera,
   Shield,
   Star,
+  Palette,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { Api } from "@/lib/api";
 import { toast } from "sonner";
+import { ModeToggle } from "@/components/layout/ThemeToggle/theme-toggle";
+import { ThemeSelector } from "@/components/theme-selector";
 
 const SA_PROVINCES = [
   "Eastern Cape",
@@ -452,6 +455,31 @@ export function AccountProfile() {
                 disabled
                 className="bg-muted"
               />
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Theme Customization */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Palette className="h-5 w-5" />
+            Theme Customization
+          </CardTitle>
+          <CardDescription>
+            Customize the appearance of your account
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1 space-y-2">
+              <Label>Color Theme</Label>
+              <ThemeSelector />
+            </div>
+            <div className="flex-1 space-y-2">
+              <Label>Appearance</Label>
+              <ModeToggle />
             </div>
           </div>
         </CardContent>

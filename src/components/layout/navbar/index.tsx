@@ -6,11 +6,7 @@ import Link from "next/link";
 import {
   IconHome,
   IconCategory,
-  IconShoppingCart,
   IconUser,
-  IconHeart,
-  IconPackage,
-  IconSearch,
 } from "@tabler/icons-react";
 import { useCartStore } from "@/lib/cart-store";
 import { Badge } from "@/components/ui/badge";
@@ -53,14 +49,6 @@ export function Navbar() {
       icon: IconCategory,
       href: "/products",
       color: "text-purple-500",
-    },
-    {
-      id: "cart",
-      label: "Cart",
-      icon: IconShoppingCart,
-      href: "/cart",
-      badge: cartItemCount,
-      color: "text-green-500",
     },
     {
       id: "account",

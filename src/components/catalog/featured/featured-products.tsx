@@ -1,50 +1,44 @@
-import React, { Suspense } from "react";
-import { Api } from "@/lib/api";
-import {
-  FeaturedProductsSkeleton,
-  AnimatedProductDisplay,
-} from "./featured-products-client";
-
-async function FeaturedProductsContent(): Promise<React.ReactElement | null> {
-  try {
-    const { products } = await Api.getProducts({
-      page: 1,
-      limit: 12, // Increased limit for a better visual effect
-      featured: true,
-    });
-
-    if (!products.length) {
-      return null;
-    }
-
-    const clientSafeProducts = JSON.parse(JSON.stringify(products));
-
-    return (
-      <section className="py-16 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
-              Featured Products
-            </h2>
-            <p className="mt-4 max-w-2xl mx-auto text-lg text-gray-500 dark:text-gray-400">
-              Discover our handpicked selection of premium footwear
-            </p>
-          </div>
-
-          <AnimatedProductDisplay products={clientSafeProducts} />
-        </div>
-      </section>
-    );
-  } catch (error) {
-    console.error("Error loading featured products:", error);
-    return null;
-  }
-}
+import { ProductCatalog } from "@/features/product/components/product-catalog";
+import { Suspense } from "react";
 
 export function FeaturedProducts() {
   return (
-    <Suspense fallback={<FeaturedProductsSkeleton />}>
-      <FeaturedProductsContent />
-    </Suspense>
+    <div className="bg-muted/30 py-8">
+      <div className="container mx-auto px-4">
+        <div className="mb-8 text-center">
+          <h2 className="text-3xl font-extrabold tracking-tight sm:text-4xl">
+            Featured Products
+          </h2>
+          <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
+            Discover our handpicked selection of premium footwear
+          </p>
+        </div>
+
+        <Suspense
+          fallback={
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-2 sm:gap-3 md:gap-4">
+              {Array.from({ length: 14 }).map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="aspect-square bg-muted rounded animate-pulse" />
+                  <div className="space-y-1 px-1">
+                    <div className="h-3 w-full bg-muted rounded animate-pulse" />
+                    <div className="h-3 w-3/4 bg-muted rounded animate-pulse" />
+                    <div className="h-4 w-1/2 bg-muted rounded animate-pulse" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          }
+        >
+          <ProductCatalog
+            searchParams={{}}
+            showSort={false}
+            showPagination={false}
+            limit={14}
+            featured={true}
+          />
+        </Suspense>
+      </div>
+    </div>
   );
 }

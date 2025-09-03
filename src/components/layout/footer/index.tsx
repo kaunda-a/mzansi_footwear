@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { FooterBillboard } from "@/components/catalog/billboard/footer-billboard";
 import {
   IconBrandInstagram,
   IconBrandTiktok,
@@ -135,11 +134,6 @@ export function StoreFooter() {
               </button>
             </div>
           </div>
-        </div>
-
-        {/* Billboard */}
-        <div className="mt-8">
-          <FooterBillboard />
         </div>
 
         {/* Bottom section */}

@@ -1,15 +1,15 @@
 import Header from "@/components/layout/header";
 import { StoreFooter } from "@/components/layout/footer";
 import { MarqueeContainer } from "@/components/catalog/marquee/marquee-container";
-import { HeroBillboard } from "@/components/catalog/billboard/hero-billboard";
-import { SecondaryBillboard } from "@/components/catalog/billboard/secondary-billboard";
-import { HeaderBillboard } from "@/components/catalog/billboard/header-billboard";
-import { FooterBillboard } from "@/components/catalog/billboard/footer-billboard";
+// import { HeroBillboard } from "@/components/catalog/billboard/hero-billboard";
+// import { SecondaryBillboard } from "@/components/catalog/billboard/secondary-billboard";
+// import { HeaderBillboard } from "@/components/catalog/billboard/header-billboard";
+// import { FooterBillboard } from "@/components/catalog/billboard/footer-billboard";
 import { FeaturedProducts } from "@/components/catalog/featured/featured-products";
 import { PopularProducts } from "@/components/catalog/featured/popular-products";
-import { ModalBillboard } from "@/components/catalog/billboard/modal-billboard";
-import { DashboardTopBillboard } from "@/components/catalog/billboard/dashboard-top-billboard";
-import { DashboardBottomBillboard } from "@/components/catalog/billboard/dashboard-bottom-billboard";
+// import { ModalBillboard } from "@/components/catalog/billboard/modal-billboard";
+// import { DashboardTopBillboard } from "@/components/catalog/billboard/dashboard-top-billboard";
+// import { DashboardBottomBillboard } from "@/components/catalog/billboard/dashboard-bottom-billboard";
 
 export default function HomePage() {
   return (
@@ -17,28 +17,28 @@ export default function HomePage() {
       <Header />
       
       {/* New Header Billboard */}
-      <HeaderBillboard />
+      {/* <HeaderBillboard /> */}
 
       <main className="flex-1">
         {/* Hero Carousel Billboard */}
-        <HeroBillboard />
+        {/* <HeroBillboard /> */}
 
          {/* Dashboard Top Billboard - After hero, before products */}
-        <div className="container mx-auto px-4 py-4">
+        {/* <div className="container mx-auto px-4 py-4">
           <DashboardTopBillboard />
-        </div>
+        </div> */}
 
 
         {/* Popular Products */}
         <PopularProducts />
         
         {/* Secondary Billboard */}
-        <SecondaryBillboard />
+        {/* <SecondaryBillboard /> */}
 
         {/* Dashboard Bottom Billboard  */}
-        <div className="container mx-auto px-4 py-6">
+        {/* <div className="container mx-auto px-4 py-6">
           <DashboardBottomBillboard />
-        </div>
+        </div> */}
         
         {/* Featured Products */}
         <FeaturedProducts />
@@ -49,12 +49,12 @@ export default function HomePage() {
       <MarqueeContainer />
       
       {/* New Footer Billboard */}
-      <FooterBillboard />
+      {/* <FooterBillboard /> */}
       
       <StoreFooter />
       
       {/* Modal Billboard - Shows automatically after 30 seconds */}
-      <ModalBillboard />
+      {/* <ModalBillboard /> */}
     </div>
   );
 }
