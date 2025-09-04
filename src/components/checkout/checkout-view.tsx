@@ -22,6 +22,7 @@ import {
   IconShield,
   IconLock,
   IconCheck,
+  IconLoader,
 } from "@tabler/icons-react";
 import { useCartStore } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/format";
@@ -47,6 +48,7 @@ export function CheckoutView({ user }: { user?: any }) {
   const [step, setStep] = useState(1);
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [orderId, setOrderId] = useState<string>("");
+  const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     // Contact Information
     email: user?.email || "",
@@ -136,6 +138,7 @@ export function CheckoutView({ user }: { user?: any }) {
   };
 
   const handleSubmitOrder = async () => {
+    setLoading(true);
     try {
       // Prepare order data
       const orderData = {
@@ -195,6 +198,8 @@ export function CheckoutView({ user }: { user?: any }) {
     } catch (error) {
       console.error("Error creating order:", error);
       toast.error("Failed to create order. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -473,7 +478,16 @@ export function CheckoutView({ user }: { user?: any }) {
                   <Button variant="outline" onClick={handlePrevStep}>
                     Back
                   </Button>
-                  <Button onClick={handleNextStep}>Continue to Payment</Button>
+                  <Button onClick={handleNextStep} disabled={loading}>
+                    {loading ? (
+                      <>
+                        <IconLoader className="mr-2 h-4 w-4 animate-spin" />
+                        Processing...
+                      </>
+                    ) : (
+                      "Continue to Payment"
+                    )}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
