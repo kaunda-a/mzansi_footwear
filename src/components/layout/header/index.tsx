@@ -3,12 +3,14 @@
 import React from "react";
 import { Separator } from "../../ui/separator";
 import SearchInput from "../../search-input";
-import { motion, AnimatePresence } from "motion/react";
+import { ThemeSelector } from "../../theme-selector";
+import { ModeToggle } from "../ThemeToggle/theme-toggle";
+import { motion } from "motion/react";
 import Link from "next/link";
+import ThemeLogo from "@/components/theme-logo";
 import Logo from "@/components/logo";
 
 export function Header() {
-
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
@@ -32,8 +34,8 @@ export function Header() {
                 className="inline-block"
               >
                 <Link href="/" className="flex items-center gap-2">
-                  <Logo />
-                  <span className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+                  <ThemeLogo className="h-8 w-auto" />
+                  <span className="text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
                     Mzansi Footwear
                   </span>
                 </Link>
@@ -42,6 +44,12 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <ModeToggle />
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <ThemeSelector />
+            </motion.div>
           </div>
         </div>
 

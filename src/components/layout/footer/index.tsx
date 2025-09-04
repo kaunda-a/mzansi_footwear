@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { FooterBillboard } from "@/components/catalog/billboard/footer-billboard";
 import {
   IconBrandInstagram,
   IconBrandTiktok,
@@ -9,7 +10,7 @@ import {
   IconPhone,
   IconMapPin,
 } from "@tabler/icons-react";
-import Logo from "@/components/logo";
+import ThemeLogo from "@/components/theme-logo";
 
 const footerLinks = {
   support: [
@@ -55,7 +56,7 @@ export function StoreFooter() {
           {/* Brand and contact info */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <Logo />
+              <ThemeLogo className="h-8 w-auto" />
             </div>
             <p className="text-muted-foreground mb-4 max-w-sm">
               Your ultimate destination for premium sneakers, streetwear, and
@@ -134,6 +135,11 @@ export function StoreFooter() {
               </button>
             </div>
           </div>
+        </div>
+
+        {/* Billboard */}
+        <div className="mt-8">
+          <FooterBillboard />
         </div>
 
         {/* Bottom section */}
