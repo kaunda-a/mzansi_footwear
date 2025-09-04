@@ -1,4 +1,5 @@
 import clsx from "clsx";
+import Image from "next/image";
 
 export default function Logo({ size }: { size?: "sm" | undefined }) {
   return (
@@ -11,16 +12,12 @@ export default function Logo({ size }: { size?: "sm" | undefined }) {
         },
       )}
     >
-      <img 
+      <Image 
         src="/logo.png" 
         alt="Mzansi Footwear" 
-        className={clsx(
-          "object-contain",
-          {
-            "h-[30px] w-[30px]": !size,
-            "h-[20px] w-[20px]": size === "sm",
-          },
-        )}
+        width={size === "sm" ? 30 : 40}
+        height={size === "sm" ? 30 : 40}
+        className="object-contain"
       />
     </div>
   );
