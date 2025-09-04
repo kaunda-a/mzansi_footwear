@@ -44,7 +44,7 @@ export default async function CartPage({ searchParams }: CartPageProps) {
               </BreadcrumbList>
             </Breadcrumb>
             <Heading
-              title="Shopping Cart"
+              title="Your Shopping Cart"
               description="Review your selected items and proceed to checkout."
             />
           </div>
