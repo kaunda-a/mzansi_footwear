@@ -116,27 +116,6 @@ export function StoreFooter() {
           </div>
         </div>
 
-        {/* Newsletter signup */}
-        <div className="mt-12 pt-8 border-t">
-          <div className="max-w-md">
-            <h3 className="font-semibold mb-2">Stay in the loop</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              Subscribe to our newsletter for the latest updates and exclusive
-              offers.
-            </p>
-            <div className="flex space-x-2">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="flex-1 px-3 py-2 text-sm border border-input rounded-md bg-background"
-              />
-              <button className="px-4 py-2 text-sm bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors">
-                Subscribe
-              </button>
-            </div>
-          </div>
-        </div>
-
         {/* Billboard */}
         <div className="mt-8">
           <FooterBillboard />
