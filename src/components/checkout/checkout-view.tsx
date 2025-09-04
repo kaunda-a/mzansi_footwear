@@ -26,6 +26,7 @@ import {
 import { useCartStore } from "@/lib/cart-store";
 import { formatPrice } from "@/lib/format";
 import { PaymentForm } from "@/components/payments/payment-form";
+import { toast } from "sonner";
 
 const SA_PROVINCES = [
   "Eastern Cape",
@@ -185,12 +186,15 @@ export function CheckoutView({ user }: { user?: any }) {
         throw new Error(result.error || "Failed to create order");
       }
 
+      // Show success message
+      toast.success("Order created successfully!");
+
       // Show payment form with the actual order ID
       setOrderId(result.order.id);
       setShowPaymentForm(true);
     } catch (error) {
       console.error("Error creating order:", error);
-      alert("Failed to create order. Please try again.");
+      toast.error("Failed to create order. Please try again.");
     }
   };
 
