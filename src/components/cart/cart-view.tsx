@@ -88,8 +88,7 @@ export function CartView() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Shopping Cart</h1>
-          <p className="text-gray-600 mt-2">
+          <p className="text-gray-600">
             {totalItems} item{totalItems !== 1 ? "s" : ""} in your cart
           </p>
         </div>
