@@ -2,6 +2,9 @@
 
 import React from "react";
 import { Separator } from "../../ui/separator";
+import SearchInput from "../../search-input";
+import { ThemeSelector } from "../../theme-selector";
+import { ModeToggle } from "../ThemeToggle/theme-toggle";
 import { motion } from "motion/react";
 import Link from "next/link";
 import ThemeLogo from "@/components/theme-logo";
@@ -10,7 +13,6 @@ import { IconShoppingCart } from "@tabler/icons-react";
 import { useCartStore } from "@/lib/cart-store";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { ExpandableSearch } from "./expandable-search";
 
 export function Header() {
   const { items } = useCartStore();
@@ -49,8 +51,12 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Expandable Search */}
-            <ExpandableSearch />
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <ModeToggle />
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <ThemeSelector />
+            </motion.div>
             
             {/* Cart Icon */}
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
@@ -71,6 +77,23 @@ export function Header() {
               </Link>
             </motion.div>
           </div>
+        </div>
+
+        {/* Enhanced search bar section */`}
+        <div className="px-4 sm:px-6 pb-4">
+          <motion.div
+            initial={{ scale: 0.95, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{
+              delay: 0.1,
+              type: "spring",
+              stiffness: 400,
+              damping: 30,
+            }}
+            className="relative"
+          >
+            <SearchInput />
+          </motion.div>
         </div>
       </div>
     </motion.header>
