@@ -92,11 +92,41 @@ export function CheckoutView({ user }: { user?: any }) {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  const validateStep1 = () => {
+    const requiredFields = [
+      'email',
+      'phone',
+      'firstName',
+      'lastName',
+      'address1',
+      'city',
+      'province',
+      'postalCode'
+    ];
+    
+    for (const field of requiredFields) {
+      if (!formData[field] || formData[field].trim() === '') {
+        return false;
+      }
+    }
+    
+    // Basic email validation
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleNextStep = () => {
-    if (step === 2) {
+    if (step === 1) {
+      if (validateStep1()) {
+        setStep(2);
+      } else {
+        alert("Please fill in all required fields marked with an asterisk (*)");
+      }
+    } else if (step === 2) {
       handleSubmitOrder();
-    } else if (step < 2) {
-      setStep(step + 1);
     }
   };
 
@@ -238,9 +268,14 @@ export function CheckoutView({ user }: { user?: any }) {
                 <CardTitle>Contact Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
+                <p className="text-sm text-gray-600">
+                  <span className="text-red-500">*</span> Indicates required field
+                </p>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="email">Email Address *</Label>
+                    <Label htmlFor="email">
+                      Email Address <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                       id="email"
                       type="email"
@@ -252,7 +287,9 @@ export function CheckoutView({ user }: { user?: any }) {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="phone">Phone Number *</Label>
+                    <Label htmlFor="phone">
+                      Phone Number <span className="text-red-500">*</span>
+                    </Label>
                     <Input
                       id="phone"
                       type="tel"
@@ -272,8 +309,10 @@ export function CheckoutView({ user }: { user?: any }) {
                     Shipping Address
                   </h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="firstName">First Name *</Label>
+                    <div className="md:col-span-2">
+                      <Label htmlFor="firstName">
+                        First Name <span className="text-red-500">*</span>
+                      </Label>
                       <Input
                         id="firstName"
                         value={formData.firstName}
@@ -284,7 +323,9 @@ export function CheckoutView({ user }: { user?: any }) {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="lastName">Last Name *</Label>
+                      <Label htmlFor="lastName">
+                        Last Name <span className="text-red-500">*</span>
+                      </Label>
                       <Input
                         id="lastName"
                         value={formData.lastName}
@@ -305,7 +346,9 @@ export function CheckoutView({ user }: { user?: any }) {
                       />
                     </div>
                     <div className="md:col-span-2">
-                      <Label htmlFor="address1">Address Line 1 *</Label>
+                      <Label htmlFor="address1">
+                        Address Line 1 <span className="text-red-500">*</span>
+                      </Label>
                       <Input
                         id="address1"
                         value={formData.address1}
@@ -328,7 +371,9 @@ export function CheckoutView({ user }: { user?: any }) {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="city">City *</Label>
+                      <Label htmlFor="city">
+                        City <span className="text-red-500">*</span>
+                      </Label>
                       <Input
                         id="city"
                         value={formData.city}
@@ -339,7 +384,9 @@ export function CheckoutView({ user }: { user?: any }) {
                       />
                     </div>
                     <div>
-                      <Label htmlFor="province">Province *</Label>
+                      <Label htmlFor="province">
+                        Province <span className="text-red-500">*</span>
+                      </Label>
                       <Select
                         value={formData.province}
                         onValueChange={(value) =>
@@ -359,7 +406,9 @@ export function CheckoutView({ user }: { user?: any }) {
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="postalCode">Postal Code *</Label>
+                      <Label htmlFor="postalCode">
+                        Postal Code <span className="text-red-500">*</span>
+                      </Label>
                       <Input
                         id="postalCode"
                         value={formData.postalCode}
