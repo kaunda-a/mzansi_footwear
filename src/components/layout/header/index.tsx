@@ -3,8 +3,6 @@
 import React from "react";
 import { Separator } from "../../ui/separator";
 import SearchInput from "../../search-input";
-import { ThemeSelector } from "../../theme-selector";
-import { ModeToggle } from "../ThemeToggle/theme-toggle";
 import { motion } from "motion/react";
 import Link from "next/link";
 import ThemeLogo from "@/components/theme-logo";
@@ -44,12 +42,6 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <ModeToggle />
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <ThemeSelector />
-            </motion.div>
           </div>
         </div>
 
