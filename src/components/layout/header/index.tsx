@@ -5,7 +5,6 @@ import { Separator } from "../../ui/separator";
 import SearchInput from "../../search-input";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
-import ThemeLogo from "@/components/theme-logo";
 import Logo from "@/components/logo";
 
 export function Header() {
@@ -33,7 +32,7 @@ export function Header() {
                 className="inline-block"
               >
                 <Link href="/" className="flex items-center gap-2">
-                  <ThemeLogo className="h-8 w-auto" />
+                  <Logo />
                   <span className="text-base sm:text-lg md:text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
                     Mzansi Footwear
                   </span>

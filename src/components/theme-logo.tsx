@@ -1,6 +1,5 @@
 "use client";
 
-import { useTheme } from "next-themes";
 import Image from "next/image";
 import React from "react";
 
@@ -10,24 +9,11 @@ interface ThemeLogoProps {
 }
 
 export default function ThemeLogo({ size, className }: ThemeLogoProps) {
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
   // Set dimensions based on size prop
   const dimensions = size === "sm" ? 30 : 40;
 
-  // Determine which logo to use
-  // On server or before mounting, use default logo
-  // On client, use logo based on resolved theme
-  const logoSrc = !mounted || !resolvedTheme ? 
-    "/logo-black.png" : 
-    resolvedTheme === "dark" ? 
-      "/logo-light.png" : 
-      "/logo-black.png";
+  // Use logo.jpg as the default and only logo
+  const logoSrc = "/logo.jpg";
 
   return (
     <Image

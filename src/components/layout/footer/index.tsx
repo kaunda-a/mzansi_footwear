@@ -9,7 +9,7 @@ import {
   IconPhone,
   IconMapPin,
 } from "@tabler/icons-react";
-import ThemeLogo from "@/components/theme-logo";
+import Logo from "@/components/logo";
 
 const footerLinks = {
   support: [
@@ -55,7 +55,7 @@ export function StoreFooter() {
           {/* Brand and contact info */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-2 mb-4">
-              <ThemeLogo className="h-8 w-auto" />
+              <Logo />
             </div>
             <p className="text-muted-foreground mb-4 max-w-sm">
               Your ultimate destination for premium sneakers, streetwear, and
