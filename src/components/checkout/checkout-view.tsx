@@ -41,6 +41,44 @@ const SA_PROVINCES = [
   "Western Cape",
 ];
 
+// Define the type for formData
+interface FormData {
+  // Contact Information
+  email: string;
+  phone: string;
+
+  // Shipping Address
+  firstName: string;
+  lastName: string;
+  company: string;
+  address1: string;
+  address2: string;
+  city: string;
+  province: string;
+  postalCode: string;
+
+  // Billing Address
+  billingDifferent: boolean;
+  billingFirstName: string;
+  billingLastName: string;
+  billingCompany: string;
+  billingAddress1: string;
+  billingAddress2: string;
+  billingCity: string;
+  billingProvince: string;
+  billingPostalCode: string;
+
+  // Payment
+  paymentMethod: string;
+
+  // Order Notes
+  orderNotes: string;
+
+  // Terms
+  acceptTerms: boolean;
+  subscribeNewsletter: boolean;
+}
+
 export function CheckoutView({ user }: { user?: any }) {
   const router = useRouter();
   const { items, totalPrice, totalItems, clearCart } = useCartStore();
@@ -49,7 +87,7 @@ export function CheckoutView({ user }: { user?: any }) {
   const [showPaymentForm, setShowPaymentForm] = useState(false);
   const [orderId, setOrderId] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     // Contact Information
     email: user?.email || "",
     phone: "",
@@ -91,12 +129,12 @@ export function CheckoutView({ user }: { user?: any }) {
   const tax = 0; // No VAT
   const total = subtotal + shipping + tax;
 
-  const handleInputChange = (field: string, value: string | boolean) => {
+  const handleInputChange = (field: keyof FormData, value: string | boolean) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const validateStep1 = () => {
-    const requiredFields = [
+    const requiredFields: (keyof FormData)[] = [
       'email',
       'phone',
       'firstName',
@@ -108,7 +146,7 @@ export function CheckoutView({ user }: { user?: any }) {
     ];
     
     for (const field of requiredFields) {
-      if (!formData[field] || formData[field].trim() === '') {
+      if (!formData[field] || formData[field].toString().trim() === '') {
         return false;
       }
     }
