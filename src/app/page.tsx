@@ -1,7 +1,7 @@
 import Header from "@/components/layout/header";
 import { StoreFooter } from "@/components/layout/footer";
 import { MarqueeContainer } from "@/components/catalog/marquee/marquee-container";
-// import { HeroBillboard } from "@/components/catalog/billboard/hero-billboard";
+import { HeroBillboard } from "@/components/catalog/billboard/hero-billboard";
 // import { SecondaryBillboard } from "@/components/catalog/billboard/secondary-billboard";
 // import { HeaderBillboard } from "@/components/catalog/billboard/header-billboard";
 // import { FooterBillboard } from "@/components/catalog/billboard/footer-billboard";
@@ -21,7 +21,7 @@ export default function HomePage() {
 
       <main className="flex-1">
         {/* Hero Carousel Billboard */}
-        {/* <HeroBillboard /> */}
+        <HeroBillboard />
 
          {/* Dashboard Top Billboard - After hero, before products */}
         {/* <div className="container mx-auto px-4 py-4">
