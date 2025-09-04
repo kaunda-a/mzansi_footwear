@@ -5,7 +5,7 @@ import { Separator } from "../../ui/separator";
 import SearchInput from "../../search-input";
 import { ThemeSelector } from "../../theme-selector";
 import { ModeToggle } from "../ThemeToggle/theme-toggle";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import ThemeLogo from "@/components/theme-logo";
 import Logo from "@/components/logo";
@@ -79,7 +79,7 @@ export function Header() {
           </div>
         </div>
 
-        {/* Enhanced search bar section */`}
+        {/* Enhanced search bar section */}
         <div className="px-4 sm:px-6 pb-4">
           <motion.div
             initial={{ scale: 0.95, opacity: 0 }}
