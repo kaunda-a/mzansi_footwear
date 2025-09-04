@@ -7,14 +7,8 @@ import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import ThemeLogo from "@/components/theme-logo";
 import Logo from "@/components/logo";
-import { IconShoppingCart } from "@tabler/icons-react";
-import { useCartStore } from "@/lib/cart-store";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
 
 export function Header() {
-  const { items } = useCartStore();
-  const cartItemCount = items.reduce((total, item) => total + item.quantity, 0);
 
   return (
     <motion.header
@@ -49,24 +43,6 @@ export function Header() {
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Cart Icon */}
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Link 
-                href="/cart" 
-                className="relative p-2 rounded-lg hover:bg-accent transition-colors"
-                aria-label="Shopping cart"
-              >
-                <IconShoppingCart className="h-5 w-5 text-foreground" />
-                {cartItemCount > 0 && (
-                  <Badge
-                    variant="destructive"
-                    className="absolute -top-1 -right-1 h-4 w-4 p-0 flex items-center justify-center text-[8px] font-bold border border-background/60 shadow-lg"
-                  >
-                    {cartItemCount > 99 ? "99+" : cartItemCount}
-                  </Badge>
-                )}
-              </Link>
-            </motion.div>
           </div>
         </div>
 
