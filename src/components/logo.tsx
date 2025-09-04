@@ -12,7 +12,7 @@ export default function Logo({ size }: { size?: "sm" | undefined }) {
       )}
     >
       <img 
-        src="/logo.jpg" 
+        src="/logo.png" 
         alt="Mzansi Footwear" 
         className={clsx(
           "object-contain",
