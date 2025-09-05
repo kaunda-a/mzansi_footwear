@@ -33,7 +33,7 @@ export function Header() {
               >
                 <Link href="/" className="flex items-center gap-2">
                   <ThemeLogo className="h-8 w-auto" />
-                  <span className="text-xl font-bold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">
+                  <span className="text-xl font-bold tracking-tight text-primary">
                     Mzansi Footwear
                   </span>
                 </Link>
