@@ -41,9 +41,9 @@ export default function HomePage() {
         </div> */}
         
         {/* Featured Products */}
-        {/* <FeaturedProducts /> */}
+        {/* <FeaturedProducts /> */
 
-     
+      }
       </main>
       
       <MarqueeContainer />
