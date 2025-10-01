@@ -8,8 +8,11 @@ import { cookies } from "next/headers";
 import NextTopLoader from "nextjs-toploader";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import KBar from "@/components/kbar";
-import { Navbar } from "@/components/layout/navbar";
 import { ConfettiProvider } from "@/components/ui/confetti";
+import Header from "@/components/layout/header";
+import { Navbar } from "@/components/layout/navbar";
+import { Footer } from "@/components/layout/footer";
+import GoogleAnalyticsComponent from "@/components/google-analytics";
 
 import "./globals.css";
 import "./theme.css";
@@ -108,15 +111,18 @@ export default async function RootLayout({
           >
             <Providers activeThemeValue={activeThemeValue as string}>
               <KBar>
+                <Header />
                 <div className="min-h-screen flex flex-col pb-20 sm:pb-24">
                   <ConfettiProvider>{children}</ConfettiProvider>
                 </div>
                 <Navbar />
                 <Toaster />
+                <Footer />
               </KBar>
             </Providers>
           </ThemeProvider>
         </NuqsAdapter>
+        <GoogleAnalyticsComponent />
       </body>
     </html>
   );
