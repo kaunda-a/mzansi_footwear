@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { SearchParams } from "nuqs/server";
 import Header from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+
 import { Heading } from "@/components/ui/heading";
 import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
 import { MarqueeListingPage } from "@/features/marquee";

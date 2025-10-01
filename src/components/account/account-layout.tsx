@@ -1,7 +1,7 @@
 "use client";
 
 import { Header } from "@/components/layout/header";
-import { Footer } from "@/components/layout/footer";
+
 import { AccountSidebar } from "./account-sidebar";
 import {
   Breadcrumb,
@@ -90,8 +90,6 @@ export function AccountLayout({
           </div>
         </div>
       </div>
-
-      <Footer />
     </div>
   );
 }
