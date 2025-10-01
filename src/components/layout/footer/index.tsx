@@ -162,3 +162,6 @@ export function Footer() {
     </footer>
   );
 }
+"// Export with both names for compatibility"  
+"export { Footer as StoreFooter };" 
+export { Footer as StoreFooter }; 

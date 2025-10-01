@@ -1,8 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { SearchParams } from "nuqs/server";
-import Header from "@/components/layout/header";
-import { StoreFooter } from "@/components/layout/footer";
 import { Heading } from "@/components/ui/heading";
 import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
 import { OrderListingPage } from "@/features/orders";
@@ -46,7 +44,6 @@ export default async function Page(props: pageProps) {
 
   return (
     <>
-      <Header />
       <main className="flex-1">
         {/* Breadcrumbs */}
         <div className="bg-gray-50 border-b">
@@ -95,7 +92,6 @@ export default async function Page(props: pageProps) {
           </Suspense>
         </div>
       </main>
-      <StoreFooter />
     </>
   );
 }

@@ -1,8 +1,6 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
 import { SearchParams } from "nuqs/server";
-import { Header } from "@/components/layout/header";
-import { StoreFooter } from "@/components/layout/footer";
 import { Heading } from "@/components/ui/heading";
 import { DataTableSkeleton } from "@/components/ui/table/data-table-skeleton";
 import { AccountPaymentMethods } from "@/components/account/account-payment-methods";
@@ -32,7 +30,6 @@ export default async function PaymentMethodsPage({
 }: PaymentMethodsPageProps) {
   return (
     <div className="flex min-h-screen w-full flex-col bg-muted/40">
-      <Header />
       <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
         <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
           <div className="mx-auto grid w-full max-w-6xl gap-2">
@@ -71,7 +68,6 @@ export default async function PaymentMethodsPage({
           </div>
         </main>
       </div>
-      <StoreFooter />
     </div>
   );
 }

@@ -95,22 +95,22 @@ export function Navbar() {
       role="navigation"
       aria-label="Main navigation"
     >
-      {/* Linear/Raycast-inspired floating container */}
+      {/* Modern floating container with enhanced glassmorphism */}
       <div className="mx-auto max-w-sm sm:max-w-md px-4 sm:px-6 pb-safe">
-        <div className="relative mb-2">
-          {/* Enhanced glassmorphism background */}
-          <div className="absolute inset-0 bg-background/98 backdrop-blur-3xl border border-border/50 rounded-2xl shadow-2xl shadow-black/[0.08] dark:shadow-white/[0.02]" />
-
-          {/* Subtle gradient overlays */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/40 via-transparent to-background/20 rounded-2xl" />
-          <div className="absolute inset-0 bg-gradient-to-r from-primary/[0.02] via-transparent to-primary/[0.02] rounded-2xl" />
-
-          {/* Inner highlight */}
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border/60 to-transparent" />
-
-          {/* Content container */}
-          <div className="relative px-2 py-2">
-            <div className="flex items-center justify-between gap-0.5">
+        <div className="relative mb-3">
+          {/* Enhanced glassmorphism background with subtle gradient */}
+          <div className="absolute inset-0 bg-background/95 backdrop-blur-3xl border border-border/50 rounded-2xl shadow-2xl shadow-black/[0.08] dark:shadow-white/[0.02]" />
+          
+          {/* Subtle gradient overlays for depth */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background/30 via-transparent to-background/10 rounded-2xl" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/[0.03] via-transparent to-primary/[0.03] rounded-2xl" />
+          
+          {/* Inner highlight for a polished look */}
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-border/50 to-transparent rounded-t-2xl" />
+          
+          {/* Content container with padding */}
+          <div className="relative px-3 py-3">
+            <div className="flex items-center justify-between gap-1">
               {navItems.map((item, index) => {
                 const Icon = item.icon;
                 const active = isActive(item.href);
@@ -121,7 +121,7 @@ export function Navbar() {
                     initial={{ scale: 0, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     transition={{
-                      delay: index * 0.04,
+                      delay: index * 0.05,
                       type: "spring",
                       stiffness: 500,
                       damping: 30,
@@ -131,14 +131,14 @@ export function Navbar() {
                     <Link
                       href={item.href}
                       className={cn(
-                        "relative flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-xl transition-all duration-200 group",
+                        "relative flex flex-col items-center justify-center p-3 rounded-xl transition-all duration-200 group",
                         "hover:bg-accent/40 active:bg-accent/60 active:scale-95",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/60 focus-visible:ring-offset-1",
-                        "min-h-[60px] sm:min-h-[68px]",
+                        "min-h-[64px] sm:min-h-[72px]",
                       )}
                       aria-label={item.label}
                     >
-                      {/* Active background indicator */}
+                      {/* Active background indicator with smooth animation */}
                       <AnimatePresence>
                         {active && (
                           <motion.div
@@ -151,17 +151,17 @@ export function Navbar() {
                               stiffness: 400,
                               damping: 30,
                             }}
-                            className="absolute inset-0 bg-primary/12 rounded-xl border border-primary/25 shadow-inner"
+                            className="absolute inset-0 bg-primary/10 rounded-xl border border-primary/20 shadow-sm"
                           />
                         )}
                       </AnimatePresence>
 
-                      {/* Icon container */}
+                      {/* Icon container with enhanced hover effects */}
                       <div className="relative z-10 mb-1">
                         <motion.div
-                          whileHover={{ scale: 1.08, y: -1 }}
-                          whileTap={{ scale: 0.92 }}
-                          animate={active ? { scale: 1.05 } : { scale: 1 }}
+                          whileHover={{ scale: 1.1, y: -2 }}
+                          whileTap={{ scale: 0.9 }}
+                          animate={active ? { scale: 1.08 } : { scale: 1 }}
                           transition={{
                             type: "spring",
                             stiffness: 400,
@@ -171,14 +171,14 @@ export function Navbar() {
                         >
                           <Icon
                             className={cn(
-                              "h-5 w-5 sm:h-6 sm:w-6 transition-colors duration-200",
+                              "h-5 w-5 sm:h-6 sm:w-6 transition-all duration-200",
                               active
                                 ? "text-primary"
                                 : "text-muted-foreground group-hover:text-foreground",
                             )}
                           />
 
-                          {/* Badge for cart items */}
+                          {/* Badge for cart items with smooth animation */}
                           <AnimatePresence>
                             {item.badge && item.badge > 0 && (
                               <motion.div
@@ -190,11 +190,11 @@ export function Navbar() {
                                   stiffness: 500,
                                   damping: 25,
                                 }}
-                                className="absolute -top-1 -right-1 sm:-top-1.5 sm:-right-1.5"
+                                className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2"
                               >
                                 <Badge
-                                  variant="destructive"
-                                  className="h-4 w-4 sm:h-5 sm:w-5 p-0 flex items-center justify-center text-[8px] sm:text-[9px] font-bold border border-background/60 shadow-lg"
+                                  variant="default"
+                                  className="h-5 w-5 sm:h-6 sm:w-6 p-0 flex items-center justify-center text-[9px] sm:text-[10px] font-bold border border-background/80 shadow-lg bg-primary text-primary-foreground"
                                 >
                                   {item.badge > 99 ? "99+" : item.badge}
                                 </Badge>
@@ -204,10 +204,10 @@ export function Navbar() {
                         </motion.div>
                       </div>
 
-                      {/* Label */}
+                      {/* Label with improved typography */}
                       <span
                         className={cn(
-                          "text-[9px] sm:text-[10px] font-medium transition-colors duration-200 text-center leading-tight max-w-full truncate px-1",
+                          "text-[10px] sm:text-[11px] font-medium transition-all duration-200 text-center leading-tight max-w-full truncate px-1",
                           active
                             ? "text-primary font-semibold"
                             : "text-muted-foreground group-hover:text-foreground",
@@ -216,19 +216,19 @@ export function Navbar() {
                         {item.label}
                       </span>
 
-                      {/* Active indicator line */}
+                      {/* Active indicator dot for better visual feedback */}
                       <AnimatePresence>
                         {active && (
                           <motion.div
-                            initial={{ scaleX: 0, opacity: 0 }}
-                            animate={{ scaleX: 1, opacity: 1 }}
-                            exit={{ scaleX: 0, opacity: 0 }}
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0, opacity: 0 }}
                             transition={{
                               type: "spring",
                               stiffness: 500,
                               damping: 30,
                             }}
-                            className="absolute -bottom-0.5 left-1/2 transform -translate-x-1/2 w-6 h-0.5 bg-primary rounded-full"
+                            className="absolute top-1 left-1/2 transform -translate-x-1/2 w-1.5 h-1.5 bg-primary rounded-full"
                           />
                         )}
                       </AnimatePresence>

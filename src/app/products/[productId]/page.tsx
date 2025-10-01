@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import Header from "@/components/layout/header";
-import { StoreFooter } from "@/components/layout/footer";
 import { ProductService } from "@/lib/services/products";
 import { ProductDetailView } from "@/features/product/components/product-detail-view";
 import { RelatedProducts } from "@/features/product/components/related-products";
@@ -102,7 +100,6 @@ export default async function ProductPage(props: {
 
     return (
       <>
-        <Header />
         <main className="flex-1">
           <script
             type="application/ld+json"
@@ -179,7 +176,6 @@ export default async function ProductPage(props: {
             </Suspense>
           </div>
         </main>
-        <StoreFooter />
       </>
     );
   } catch (error) {

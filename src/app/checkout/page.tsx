@@ -1,5 +1,4 @@
-import Header from "@/components/layout/header";
-import { StoreFooter } from "@/components/layout/footer";
+
 import { CheckoutView } from "@/components/checkout/checkout-view";
 import {
   Breadcrumb,
@@ -22,7 +21,6 @@ export default async function CheckoutPage() {
 
   return (
     <>
-      <Header />
       <main className="flex-1">
         {/* Breadcrumbs */}
         <div className="bg-gray-50 border-b">
@@ -55,7 +53,7 @@ export default async function CheckoutPage() {
           <CheckoutView user={session?.user} />
         </div>
       </main>
-      <StoreFooter />
+      
     </>
   );
 }

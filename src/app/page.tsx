@@ -1,5 +1,4 @@
-import Header from "@/components/layout/header";
-import { StoreFooter } from "@/components/layout/footer";
+
 import { MarqueeContainer } from "@/components/catalog/marquee/marquee-container";
 import { HeroBillboard } from "@/components/catalog/billboard/hero-billboard";
 // import { SecondaryBillboard } from "@/components/catalog/billboard/secondary-billboard";
@@ -14,7 +13,6 @@ import { PopularProducts } from "@/components/catalog/featured/popular-products"
 export default function HomePage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
       
       {/* New Header Billboard */}
       {/* <HeaderBillboard /> */}
@@ -49,10 +47,7 @@ export default function HomePage() {
       <MarqueeContainer />
       
       {/* New Footer Billboard */}
-      {/* <FooterBillboard /> */}
-      
-      <StoreFooter />
-      
+      {/* <FooterBillboard /> */}      
       {/* Modal Billboard - Shows automatically after 30 seconds */}
       {/* <ModalBillboard /> */}
     </div>

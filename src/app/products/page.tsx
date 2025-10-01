@@ -1,6 +1,4 @@
 import { Suspense } from "react";
-import Header from "@/components/layout/header";
-import { StoreFooter } from "@/components/layout/footer";
 import { ProductCatalog } from "@/features/product/components/product-catalog";
 import ProductCatalogContainer from "@/components/catalog/featured/product-catalog-container";
 import {
@@ -23,8 +21,6 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
   const resolvedSearchParams = await searchParams;
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
-
       <main className="flex-1">
         {/* Breadcrumbs */}
         <div className="bg-muted/30 border-b">
@@ -97,10 +93,7 @@ export default async function ProductsPage({ searchParams }: ProductsPageProps) 
             </Suspense>
           </ProductCatalogContainer>
         </div>
-      </main>
-
-      <StoreFooter />
-      
+      </main>      
       {/* Modal Billboard - Shows automatically after 30 seconds */}
       <ModalBillboard />
     </div>

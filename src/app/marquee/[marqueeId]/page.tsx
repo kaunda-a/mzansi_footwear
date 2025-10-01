@@ -1,8 +1,6 @@
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import Header from "@/components/layout/header";
-import { StoreFooter } from "@/components/layout/footer";
 import FormCardSkeleton from "@/components/form-card-skeleton";
 import { MarqueeViewPage } from "@/features/marquee";
 import {
@@ -64,7 +62,7 @@ export default async function Page(props: MarqueePageProps) {
 
     return (
       <div className="flex flex-col min-h-screen">
-        <Header />
+        
         <main className="flex-1">
           {/* Breadcrumbs */}
           <div className="bg-gray-50 border-b">
@@ -94,7 +92,7 @@ export default async function Page(props: MarqueePageProps) {
             </Suspense>
           </div>
         </main>
-        <StoreFooter />
+        
       </div>
     );
   } catch (error) {

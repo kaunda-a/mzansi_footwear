@@ -136,14 +136,14 @@ export default function SearchInput() {
           value={query}
           onChange={handleInputChange}
           onFocus={() => query.length > 0 && setIsOpen(true)}
-          className="pl-10 pr-8 h-9 bg-background"
+          className="pl-10 pr-8 h-10 bg-background/90 backdrop-blur-xl border-border/50 rounded-xl shadow-sm focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all duration-200"
         />
         {query && (
           <Button
             variant="ghost"
             size="sm"
             onClick={handleClear}
-            className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0"
+            className="absolute right-1 top-1/2 transform -translate-y-1/2 h-7 w-7 p-0 hover:bg-accent/50"
           >
             <IconX className="h-3 w-3" />
           </Button>
@@ -151,11 +151,11 @@ export default function SearchInput() {
       </div>
 
       {isOpen && (
-        <Card className="absolute top-full left-0 right-0 mt-1 z-50 max-h-96 overflow-hidden shadow-lg">
+        <Card className="absolute top-full left-0 right-0 mt-2 z-50 max-h-96 overflow-hidden shadow-2xl backdrop-blur-3xl bg-background/95 border-border/50 rounded-2xl">
           <CardContent className="p-0">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
-                <IconLoader2 className="h-6 w-6 animate-spin" />
+                <IconLoader2 className="h-6 w-6 animate-spin text-primary" />
                 <span className="ml-2 text-sm text-muted-foreground">
                   Searching...
                 </span>
@@ -168,30 +168,30 @@ export default function SearchInput() {
                       key={product.id}
                       href={`/products/${product.id}`}
                       onClick={() => setIsOpen(false)}
-                      className="flex items-center gap-3 p-3 hover:bg-muted/50 transition-colors border-b last:border-b-0"
+                      className="flex items-center gap-3 p-3 hover:bg-muted/30 transition-all duration-200 border-b border-border/30 last:border-b-0 group"
                     >
-                      <div className="relative w-12 h-12 bg-muted rounded-md overflow-hidden flex-shrink-0">
+                      <div className="relative w-14 h-14 bg-muted rounded-lg overflow-hidden flex-shrink-0 shadow-sm">
                         {product.image ? (
                           <Image
                             src={product.image}
                             alt={product.imageAlt}
                             fill
-                            className="object-cover"
-                            sizes="48px"
+                            className="object-cover group-hover:scale-105 transition-transform duration-200"
+                            sizes="56px"
                           />
                         ) : (
                           <div className="w-full h-full bg-muted flex items-center justify-center">
-                            <IconSearch className="h-4 w-4 text-muted-foreground" />
+                            <IconSearch className="h-5 w-5 text-muted-foreground" />
                           </div>
                         )}
                       </div>
 
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-sm truncate">
+                        <h4 className="font-medium text-sm truncate group-hover:text-primary transition-colors">
                           {product.name}
                         </h4>
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="font-semibold text-sm">
+                          <span className="font-semibold text-sm text-primary">
                             {formatPrice(product.price)}
                           </span>
                           {product.isOnSale && product.compareAtPrice && (
@@ -202,12 +202,12 @@ export default function SearchInput() {
                         </div>
                         <div className="flex items-center gap-2 mt-1">
                           {product.category && (
-                            <Badge variant="secondary" className="text-xs">
+                            <Badge variant="secondary" className="text-xs px-2 py-0.5">
                               {product.category.name}
                             </Badge>
                           )}
                           {product.isOnSale && (
-                            <Badge variant="destructive" className="text-xs">
+                            <Badge variant="destructive" className="text-xs px-2 py-0.5">
                               Sale
                             </Badge>
                           )}
@@ -218,12 +218,12 @@ export default function SearchInput() {
                 </div>
 
                 {total > results.length && (
-                  <div className="p-3 border-t bg-muted/30">
+                  <div className="p-3 border-t border-border/30 bg-muted/20">
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={handleViewAllResults}
-                      className="w-full"
+                      className="w-full hover:bg-primary/10 hover:border-primary/30 transition-all duration-200"
                     >
                       View all {total} results for "{query}"
                     </Button>
@@ -232,7 +232,7 @@ export default function SearchInput() {
               </>
             ) : query.length >= 2 ? (
               <div className="p-8 text-center">
-                <IconSearch className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+                <IconSearch className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
                 <p className="text-sm text-muted-foreground">
                   No products found for "{query}"
                 </p>
@@ -240,7 +240,7 @@ export default function SearchInput() {
                   variant="link"
                   size="sm"
                   onClick={handleViewAllResults}
-                  className="mt-2"
+                  className="mt-3 text-primary hover:text-primary/80"
                 >
                   Search all products
                 </Button>
