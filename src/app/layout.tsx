@@ -117,11 +117,11 @@ export default async function RootLayout({
                 </div>
                 <Navbar />
                 <Toaster />
-                <Footer />
               </KBar>
             </Providers>
           </ThemeProvider>
         </NuqsAdapter>
+        <Footer />
         <GoogleAnalyticsComponent />
       </body>
     </html>

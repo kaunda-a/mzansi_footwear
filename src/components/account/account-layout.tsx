@@ -1,7 +1,7 @@
 "use client";
 
 import { Header } from "@/components/layout/header";
-import { StoreFooter } from "@/components/layout/footer";
+import { Footer } from "@/components/layout/footer";
 import { AccountSidebar } from "./account-sidebar";
 import {
   Breadcrumb,
@@ -29,7 +29,7 @@ export function AccountLayout({
   breadcrumbs,
 }: AccountLayoutProps) {
   return (
-    <div className="flex min-h-screen w-full flex-col bg-background">
+    <div className="flex min-h-screen w-full flex-col bg-background lg:ml-16">
       <Header />
 
       <div className="flex-1">
@@ -91,7 +91,7 @@ export function AccountLayout({
         </div>
       </div>
 
-      <StoreFooter />
+      <Footer />
     </div>
   );
 }
